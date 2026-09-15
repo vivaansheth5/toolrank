@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { X } from "lucide-react";
 import ComparisonTable from "@/components/ComparisonTable";
 import ToolCard from "@/components/ToolCard";
@@ -9,9 +10,13 @@ import EmptyState from "@/components/EmptyState";
 import OfferCard from "@/components/OfferCard";
 import VerdictCard from "@/components/VerdictCard";
 import AffiliateDisclosure from "@/components/AffiliateDisclosure";
+import ComparisonEditorial from "@/components/ComparisonEditorial";
+import ComparisonFAQ from "@/components/ComparisonFAQ";
 import { tools } from "@/data/tools";
 import { getBestDealForTool } from "@/data/deals";
+import { getFeaturedComparisons } from "@/data/featuredComparisons";
 import { getCompareVerdicts } from "@/lib/verdict";
+import { buildComparisonEditorial } from "@/lib/comparisonContent";
 
 const MAX_COMPARE = 3;
 
@@ -43,6 +48,9 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
       return [...prev, slug];
     });
   }
+
+  const editorial = selectedTools.length >= 2 ? buildComparisonEditorial(selectedTools) : null;
+  const featuredComparisons = getFeaturedComparisons();
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -118,6 +126,28 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {getCompareVerdicts(selectedTools).map((verdict) => (
               <VerdictCard key={verdict.tool.slug} verdict={verdict} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {selectedTools.length >= 2 && <ComparisonEditorial tools={selectedTools} />}
+
+      {editorial && <ComparisonFAQ faqs={editorial.faqs} />}
+
+      {selectedTools.length < 2 && featuredComparisons.length > 0 && (
+        <section className="mt-14 border-t border-border pt-10">
+          <h2 className="text-lg font-semibold text-foreground">Popular comparisons</h2>
+          <p className="mt-1 text-sm text-muted">Jump straight into a comparison people look up often.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {featuredComparisons.map((c) => (
+              <Link
+                key={c.slug}
+                href={c.href}
+                className="focus-ring rounded-full border border-border bg-surface px-3.5 py-2 text-sm text-foreground/80 transition-colors hover:border-border-strong hover:text-foreground"
+              >
+                {c.label}
+              </Link>
             ))}
           </div>
         </section>

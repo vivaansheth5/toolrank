@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import CompareClient from "./CompareClient";
 import { getToolBySlug } from "@/data/tools";
+import { joinNames } from "@/lib/comparisonContent";
 
 function parseSlugs(toolsParam: string | string[] | undefined): string[] {
   return typeof toolsParam === "string"
@@ -24,8 +25,8 @@ export async function generateMetadata(props: PageProps<"/compare">): Promise<Me
   const title =
     names.length === 2
       ? `${names[0]} vs ${names[1]}: Which AI Tool Is Better?`
-      : `${names.join(" vs ")}: Compare AI Tools`;
-  const description = `Compare ${names.join(", ")} on features, pricing, ease of use, best use cases and current offers.`;
+      : `${names.join(" vs ")}: Which AI Tool Is Best?`;
+  const description = `Compare ${joinNames(names)} on features, pricing, ease of use, best use cases and current offers.`;
 
   return {
     title,

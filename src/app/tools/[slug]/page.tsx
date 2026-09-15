@@ -13,6 +13,7 @@ import AffiliateCTA from "@/components/AffiliateCTA";
 import { tools, getToolBySlug } from "@/data/tools";
 import { getCategory } from "@/data/categories";
 import { getBestDealForTool } from "@/data/deals";
+import { getRelatedFeaturedComparisons } from "@/data/featuredComparisons";
 import { AUDIENCE_LABELS, PRICING_DISCLAIMER } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -39,6 +40,12 @@ export default async function ToolDetailPage(props: PageProps<"/tools/[slug]">) 
     .filter((t) => t.category === tool.category && t.slug !== tool.slug)
     .sort((a, b) => b.rating - a.rating);
   const alternatives = related.slice(0, 3);
+  const featuredPartners = getRelatedFeaturedComparisons(tool.slug, 5)
+    .map((c) => c.tools.find((t) => t.slug !== tool.slug))
+    .filter((t): t is NonNullable<typeof t> => Boolean(t));
+  const compareTargets = Array.from(
+    new Map([...featuredPartners, ...related].map((t) => [t.slug, t])).values()
+  ).slice(0, 5);
   const similar = related.slice(0, 6);
 
   return (
@@ -203,6 +210,26 @@ export default async function ToolDetailPage(props: PageProps<"/tools/[slug]">) 
                       <p className="truncate text-sm font-semibold text-foreground">{alt.name}</p>
                       <p className="truncate text-xs text-muted">{alt.tagline}</p>
                     </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {compareTargets.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold text-foreground">Compare {tool.name}</h2>
+              <p className="mt-1 text-sm text-muted">
+                See {tool.name} side by side with a close alternative on pricing, features and offers.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {compareTargets.map((alt) => (
+                  <Link
+                    key={alt.slug}
+                    href={`/compare?tools=${tool.slug},${alt.slug}`}
+                    className="focus-ring rounded-full border border-border bg-surface px-3.5 py-2 text-sm text-foreground/80 transition-colors hover:border-border-strong hover:text-foreground"
+                  >
+                    vs {alt.name}
                   </Link>
                 ))}
               </div>

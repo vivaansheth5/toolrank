@@ -12,7 +12,7 @@ function tierRank(tier: PriceTier): number {
   return TIER_ORDER.indexOf(tier);
 }
 
-const STRENGTH_LABELS: Record<Strength, string> = {
+export const STRENGTH_PHRASES: Record<Strength, string> = {
   "ease-of-use": "ease of use",
   quality: "output quality",
   price: "price",
@@ -65,7 +65,7 @@ export function getCompareVerdicts(tools: Tool[]): CompareVerdict[] {
 
   for (const tool of remaining) {
     const primaryStrength = tool.strengths[0];
-    const strengthLabel = primaryStrength ? STRENGTH_LABELS[primaryStrength] : undefined;
+    const strengthLabel = primaryStrength ? STRENGTH_PHRASES[primaryStrength] : undefined;
     verdicts.push({
       tool,
       label: strengthLabel ? `Best for ${strengthLabel}` : "Worth a look",
