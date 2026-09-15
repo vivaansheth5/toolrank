@@ -1,10 +1,13 @@
 import Link from "next/link";
-import { Check, X, ExternalLink } from "lucide-react";
+import { Check, X } from "lucide-react";
 import ToolLogo from "./ToolLogo";
 import Rating from "./Rating";
 import PricingBadge from "./PricingBadge";
+import AffiliateCTA from "./AffiliateCTA";
 import { AUDIENCE_LABELS, PRICE_TIER_LABELS } from "@/lib/utils";
 import { getCategory } from "@/data/categories";
+import { getBestDealForTool } from "@/data/deals";
+import { resolveOfferCta } from "@/lib/offers";
 import type { Tool } from "@/data/types";
 
 function Row({
@@ -160,19 +163,22 @@ export default function ComparisonTable({ tools }: { tools: Tool[] }) {
             ))}
           </Row>
           <Row label="Website">
-            {tools.map((tool) => (
-              <td key={tool.id} className="px-4 py-4 align-top">
-                <a
-                  href={tool.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                  className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-                >
-                  Visit Website
-                  <ExternalLink size={13} />
-                </a>
-              </td>
-            ))}
+            {tools.map((tool) => {
+              const cta = resolveOfferCta(tool, getBestDealForTool(tool.id));
+              return (
+                <td key={tool.id} className="px-4 py-4 align-top">
+                  <AffiliateCTA
+                    tool={tool}
+                    href={cta.href}
+                    isAffiliate={cta.isAffiliate}
+                    placement="compare_offer"
+                    size="sm"
+                  >
+                    {cta.label}
+                  </AffiliateCTA>
+                </td>
+              );
+            })}
           </Row>
         </tbody>
       </table>

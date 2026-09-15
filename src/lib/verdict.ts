@@ -12,19 +12,23 @@ function tierRank(tier: PriceTier): number {
   return TIER_ORDER.indexOf(tier);
 }
 
-const STRENGTH_LABELS: Record<Strength, { label: string; blurb: string }> = {
-  "ease-of-use": { label: "Easiest to use", blurb: "the easiest of the group to pick up" },
-  quality: { label: "Best quality", blurb: "known for the highest-quality output" },
-  price: { label: "Most affordable", blurb: "known for strong value at its price point" },
-  features: { label: "Most features", blurb: "packed with the most features of the group" },
-  speed: { label: "Fastest results", blurb: "known for getting you results the fastest" },
+const STRENGTH_LABELS: Record<Strength, string> = {
+  "ease-of-use": "ease of use",
+  quality: "output quality",
+  price: "price",
+  features: "feature depth",
+  speed: "speed",
 };
 
 /**
  * Deterministic "which one should you choose" verdicts for a set of
  * compared tools, built entirely from existing tool metadata (rating,
- * pricing tier, free plan, strengths). No AI call — mirrors the same
- * transparent, explainable approach used by lib/recommend.ts.
+ * pricing tier, free plan, strengths, tagline). No AI call — mirrors the
+ * same transparent, explainable approach used by lib/recommend.ts.
+ *
+ * IMPORTANT: this must never read affiliate/deal data. Recommendation and
+ * monetization are deliberately independent — whether a tool has an offer
+ * never changes its verdict or ranking here.
  */
 export function getCompareVerdicts(tools: Tool[]): CompareVerdict[] {
   if (tools.length < 2) return [];
@@ -38,7 +42,7 @@ export function getCompareVerdicts(tools: Tool[]): CompareVerdict[] {
   verdicts.push({
     tool: overall,
     label: "Best overall",
-    reason: `Rated ${overall.rating.toFixed(1)}/5 — the strongest all-round pick of the group.`,
+    reason: `Choose ${overall.name} if you want the strongest all-round pick — rated ${overall.rating.toFixed(1)}/5, the highest of the group.`,
   });
   remaining.splice(remaining.indexOf(overall), 1);
 
@@ -53,18 +57,21 @@ export function getCompareVerdicts(tools: Tool[]): CompareVerdict[] {
       tool: value,
       label: "Best value",
       reason: value.freePlan
-        ? "Has a free plan and the lowest starting price of the group."
-        : "The lowest starting price of the group.",
+        ? `Choose ${value.name} if price is the deciding factor: it has a free plan and the lowest cost to start of the group.`
+        : `Choose ${value.name} if price is the deciding factor: it has the lowest starting price of the group.`,
     });
     remaining.splice(remaining.indexOf(value), 1);
   }
 
   for (const tool of remaining) {
-    const meta = tool.strengths.map((s) => STRENGTH_LABELS[s]).find(Boolean);
+    const primaryStrength = tool.strengths[0];
+    const strengthLabel = primaryStrength ? STRENGTH_LABELS[primaryStrength] : undefined;
     verdicts.push({
       tool,
-      label: meta?.label ?? "Worth a look",
-      reason: meta ? `${tool.name} is ${meta.blurb}.` : `A solid alternative worth considering.`,
+      label: strengthLabel ? `Best for ${strengthLabel}` : "Worth a look",
+      reason: strengthLabel
+        ? `Choose ${tool.name} if your priority is ${strengthLabel}: ${tool.tagline}`
+        : `Choose ${tool.name} as a solid alternative: ${tool.tagline}`,
     });
   }
 

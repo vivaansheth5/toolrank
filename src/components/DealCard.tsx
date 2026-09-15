@@ -1,20 +1,21 @@
 import Link from "next/link";
-import { ExternalLink, Tag } from "lucide-react";
 import ToolLogo from "./ToolLogo";
+import OfferStatus from "./OfferStatus";
+import AffiliateCTA from "./AffiliateCTA";
 import { getCategory } from "@/data/categories";
+import { resolveOfferCta } from "@/lib/offers";
 import type { Deal, Tool } from "@/data/types";
 
 export default function DealCard({ deal, tool }: { deal: Deal; tool: Tool }) {
-  const category = getCategory(deal.category);
+  const category = getCategory(tool.category);
+  const cta = resolveOfferCta(tool, deal);
 
   return (
     <div className="flex flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:-translate-y-0.5 hover:shadow-md">
       <div className="flex items-center justify-between">
-        <span className="inline-flex items-center gap-1 rounded-full bg-warning-soft px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-warning">
-          <Tag size={11} /> Sample offer
-        </span>
-        {deal.discountPercent > 0 && (
-          <span className="text-sm font-bold text-success">-{deal.discountPercent}%</span>
+        <OfferStatus verified={deal.verified} demo={deal.demo} />
+        {deal.discountText && (
+          <span className="text-sm font-bold text-success">{deal.discountText}</span>
         )}
       </div>
 
@@ -28,25 +29,34 @@ export default function DealCard({ deal, tool }: { deal: Deal; tool: Tool }) {
         </div>
       </div>
 
-      <h3 className="mt-3 text-base font-semibold leading-snug text-foreground">{deal.headline}</h3>
+      <h3 className="mt-3 text-base font-semibold leading-snug text-foreground">{deal.title}</h3>
       <p className="mt-1.5 text-sm text-muted">{deal.description}</p>
 
-      <div className="mt-4 flex items-baseline gap-2">
-        <span className="text-lg font-bold text-foreground">{deal.discountedPrice}</span>
-        <span className="text-sm text-muted line-through">{deal.originalPrice}</span>
-      </div>
+      {(deal.offerPrice || deal.originalPrice) && (
+        <div className="mt-4 flex items-baseline gap-2">
+          {deal.offerPrice && (
+            <span className="text-lg font-bold text-foreground">{deal.offerPrice}</span>
+          )}
+          {deal.originalPrice && (
+            <span className="text-sm text-muted line-through">{deal.originalPrice}</span>
+          )}
+        </div>
+      )}
 
-      {deal.expiry && <p className="mt-1 text-xs text-muted">{deal.expiry}</p>}
+      {deal.expiresAt && (
+        <p className="mt-1 text-xs text-muted">Expires {new Date(deal.expiresAt).toLocaleDateString()}</p>
+      )}
 
-      <a
-        href={tool.websiteUrl}
-        target="_blank"
-        rel="noopener noreferrer nofollow sponsored"
-        className="focus-ring mt-5 inline-flex items-center justify-center gap-1.5 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-stone-50"
+      <AffiliateCTA
+        tool={tool}
+        href={cta.href}
+        isAffiliate={cta.isAffiliate}
+        placement="deals_page"
+        variant={cta.isAffiliate ? "primary" : "secondary"}
+        className="mt-5"
       >
-        Get this deal
-        <ExternalLink size={14} />
-      </a>
+        {cta.label}
+      </AffiliateCTA>
     </div>
   );
 }

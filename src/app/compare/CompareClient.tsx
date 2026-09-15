@@ -8,6 +8,7 @@ import ToolLogo from "@/components/ToolLogo";
 import EmptyState from "@/components/EmptyState";
 import OfferCard from "@/components/OfferCard";
 import VerdictCard from "@/components/VerdictCard";
+import AffiliateDisclosure from "@/components/AffiliateDisclosure";
 import { tools } from "@/data/tools";
 import { getBestDealForTool } from "@/data/deals";
 import { getCompareVerdicts } from "@/lib/verdict";
@@ -91,13 +92,21 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
 
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {selectedTools.map((tool) => (
-              <OfferCard key={tool.slug} tool={tool} deal={getBestDealForTool(tool.slug)} />
+              <OfferCard
+                key={tool.slug}
+                tool={tool}
+                deal={getBestDealForTool(tool.id)}
+                placement="compare_offer"
+              />
             ))}
           </div>
 
-          <p className="mt-5 text-xs text-foreground/60">
-            Offers and pricing may change. Always confirm current terms on the provider&apos;s website.
-          </p>
+          <div className="mt-5 space-y-1">
+            <p className="text-xs text-foreground/60">
+              Offers and pricing may change. Always confirm current terms on the provider&apos;s website.
+            </p>
+            <AffiliateDisclosure className="text-foreground/60" />
+          </div>
         </section>
       )}
 

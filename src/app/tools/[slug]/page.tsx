@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Check, ExternalLink, Info, X } from "lucide-react";
+import { Check, Info, X } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ToolLogo from "@/components/ToolLogo";
 import Rating from "@/components/Rating";
 import PricingBadge from "@/components/PricingBadge";
 import ToolCard from "@/components/ToolCard";
+import OfferCard from "@/components/OfferCard";
+import AffiliateDisclosure from "@/components/AffiliateDisclosure";
+import AffiliateCTA from "@/components/AffiliateCTA";
 import { tools, getToolBySlug } from "@/data/tools";
 import { getCategory } from "@/data/categories";
+import { getBestDealForTool } from "@/data/deals";
 import { AUDIENCE_LABELS, PRICING_DISCLAIMER } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -74,15 +78,9 @@ export default async function ToolDetailPage(props: PageProps<"/tools/[slug]">) 
         </div>
 
         <div className="flex shrink-0 gap-3 sm:flex-col">
-          <a
-            href={tool.websiteUrl}
-            target="_blank"
-            rel="noopener noreferrer nofollow sponsored"
-            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-          >
-            Visit Website
-            <ExternalLink size={15} />
-          </a>
+          <AffiliateCTA tool={tool} href={tool.officialUrl} isAffiliate={false} placement="tool_detail">
+            Visit Official Site
+          </AffiliateCTA>
           <Link
             href={`/compare?tools=${tool.slug}`}
             className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg border border-border-strong px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-stone-50"
@@ -153,6 +151,16 @@ export default async function ToolDetailPage(props: PageProps<"/tools/[slug]">) 
               </div>
             </div>
             <p className="mt-3 text-xs text-muted">{PRICING_DISCLAIMER}</p>
+          </section>
+
+          <section>
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-foreground">
+              <span aria-hidden="true">🔥</span> Current Offers
+            </h2>
+            <div className="mt-3 max-w-sm">
+              <OfferCard tool={tool} deal={getBestDealForTool(tool.id)} placement="tool_detail" />
+            </div>
+            <AffiliateDisclosure className="mt-3" />
           </section>
 
           <section className="grid grid-cols-1 gap-6 sm:grid-cols-2">

@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Check, ExternalLink } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import ToolLogo from "./ToolLogo";
 import Rating from "./Rating";
 import PricingBadge from "./PricingBadge";
+import AffiliateCTA from "./AffiliateCTA";
+import { getBestDealForTool } from "@/data/deals";
+import { resolveOfferCta } from "@/lib/offers";
 import type { Recommendation } from "@/lib/recommend";
 
 export default function RecommendationCard({
@@ -13,6 +16,7 @@ export default function RecommendationCard({
   rank: number;
 }) {
   const { tool, matchPercent, reasons, label } = recommendation;
+  const cta = resolveOfferCta(tool, getBestDealForTool(tool.id));
 
   return (
     <div className="animate-fade-in-up relative flex flex-col gap-5 rounded-2xl border border-border bg-surface p-6 shadow-sm sm:flex-row sm:items-start">
@@ -61,15 +65,15 @@ export default function RecommendationCard({
         </div>
 
         <div className="mt-5 flex flex-wrap gap-3">
-          <a
-            href={tool.websiteUrl}
-            target="_blank"
-            rel="noopener noreferrer nofollow sponsored"
-            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+          <AffiliateCTA
+            tool={tool}
+            href={cta.href}
+            isAffiliate={cta.isAffiliate}
+            placement="find_my_tool"
+            variant={cta.isAffiliate ? "primary" : "secondary"}
           >
-            Visit Website
-            <ExternalLink size={14} />
-          </a>
+            {cta.label}
+          </AffiliateCTA>
           <Link
             href={`/tools/${tool.slug}`}
             className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-stone-50"

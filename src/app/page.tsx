@@ -6,7 +6,7 @@ import ToolCard from "@/components/ToolCard";
 import DealCard from "@/components/DealCard";
 import Section from "@/components/Section";
 import { categories } from "@/data/categories";
-import { tools, getToolBySlug } from "@/data/tools";
+import { tools, getToolById } from "@/data/tools";
 import { deals } from "@/data/deals";
 import { searchSuggestions } from "@/lib/search";
 
@@ -119,7 +119,7 @@ export default function Home() {
       >
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featuredDeals.map((deal) => {
-            const tool = getToolBySlug(deal.toolSlug);
+            const tool = getToolById(deal.toolId);
             if (!tool) return null;
             return <DealCard key={deal.id} deal={deal} tool={tool} />;
           })}
