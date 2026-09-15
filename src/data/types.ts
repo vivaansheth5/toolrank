@@ -75,4 +75,13 @@ export interface Deal {
   expiry?: string;
   category: CategorySlug;
   sample: true;
+  /** Only render a "Verified" badge when this is explicitly true. */
+  verified: boolean;
+  /** Where "Get Offer" sends the user today. Kept separate from affiliateUrl
+   *  so a real tracked link can be swapped in later without touching the
+   *  rest of the deal record. */
+  offerUrl: string;
+  /** Reserved for a future affiliate/tracking link. Left undefined until
+   *  a real partnership exists — never fall back to a fabricated one. */
+  affiliateUrl?: string;
 }

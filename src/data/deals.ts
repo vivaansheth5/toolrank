@@ -1,11 +1,42 @@
 import type { Deal } from "./types";
 
 /**
- * SAMPLE / OFFER DATA — none of these are verified, live discounts.
- * Structured so real affiliate or partner deal data can replace it later
- * without changing any component code.
+ * SAMPLE / OFFER DATA — none of these are verified, live discounts unless
+ * `verified: true` is explicitly set. Structured so real affiliate or
+ * partner deal data can replace it later without changing any component
+ * code. `offerUrl` is where "Get Offer" sends people today; `affiliateUrl`
+ * is reserved for a future tracked link and is left undefined until a real
+ * partnership exists.
  */
 export const deals: Deal[] = [
+  {
+    id: "deal-chatgpt",
+    toolSlug: "chatgpt",
+    headline: "2 months of ChatGPT Plus at 20% off",
+    description: "A sample introductory discount on the Plus plan for new subscribers.",
+    originalPrice: "$20/month",
+    discountedPrice: "$16/month",
+    discountPercent: 20,
+    expiry: "Sample offer — check provider for current terms",
+    category: "writing",
+    sample: true,
+    verified: false,
+    offerUrl: "https://chatgpt.com",
+  },
+  {
+    id: "deal-claude",
+    toolSlug: "claude",
+    headline: "15% off Claude Pro, first 3 months",
+    description: "An illustrative introductory rate on the Pro plan for new subscribers.",
+    originalPrice: "$20/month",
+    discountedPrice: "$17/month",
+    discountPercent: 15,
+    expiry: "Sample offer — check provider for current terms",
+    category: "writing",
+    sample: true,
+    verified: false,
+    offerUrl: "https://claude.ai",
+  },
   {
     id: "deal-notion",
     toolSlug: "notion",
@@ -17,6 +48,8 @@ export const deals: Deal[] = [
     expiry: "Sample offer — check provider for current terms",
     category: "productivity",
     sample: true,
+    verified: false,
+    offerUrl: "https://www.notion.so",
   },
   {
     id: "deal-canva",
@@ -29,6 +62,8 @@ export const deals: Deal[] = [
     expiry: "Sample offer — check provider for current terms",
     category: "design",
     sample: true,
+    verified: false,
+    offerUrl: "https://www.canva.com",
   },
   {
     id: "deal-elevenlabs",
@@ -41,6 +76,8 @@ export const deals: Deal[] = [
     expiry: "Sample offer — check provider for current terms",
     category: "audio",
     sample: true,
+    verified: false,
+    offerUrl: "https://elevenlabs.io",
   },
   {
     id: "deal-clickup",
@@ -53,6 +90,8 @@ export const deals: Deal[] = [
     expiry: "Sample offer — check provider for current terms",
     category: "productivity",
     sample: true,
+    verified: false,
+    offerUrl: "https://clickup.com",
   },
   {
     id: "deal-semrush",
@@ -65,6 +104,8 @@ export const deals: Deal[] = [
     expiry: "Sample offer — check provider for current terms",
     category: "marketing",
     sample: true,
+    verified: false,
+    offerUrl: "https://www.semrush.com",
   },
   {
     id: "deal-webflow",
@@ -77,9 +118,20 @@ export const deals: Deal[] = [
     expiry: "Sample offer — check provider for current terms",
     category: "design",
     sample: true,
+    verified: false,
+    offerUrl: "https://webflow.com",
   },
 ];
 
 export function getDealsForTool(slug: string): Deal[] {
   return deals.filter((d) => d.toolSlug === slug);
+}
+
+/**
+ * The single best offer for a tool (highest discount first), or undefined
+ * if no curated deal exists yet. Callers should show an honest "no active
+ * offer" state rather than fabricating one when this returns undefined.
+ */
+export function getBestDealForTool(slug: string): Deal | undefined {
+  return getDealsForTool(slug).sort((a, b) => b.discountPercent - a.discountPercent)[0];
 }

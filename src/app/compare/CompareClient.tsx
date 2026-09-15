@@ -6,7 +6,11 @@ import ComparisonTable from "@/components/ComparisonTable";
 import ToolCard from "@/components/ToolCard";
 import ToolLogo from "@/components/ToolLogo";
 import EmptyState from "@/components/EmptyState";
+import OfferCard from "@/components/OfferCard";
+import VerdictCard from "@/components/VerdictCard";
 import { tools } from "@/data/tools";
+import { getBestDealForTool } from "@/data/deals";
+import { getCompareVerdicts } from "@/lib/verdict";
 
 const MAX_COMPARE = 3;
 
@@ -74,6 +78,40 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
         <div className="mt-8">
           <ComparisonTable tools={selectedTools} />
         </div>
+      )}
+
+      {selectedTools.length >= 2 && (
+        <section className="mt-12 rounded-3xl border border-border bg-warning-soft px-5 py-8 sm:px-8">
+          <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
+            <span aria-hidden="true">🔥</span> Best Offers &amp; Deals
+          </h2>
+          <p className="mt-1.5 text-sm text-foreground/70">
+            The best available offer for each tool you&apos;re comparing.
+          </p>
+
+          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {selectedTools.map((tool) => (
+              <OfferCard key={tool.slug} tool={tool} deal={getBestDealForTool(tool.slug)} />
+            ))}
+          </div>
+
+          <p className="mt-5 text-xs text-foreground/60">
+            Offers and pricing may change. Always confirm current terms on the provider&apos;s website.
+          </p>
+        </section>
+      )}
+
+      {selectedTools.length >= 2 && (
+        <section className="mt-12">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">
+            Which one should you choose?
+          </h2>
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {getCompareVerdicts(selectedTools).map((verdict) => (
+              <VerdictCard key={verdict.tool.slug} verdict={verdict} />
+            ))}
+          </div>
+        </section>
       )}
 
       <div className="mt-12">
