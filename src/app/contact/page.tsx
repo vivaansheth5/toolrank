@@ -3,7 +3,7 @@ import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with the Toolora team.",
+  description: "Get in touch with the ToolDhundho team.",
 };
 
 export default function ContactPage() {
@@ -11,7 +11,7 @@ export default function ContactPage() {
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Contact us</h1>
       <p className="mt-4 max-w-xl text-foreground/80">
-        Spotted an issue, have a tool suggestion, or interested in listing your product on Toolora?
+        Spotted an issue, have a tool suggestion, or interested in listing your product on ToolDhundho?
         We&apos;d like to hear from you.
       </p>
 
@@ -21,7 +21,7 @@ export default function ContactPage() {
         </div>
         <div>
           <p className="text-sm font-medium text-foreground">Email</p>
-          <p className="text-sm text-muted">hello@toolora.example.com</p>
+          <p className="text-sm text-muted">hello@tooldhundho.com</p>
         </div>
       </div>
 

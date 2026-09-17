@@ -1,7 +1,7 @@
 import type { Tool } from "./types";
 
 /**
- * Sample tool database for the Toolora MVP.
+ * Sample tool database for the ToolDhundho MVP.
  *
  * All pricing, ratings and review counts are illustrative sample data used
  * to demonstrate the product experience. Replace with verified data before

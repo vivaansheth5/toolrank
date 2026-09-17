@@ -10,12 +10,12 @@ const inter = Inter({
   display: "swap",
 });
 
-const SITE_NAME = "Toolora";
+const SITE_NAME = "ToolDhundho";
 const SITE_DESCRIPTION =
   "Stop searching. Find the right AI tool or software for exactly what you're trying to accomplish — browse categories, compare tools and get personalized recommendations.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://toolora.example.com"),
+  metadataBase: new URL("https://tooldhundho.com"),
   title: {
     default: `${SITE_NAME} — Stop searching. Find the right tool.`,
     template: `%s | ${SITE_NAME}`,

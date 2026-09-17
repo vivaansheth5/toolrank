@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { tools } from "@/data/tools";
 import { categories } from "@/data/categories";
 
-const BASE_URL = "https://toolora.example.com";
+const BASE_URL = "https://tooldhundho.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [

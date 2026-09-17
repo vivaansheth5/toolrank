@@ -11,7 +11,7 @@ export interface OutboundClickEvent {
 
 type AnalyticsSink = (event: OutboundClickEvent) => void;
 
-const STORAGE_KEY = "toolora_outbound_clicks";
+const STORAGE_KEY = "tooldhundho_outbound_clicks";
 const MAX_STORED_EVENTS = 200;
 
 /**
@@ -23,7 +23,7 @@ function localSink(event: OutboundClickEvent) {
   if (typeof window === "undefined") return;
 
   if (process.env.NODE_ENV !== "production") {
-    console.info("[toolora:outbound-click]", event);
+    console.info("[tooldhundho:outbound-click]", event);
   }
 
   try {

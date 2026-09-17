@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import type { CtaPlacement, Tool } from "@/data/types";
 
 /**
- * The one component every outbound monetization button in Toolora must go
+ * The one component every outbound monetization button in ToolDhundho must go
  * through. It fires a trackOutboundClick event, then opens the link — so
  * every CTA is measurable the same way without duplicating tracking code
  * at each call site.

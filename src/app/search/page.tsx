@@ -27,7 +27,7 @@ export default async function SearchPage(props: PageProps<"/search">) {
             Results for <span className="text-accent">&ldquo;{query}&rdquo;</span>
           </>
         ) : (
-          "Search Toolora"
+          "Search ToolDhundho"
         )}
       </h1>
       <p className="mt-2 max-w-2xl text-muted">

@@ -34,7 +34,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
             <Link href="/" className="text-lg font-semibold tracking-tight text-foreground">
-              Toolora
+              ToolDhundho
             </Link>
             <p className="mt-3 max-w-xs text-sm text-muted">
               Stop searching. Find the right AI tool or software for exactly what you&apos;re trying to do.
@@ -61,8 +61,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-border pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Toolora. All rights reserved.</p>
-          <p>Toolora is a working brand name for this product preview.</p>
+          <p>© {new Date().getFullYear()} ToolDhundho. All rights reserved.</p>
+          <p>ToolDhundho is currently an early product preview.</p>
         </div>
       </div>
     </footer>

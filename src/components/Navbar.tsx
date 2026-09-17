@@ -26,7 +26,7 @@ export default function Navbar() {
           onClick={() => setOpen(false)}
           className="focus-ring flex shrink-0 items-center gap-1.5 rounded-lg"
         >
-          <span className="text-lg font-semibold tracking-tight text-foreground">Toolora</span>
+          <span className="text-lg font-semibold tracking-tight text-foreground">ToolDhundho</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

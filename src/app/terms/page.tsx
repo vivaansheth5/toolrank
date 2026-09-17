@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Terms for using Toolora in this product preview.",
+  description: "Terms for using ToolDhundho in this product preview.",
 };
 
 export default function TermsPage() {
@@ -15,7 +15,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-foreground">Product preview</h2>
           <p className="mt-2 leading-relaxed">
-            Toolora, as presented here, is an early-stage MVP built to demonstrate a discovery product
+            ToolDhundho, as presented here, is an early-stage MVP built to demonstrate a discovery product
             experience. Tool listings, pricing, ratings and deals shown throughout the site are sample
             data used for illustration and should not be relied on as current or verified information.
           </p>
@@ -31,8 +31,8 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-foreground">Third-party tools</h2>
           <p className="mt-2 leading-relaxed">
-            Toolora links out to third-party products. Your use of any linked tool is governed by that
-            provider&apos;s own terms, not Toolora&apos;s.
+            ToolDhundho links out to third-party products. Your use of any linked tool is governed by that
+            provider&apos;s own terms, not ToolDhundho&apos;s.
           </p>
         </section>
       </div>

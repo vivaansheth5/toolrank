@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://toolora.example.com/sitemap.xml",
+    sitemap: "https://tooldhundho.com/sitemap.xml",
   };
 }
