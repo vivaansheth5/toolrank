@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Check, X } from "lucide-react";
-import ToolLogo from "./ToolLogo";
+import ToolLogo, { CATEGORY_COLORS } from "./ToolLogo";
 import Rating from "./Rating";
 import PricingBadge from "./PricingBadge";
 import AffiliateCTA from "./AffiliateCTA";
@@ -37,22 +37,27 @@ export default function ComparisonTable({ tools }: { tools: Tool[] }) {
         <thead>
           <tr className="border-b border-border">
             <th scope="col" className="sticky left-0 z-10 w-36 min-w-36 bg-surface px-4 py-5" />
-            {tools.map((tool) => (
-              <th key={tool.id} scope="col" className="min-w-[220px] px-4 py-5 text-left align-top">
-                <div className="flex items-center gap-3">
-                  <ToolLogo name={tool.name} category={tool.category} size="sm" />
-                  <div>
-                    <Link
-                      href={`/tools/${tool.slug}`}
-                      className="focus-ring rounded text-base font-semibold text-foreground hover:text-accent"
-                    >
-                      {tool.name}
-                    </Link>
-                    <p className="text-xs text-muted">{tool.subcategory}</p>
+            {tools.map((tool) => {
+              const [softBg] = CATEGORY_COLORS[tool.category].split(" ");
+              return (
+                <th key={tool.id} scope="col" className="min-w-[220px] p-0 text-left align-top">
+                  <div className={`px-4 py-5 ${softBg}`}>
+                    <div className="flex items-center gap-3">
+                      <ToolLogo name={tool.name} category={tool.category} size="sm" />
+                      <div>
+                        <Link
+                          href={`/tools/${tool.slug}`}
+                          className="focus-ring rounded text-base font-semibold text-foreground hover:text-accent"
+                        >
+                          {tool.name}
+                        </Link>
+                        <p className="text-xs text-muted">{tool.subcategory}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </th>
-            ))}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -166,7 +171,7 @@ export default function ComparisonTable({ tools }: { tools: Tool[] }) {
             {tools.map((tool) => {
               const cta = resolveOfferCta(tool, getBestDealForTool(tool.id));
               return (
-                <td key={tool.id} className="px-4 py-4 align-top">
+                <td key={tool.id} className="bg-stone-50/60 px-4 py-4 align-top">
                   <AffiliateCTA
                     tool={tool}
                     href={cta.href}

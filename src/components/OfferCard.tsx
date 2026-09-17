@@ -1,7 +1,8 @@
-import ToolLogo from "./ToolLogo";
+import ToolLogo, { CATEGORY_ACCENT } from "./ToolLogo";
 import OfferStatus from "./OfferStatus";
 import AffiliateCTA from "./AffiliateCTA";
 import { resolveOfferCta } from "@/lib/offers";
+import { cn } from "@/lib/utils";
 import type { CtaPlacement, Deal, Tool } from "@/data/types";
 
 export default function OfferCard({
@@ -14,9 +15,16 @@ export default function OfferCard({
   placement: CtaPlacement;
 }) {
   const cta = resolveOfferCta(tool, deal);
+  const accent = CATEGORY_ACCENT[tool.category];
 
   return (
-    <div className="flex flex-col rounded-2xl border border-border bg-surface p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <div
+      style={{ ["--hover-shadow" as string]: accent.shadow }}
+      className={cn(
+        "flex flex-col rounded-2xl border border-border bg-surface p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[var(--hover-shadow)]",
+        accent.border
+      )}
+    >
       <div className="flex items-center gap-3">
         <ToolLogo name={tool.name} category={tool.category} size="sm" />
         <div>

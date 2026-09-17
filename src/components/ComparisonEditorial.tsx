@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Check, X } from "lucide-react";
-import ToolLogo from "./ToolLogo";
+import ToolLogo, { CATEGORY_STRIP } from "./ToolLogo";
 import { buildComparisonEditorial } from "@/lib/comparisonContent";
 import { getCategory } from "@/data/categories";
 import { getRelatedFeaturedComparisons, type FeaturedComparison } from "@/data/featuredComparisons";
@@ -29,7 +29,11 @@ export default function ComparisonEditorial({ tools }: { tools: Tool[] }) {
 
   return (
     <section className="mt-14">
-      <h2 className="text-2xl font-bold tracking-tight text-foreground">{content.title}</h2>
+      <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-accent">
+        <span className="h-1.5 w-1.5 rounded-full bg-accent-warm" aria-hidden="true" />
+        In depth
+      </p>
+      <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">{content.title}</h2>
 
       <div className="mt-6">
         <h3 className="text-lg font-semibold text-foreground">Quick verdict</h3>
@@ -49,21 +53,26 @@ export default function ComparisonEditorial({ tools }: { tools: Tool[] }) {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {content.bestFor.map(({ tool, text }) => (
-          <div key={tool.slug} className="rounded-xl border border-border bg-surface p-4">
-            <div className="flex items-center gap-2">
-              <ToolLogo name={tool.name} category={tool.category} size="sm" />
-              <Link
-                href={`/tools/${tool.slug}`}
-                className="focus-ring rounded text-sm font-semibold text-foreground hover:text-accent"
-              >
-                {tool.name}
-              </Link>
+        {content.bestFor.map(({ tool, text }) => {
+          return (
+            <div key={tool.slug} className="overflow-hidden rounded-xl border border-border bg-surface">
+              <div className={`h-1 ${CATEGORY_STRIP[tool.category]}`} />
+              <div className="p-4">
+                <div className="flex items-center gap-2">
+                  <ToolLogo name={tool.name} category={tool.category} size="sm" />
+                  <Link
+                    href={`/tools/${tool.slug}`}
+                    className="focus-ring rounded text-sm font-semibold text-foreground hover:text-accent"
+                  >
+                    {tool.name}
+                  </Link>
+                </div>
+                <p className="mt-2 text-xs font-medium uppercase tracking-wide text-muted">Best for</p>
+                <p className="mt-1 text-sm text-foreground/80">{text}</p>
+              </div>
             </div>
-            <p className="mt-2 text-xs font-medium uppercase tracking-wide text-muted">Best for</p>
-            <p className="mt-1 text-sm text-foreground/80">{text}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -141,17 +150,17 @@ export default function ComparisonEditorial({ tools }: { tools: Tool[] }) {
 
       <div className="mt-10 flex flex-wrap items-center gap-2 border-t border-border pt-6 text-sm">
         <span className="text-muted">Keep exploring:</span>
-        <Link href="/explore" className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-colors hover:border-border-strong hover:text-foreground">
+        <Link href="/explore" className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent hover:shadow-sm">
           Explore all tools
         </Link>
-        <Link href="/find-my-tool" className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-colors hover:border-border-strong hover:text-foreground">
+        <Link href="/find-my-tool" className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent hover:shadow-sm">
           Find My Tool
         </Link>
         {categories.map((c) => (
           <Link
             key={c.slug}
             href={`/category/${c.slug}`}
-            className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-colors hover:border-border-strong hover:text-foreground"
+            className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent hover:shadow-sm"
           >
             {c.name} tools
           </Link>
@@ -165,7 +174,7 @@ export default function ComparisonEditorial({ tools }: { tools: Tool[] }) {
             <Link
               key={c.slug}
               href={c.href}
-              className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-colors hover:border-border-strong hover:text-foreground"
+              className="focus-ring rounded-full border border-border px-3 py-1.5 text-foreground/80 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent hover:shadow-sm"
             >
               {c.label}
             </Link>

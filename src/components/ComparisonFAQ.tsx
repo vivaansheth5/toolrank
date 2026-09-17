@@ -25,11 +25,13 @@ export default function ComparisonFAQ({ faqs }: { faqs: ComparisonFaq[] }) {
       <h3 className="text-lg font-semibold text-foreground">Frequently asked questions</h3>
       <div className="mt-3 divide-y divide-border rounded-2xl border border-border bg-surface">
         {faqs.map((faq) => (
-          <details key={faq.question} className="group p-4 open:pb-4">
+          <details key={faq.question} className="group p-4 open:pb-4 open:bg-accent-soft/30">
             <summary className="focus-ring cursor-pointer list-none text-sm font-medium text-foreground marker:content-none">
               <span className="flex items-center justify-between gap-3">
                 {faq.question}
-                <span className="shrink-0 text-muted transition-transform group-open:rotate-45">+</span>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-100 text-muted transition-all group-open:rotate-45 group-open:bg-accent-soft group-open:text-accent">
+                  +
+                </span>
               </span>
             </summary>
             <p className="mt-2 text-sm leading-relaxed text-foreground/80">{faq.answer}</p>

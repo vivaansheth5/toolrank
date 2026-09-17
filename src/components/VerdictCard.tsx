@@ -1,15 +1,26 @@
 import Link from "next/link";
-import ToolLogo from "./ToolLogo";
+import { Trophy } from "lucide-react";
+import ToolLogo, { CATEGORY_ACCENT, CATEGORY_COLORS } from "./ToolLogo";
+import { cn } from "@/lib/utils";
 import type { CompareVerdict } from "@/lib/verdict";
 
 export default function VerdictCard({ verdict }: { verdict: CompareVerdict }) {
   const { tool, label, reason } = verdict;
+  const [softBg, softText] = CATEGORY_COLORS[tool.category].split(" ");
+  const accent = CATEGORY_ACCENT[tool.category];
 
   return (
-    <div className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-5">
+    <div
+      style={{ ["--hover-shadow" as string]: accent.shadow }}
+      className={cn(
+        "flex items-start gap-4 rounded-2xl border border-border bg-surface p-5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--hover-shadow)]",
+        accent.border
+      )}
+    >
       <ToolLogo name={tool.name} category={tool.category} />
       <div className="min-w-0">
-        <span className="inline-flex items-center rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
+        <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold", softBg, softText)}>
+          <Trophy size={12} />
           {label}
         </span>
         <p className="mt-2 text-sm font-semibold text-foreground">

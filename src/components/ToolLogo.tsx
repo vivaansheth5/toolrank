@@ -31,6 +31,41 @@ export const CATEGORY_ACCENT: Record<CategorySlug, { border: string; shadow: str
   business: { border: "group-hover:border-emerald-300", shadow: "0 12px 28px -14px rgba(4, 120, 87, 0.35)" },
 };
 
+/**
+ * Static (non-hover) per-category ring/border, for decorative use on
+ * detail-page hero bands and cards that should always show their category
+ * hue, not just on hover.
+ */
+export const CATEGORY_RING: Record<CategorySlug, string> = {
+  writing: "ring-blue-200",
+  image: "ring-pink-200",
+  video: "ring-rose-200",
+  audio: "ring-purple-200",
+  coding: "ring-slate-300",
+  research: "ring-cyan-200",
+  productivity: "ring-amber-200",
+  design: "ring-violet-200",
+  marketing: "ring-orange-200",
+  business: "ring-emerald-200",
+};
+
+/**
+ * Solid per-category strip color (one shade stronger than CATEGORY_RING),
+ * for decorative top-border accents on editorial cards.
+ */
+export const CATEGORY_STRIP: Record<CategorySlug, string> = {
+  writing: "bg-blue-300",
+  image: "bg-pink-300",
+  video: "bg-rose-300",
+  audio: "bg-purple-300",
+  coding: "bg-slate-400",
+  research: "bg-cyan-300",
+  productivity: "bg-amber-300",
+  design: "bg-violet-300",
+  marketing: "bg-orange-300",
+  business: "bg-emerald-300",
+};
+
 function getInitials(name: string): string {
   const parts = name.replace(/\./g, "").split(/\s+/).filter(Boolean);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();

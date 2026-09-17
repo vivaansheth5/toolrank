@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { Flame, Search, X } from "lucide-react";
 import ComparisonTable from "@/components/ComparisonTable";
 import ToolCard from "@/components/ToolCard";
-import ToolLogo from "@/components/ToolLogo";
+import ToolLogo, { CATEGORY_RING } from "@/components/ToolLogo";
 import EmptyState from "@/components/EmptyState";
 import OfferCard from "@/components/OfferCard";
 import VerdictCard from "@/components/VerdictCard";
@@ -54,34 +54,41 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Compare tools before you choose.
-      </h1>
-      <p className="mt-2 max-w-2xl text-muted">
-        Pick up to {MAX_COMPARE} tools to see pricing, ratings and features side by side.
-      </p>
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-mesh px-6 py-10 sm:px-10">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          Compare tools <span className="text-gradient-brand">before you choose.</span>
+        </h1>
+        <p className="mt-2 max-w-2xl text-muted">
+          Pick up to {MAX_COMPARE} tools to see pricing, ratings and features side by side.
+        </p>
 
-      {selectedTools.length > 0 && (
-        <div className="mt-6 flex flex-wrap gap-2">
-          {selectedTools.map((tool) => (
-            <span
-              key={tool.slug}
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface py-1 pl-1.5 pr-2.5 text-sm text-foreground"
-            >
-              <ToolLogo name={tool.name} category={tool.category} size="sm" className="h-6 w-6 text-[10px]" />
-              {tool.name}
-              <button
-                type="button"
-                onClick={() => toggle(tool.slug)}
-                className="focus-ring text-muted hover:text-foreground"
-                aria-label={`Remove ${tool.name} from comparison`}
+        {selectedTools.length > 0 && (
+          <div className="mt-6 flex flex-wrap gap-2">
+            {selectedTools.map((tool) => (
+              <span
+                key={tool.slug}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface py-1 pl-1.5 pr-2.5 text-sm text-foreground shadow-sm"
               >
-                <X size={14} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
+                <ToolLogo
+                  name={tool.name}
+                  category={tool.category}
+                  size="sm"
+                  className={`h-6 w-6 text-[10px] ring-2 ${CATEGORY_RING[tool.category]}`}
+                />
+                {tool.name}
+                <button
+                  type="button"
+                  onClick={() => toggle(tool.slug)}
+                  className="focus-ring text-muted hover:text-foreground"
+                  aria-label={`Remove ${tool.name} from comparison`}
+                >
+                  <X size={14} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
 
       {selectedTools.length >= 2 && (
         <div className="mt-8">
@@ -90,9 +97,18 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
       )}
 
       {selectedTools.length >= 2 && (
-        <section className="mt-12 rounded-3xl border border-border bg-warning-soft px-5 py-8 sm:px-8">
-          <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
-            <span aria-hidden="true">🔥</span> Best Offers &amp; Deals
+        <section
+          className="mt-12 rounded-3xl border border-border px-5 py-8 sm:px-8"
+          style={{
+            backgroundImage:
+              "linear-gradient(135deg, var(--accent-warm-soft) 0%, var(--accent-soft) 100%)",
+          }}
+        >
+          <h2 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-warm text-white shadow-glow-warm">
+              <Flame size={18} />
+            </span>
+            Best Offers &amp; Deals
           </h2>
           <p className="mt-1.5 text-sm text-foreground/70">
             The best available offer for each tool you&apos;re comparing.
@@ -144,7 +160,7 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
               <Link
                 key={c.slug}
                 href={c.href}
-                className="focus-ring rounded-full border border-border bg-surface px-3.5 py-2 text-sm text-foreground/80 transition-colors hover:border-border-strong hover:text-foreground"
+                className="focus-ring rounded-full border border-border bg-surface px-3.5 py-2 text-sm text-foreground/80 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent hover:shadow-sm"
               >
                 {c.label}
               </Link>
@@ -162,13 +178,16 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
               ? "Maximum reached — remove one to add another"
               : "Add another tool"}
           </h2>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tools to add..."
-            className="focus-ring w-full max-w-xs rounded-lg border border-border-strong bg-surface px-3.5 py-2 text-sm text-foreground placeholder:text-muted"
-          />
+          <div className="relative w-full max-w-xs">
+            <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search tools to add..."
+              className="focus-ring w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3.5 text-sm text-foreground placeholder:text-muted"
+            />
+          </div>
         </div>
 
         {selectedTools.length === 0 && selectedTools.length < 2 && (
