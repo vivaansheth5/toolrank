@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
-import ToolLogo from "./ToolLogo";
+import ToolLogo, { CATEGORY_ACCENT } from "./ToolLogo";
 import Rating from "./Rating";
 import PricingBadge from "./PricingBadge";
 import { cn } from "@/lib/utils";
@@ -21,12 +21,14 @@ export default function ToolCard({
   disabledSelect?: boolean;
 }) {
   const category = getCategory(tool.category);
+  const accent = CATEGORY_ACCENT[tool.category];
 
   return (
     <div
+      style={{ ["--hover-shadow" as string]: accent.shadow }}
       className={cn(
-        "group relative flex flex-col rounded-2xl border bg-surface p-5 transition-all hover:-translate-y-0.5 hover:shadow-md",
-        selected ? "border-accent ring-1 ring-accent" : "border-border"
+        "group relative flex flex-col rounded-2xl border bg-surface p-5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--hover-shadow)]",
+        selected ? "border-accent ring-1 ring-accent" : cn("border-border", accent.border)
       )}
     >
       {selectable && (
@@ -50,7 +52,7 @@ export default function ToolCard({
 
       <Link href={`/tools/${tool.slug}`} className="flex flex-1 flex-col focus-ring rounded-xl">
         <div className="flex items-start gap-3">
-          <ToolLogo name={tool.name} category={tool.category} />
+          <ToolLogo name={tool.name} category={tool.category} className="transition-transform group-hover:scale-110" />
           <div className="min-w-0 flex-1 pr-6">
             <h3 className="truncate text-base font-semibold text-foreground">{tool.name}</h3>
             <p className="text-xs text-muted">

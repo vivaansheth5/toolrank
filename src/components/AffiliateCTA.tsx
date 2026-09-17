@@ -51,10 +51,10 @@ export default function AffiliateCTA({
       }
       onClick={handleClick}
       className={cn(
-        "focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors",
+        "focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-all",
         size === "sm" ? "px-3.5 py-2 text-xs" : "px-4 py-2.5 text-sm",
         variant === "primary"
-          ? "bg-accent text-accent-foreground hover:bg-accent-hover"
+          ? "bg-accent-warm text-accent-warm-foreground shadow-glow-warm hover:-translate-y-0.5 hover:bg-accent-warm-hover"
           : "border border-border-strong text-foreground hover:bg-stone-50",
         className
       )}

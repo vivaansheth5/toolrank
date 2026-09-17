@@ -138,7 +138,7 @@ export default function FindMyToolClient() {
         <button
           type="button"
           onClick={() => setStep(0)}
-          className="focus-ring mt-8 inline-flex items-center gap-1.5 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+          className="focus-ring mt-8 inline-flex items-center gap-1.5 rounded-full bg-accent-warm px-6 py-3 text-sm font-medium text-accent-warm-foreground shadow-glow-warm transition-all hover:-translate-y-0.5 hover:bg-accent-warm-hover"
         >
           Get started
           <ArrowRight size={15} />
@@ -205,7 +205,7 @@ export default function FindMyToolClient() {
         </button>
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-stone-100">
           <div
-            className="h-full rounded-full bg-accent transition-all duration-300"
+            className="h-full rounded-full bg-accent-warm transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -235,7 +235,7 @@ export default function FindMyToolClient() {
               className={cn(
                 "focus-ring rounded-xl border px-4 py-5 text-left text-sm font-medium transition-all",
                 active
-                  ? "border-accent bg-accent-soft text-accent shadow-sm"
+                  ? "border-accent-warm bg-accent-warm-soft text-accent-warm shadow-sm"
                   : "border-border bg-surface text-foreground hover:-translate-y-0.5 hover:border-border-strong hover:shadow-sm"
               )}
             >

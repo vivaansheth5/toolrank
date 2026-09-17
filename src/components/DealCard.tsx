@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ToolLogo from "./ToolLogo";
+import ToolLogo, { CATEGORY_ACCENT } from "./ToolLogo";
 import OfferStatus from "./OfferStatus";
 import AffiliateCTA from "./AffiliateCTA";
 import { getCategory } from "@/data/categories";
@@ -9,9 +9,13 @@ import type { Deal, Tool } from "@/data/types";
 export default function DealCard({ deal, tool }: { deal: Deal; tool: Tool }) {
   const category = getCategory(tool.category);
   const cta = resolveOfferCta(tool, deal);
+  const accent = CATEGORY_ACCENT[tool.category];
 
   return (
-    <div className="flex flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <div
+      style={{ ["--hover-shadow" as string]: accent.shadow }}
+      className={`group flex flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--hover-shadow)] ${accent.border}`}
+    >
       <div className="flex items-center justify-between">
         <OfferStatus verified={deal.verified} demo={deal.demo} />
         {deal.discountText && (
@@ -20,7 +24,7 @@ export default function DealCard({ deal, tool }: { deal: Deal; tool: Tool }) {
       </div>
 
       <div className="mt-4 flex items-center gap-3">
-        <ToolLogo name={tool.name} category={tool.category} size="sm" />
+        <ToolLogo name={tool.name} category={tool.category} size="sm" className="transition-transform group-hover:scale-110" />
         <div>
           <Link href={`/tools/${tool.slug}`} className="focus-ring rounded text-sm font-semibold text-foreground hover:text-accent">
             {tool.name}

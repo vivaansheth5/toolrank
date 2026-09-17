@@ -7,14 +7,30 @@
   --muted: #6b6b74;
   --border: #e7e5e4;
   --border-strong: #d6d3d1;
+
+  /* Cool indigo: brand, navigation, trust — the "clarity" half of the palette. */
   --accent: #4f46e5;
   --accent-hover: #4338ca;
   --accent-soft: #eef2ff;
   --accent-foreground: #ffffff;
+
+  /* Warm coral: conversion, urgency, action — reserved for CTAs that move
+     someone toward an offer (color psychology: warm hues read as energetic
+     and prompt action, cool hues read as trustworthy and calm). */
+  --accent-warm: #f9622c;
+  --accent-warm-hover: #ea4f1a;
+  --accent-warm-soft: #fff1ec;
+  --accent-warm-foreground: #ffffff;
+
   --success: #15803d;
   --success-soft: #f0fdf4;
   --warning: #b45309;
   --warning-soft: #fffbeb;
+
+  --gradient-brand: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #f9622c 100%);
+  --gradient-mesh: radial-gradient(at 15% 15%, rgba(79, 70, 229, 0.16) 0px, transparent 55%),
+    radial-gradient(at 85% 10%, rgba(249, 98, 44, 0.14) 0px, transparent 50%),
+    radial-gradient(at 50% 85%, rgba(124, 58, 237, 0.12) 0px, transparent 55%);
 }
 
 @theme inline {
@@ -28,11 +44,16 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-warm: var(--accent-warm);
+  --color-accent-warm-hover: var(--accent-warm-hover);
+  --color-accent-warm-soft: var(--accent-warm-soft);
+  --color-accent-warm-foreground: var(--accent-warm-foreground);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --font-sans: var(--font-inter);
+  --font-display: var(--font-sora);
 }
 
 * {
@@ -50,9 +71,36 @@ body {
     sans-serif;
 }
 
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), var(--font-sans), ui-sans-serif, system-ui,
+    sans-serif;
+  letter-spacing: -0.02em;
+}
+
 ::selection {
   background: var(--accent-soft);
   color: var(--accent);
+}
+
+.text-gradient-brand {
+  background: var(--gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-mesh {
+  background-image: var(--gradient-mesh);
+}
+
+.shadow-glow-accent {
+  box-shadow: 0 12px 32px -12px rgba(79, 70, 229, 0.35);
+}
+
+.shadow-glow-warm {
+  box-shadow: 0 12px 32px -12px rgba(249, 98, 44, 0.4);
 }
 
 .focus-ring {

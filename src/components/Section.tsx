@@ -22,7 +22,10 @@ export default function Section({
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-wide text-accent">{eyebrow}</p>
+            <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-accent">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent-warm" aria-hidden="true" />
+              {eyebrow}
+            </p>
           )}
           <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             {title}

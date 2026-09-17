@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { CategorySlug } from "@/data/types";
 
-const CATEGORY_COLORS: Record<CategorySlug, string> = {
+export const CATEGORY_COLORS: Record<CategorySlug, string> = {
   writing: "bg-blue-50 text-blue-700",
   image: "bg-pink-50 text-pink-700",
   video: "bg-rose-50 text-rose-700",
@@ -12,6 +12,23 @@ const CATEGORY_COLORS: Record<CategorySlug, string> = {
   design: "bg-violet-50 text-violet-700",
   marketing: "bg-orange-50 text-orange-700",
   business: "bg-emerald-50 text-emerald-700",
+};
+
+/**
+ * Solid per-category hue used for hover borders/glows on cards — same
+ * category mapping as CATEGORY_COLORS, one shade stronger.
+ */
+export const CATEGORY_ACCENT: Record<CategorySlug, { border: string; shadow: string }> = {
+  writing: { border: "group-hover:border-blue-300", shadow: "0 12px 28px -14px rgba(29, 78, 216, 0.35)" },
+  image: { border: "group-hover:border-pink-300", shadow: "0 12px 28px -14px rgba(190, 24, 93, 0.35)" },
+  video: { border: "group-hover:border-rose-300", shadow: "0 12px 28px -14px rgba(190, 18, 60, 0.35)" },
+  audio: { border: "group-hover:border-purple-300", shadow: "0 12px 28px -14px rgba(126, 34, 206, 0.35)" },
+  coding: { border: "group-hover:border-slate-400", shadow: "0 12px 28px -14px rgba(51, 65, 85, 0.35)" },
+  research: { border: "group-hover:border-cyan-300", shadow: "0 12px 28px -14px rgba(14, 116, 144, 0.35)" },
+  productivity: { border: "group-hover:border-amber-300", shadow: "0 12px 28px -14px rgba(180, 83, 9, 0.35)" },
+  design: { border: "group-hover:border-violet-300", shadow: "0 12px 28px -14px rgba(109, 40, 217, 0.35)" },
+  marketing: { border: "group-hover:border-orange-300", shadow: "0 12px 28px -14px rgba(194, 65, 12, 0.35)" },
+  business: { border: "group-hover:border-emerald-300", shadow: "0 12px 28px -14px rgba(4, 120, 87, 0.35)" },
 };
 
 function getInitials(name: string): string {
