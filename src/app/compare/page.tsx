@@ -36,9 +36,21 @@ export async function generateMetadata(props: PageProps<"/compare">): Promise<Me
   };
 }
 
+function firstString(value: string | string[] | undefined): string {
+  return typeof value === "string" ? value : "";
+}
+
 export default async function ComparePage(props: PageProps<"/compare">) {
-  const { tools: toolsParam } = await props.searchParams;
+  const { tools: toolsParam, need, experience, budget, priority } = await props.searchParams;
   const initialSlugs = parseSlugs(toolsParam);
 
-  return <CompareClient initialSlugs={initialSlugs} />;
+  return (
+    <CompareClient
+      initialSlugs={initialSlugs}
+      initialNeed={firstString(need)}
+      initialExperience={firstString(experience)}
+      initialBudget={firstString(budget)}
+      initialPriority={firstString(priority)}
+    />
+  );
 }

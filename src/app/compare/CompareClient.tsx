@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Flame, Search, X } from "lucide-react";
+import { ChevronDown, Flame, Search, X } from "lucide-react";
 import ComparisonTable from "@/components/ComparisonTable";
 import ToolCard from "@/components/ToolCard";
 import ToolLogo, { CATEGORY_RING } from "@/components/ToolLogo";
@@ -12,21 +12,83 @@ import VerdictCard from "@/components/VerdictCard";
 import AffiliateDisclosure from "@/components/AffiliateDisclosure";
 import ComparisonEditorial from "@/components/ComparisonEditorial";
 import ComparisonFAQ from "@/components/ComparisonFAQ";
+import RequirementChip from "@/components/RequirementChip";
+import NeedFitCard from "@/components/NeedFitCard";
+import NeedComparisonTable from "@/components/NeedComparisonTable";
+import GetVsMissCard from "@/components/GetVsMissCard";
+import AskAboutNeeds from "@/components/AskAboutNeeds";
 import { tools } from "@/data/tools";
 import { getBestDealForTool } from "@/data/deals";
 import { getFeaturedComparisons } from "@/data/featuredComparisons";
 import { getCompareVerdicts } from "@/lib/verdict";
 import { buildComparisonEditorial } from "@/lib/comparisonContent";
+import { parseNeed } from "@/lib/needSignals";
+import { getMatchPercent } from "@/lib/needMatch";
+import { compareAgainstNeeds, getWhatYouGetAndMiss, getNeedBasedVerdict, summarizeFit } from "@/lib/needCompare";
+import type { ExperienceLevel, PriceTier, Strength } from "@/data/types";
 
 const MAX_COMPARE = 3;
+const VALID_EXPERIENCE: ExperienceLevel[] = ["beginner", "intermediate", "advanced"];
+const VALID_BUDGET: PriceTier[] = ["free", "under-500", "500-1000", "1000-plus"];
+const VALID_PRIORITY: Strength[] = ["ease-of-use", "quality", "price", "features", "speed"];
 
-export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: string[] }) {
+export default function CompareClient({
+  initialSlugs = [],
+  initialNeed = "",
+  initialExperience = "",
+  initialBudget = "",
+  initialPriority = "",
+}: {
+  initialSlugs?: string[];
+  initialNeed?: string;
+  initialExperience?: string;
+  initialBudget?: string;
+  initialPriority?: string;
+}) {
   const [selected, setSelected] = useState<string[]>(initialSlugs.slice(0, MAX_COMPARE));
   const [query, setQuery] = useState("");
+  const [detailedOpen, setDetailedOpen] = useState(false);
 
   const selectedTools = selected
     .map((slug) => tools.find((t) => t.slug === slug))
     .filter((t): t is (typeof tools)[number] => Boolean(t));
+
+  const parsedNeed = useMemo(() => {
+    if (!initialNeed.trim()) return null;
+    const experience = VALID_EXPERIENCE.includes(initialExperience as ExperienceLevel)
+      ? (initialExperience as ExperienceLevel)
+      : undefined;
+    const budget = VALID_BUDGET.includes(initialBudget as PriceTier) ? (initialBudget as PriceTier) : undefined;
+    const priority = VALID_PRIORITY.includes(initialPriority as Strength) ? (initialPriority as Strength) : undefined;
+    return parseNeed(initialNeed, { experience, budget, priority });
+  }, [initialNeed, initialExperience, initialBudget, initialPriority]);
+
+  const matchPercents = useMemo(() => {
+    if (!parsedNeed) return {};
+    const entries = selectedTools.map((t) => [t.slug, getMatchPercent(t, parsedNeed)] as const);
+    return Object.fromEntries(entries);
+  }, [parsedNeed, selectedTools]);
+
+  const fitSummaries = useMemo(
+    () =>
+      parsedNeed ? selectedTools.map((t) => summarizeFit(t, matchPercents[t.slug] ?? 0, parsedNeed)) : [],
+    [parsedNeed, selectedTools, matchPercents]
+  );
+
+  const needComparisonRows = useMemo(
+    () => (parsedNeed && selectedTools.length >= 2 ? compareAgainstNeeds(selectedTools, parsedNeed) : []),
+    [parsedNeed, selectedTools]
+  );
+
+  const getVsMiss = useMemo(
+    () => (parsedNeed ? selectedTools.map((t) => getWhatYouGetAndMiss(t, parsedNeed)) : []),
+    [parsedNeed, selectedTools]
+  );
+
+  const needVerdicts = useMemo(
+    () => (parsedNeed && selectedTools.length >= 2 ? getNeedBasedVerdict(selectedTools, parsedNeed, matchPercents) : []),
+    [parsedNeed, selectedTools, matchPercents]
+  );
 
   const pickerTools = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -51,6 +113,10 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
 
   const editorial = selectedTools.length >= 2 ? buildComparisonEditorial(selectedTools) : null;
   const featuredComparisons = getFeaturedComparisons();
+
+  const displayedVerdicts = parsedNeed
+    ? needVerdicts.map((v, i) => ({ tool: v.tool, label: i === 0 ? "Top pick for your need" : "Alternative", reason: v.reason }))
+    : getCompareVerdicts(selectedTools);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -88,12 +154,92 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
             ))}
           </div>
         )}
+
+        {parsedNeed && (
+          <div className="mt-6 rounded-2xl border border-accent/20 bg-surface/80 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-accent">Compare based on YOUR needs</p>
+            <p className="mt-1 text-sm text-foreground/70">&ldquo;{parsedNeed.rawText}&rdquo;</p>
+            {parsedNeed.chips.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {parsedNeed.chips.map((chip) => (
+                  <RequirementChip key={chip.id} emoji={chip.emoji} label={chip.label} active size="sm" />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
+      {parsedNeed && selectedTools.length >= 2 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">How these tools fit your needs</h2>
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {fitSummaries.map((fit) => (
+              <NeedFitCard key={fit.tool.slug} fit={fit} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {parsedNeed && needComparisonRows.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Based on what you need</h2>
+          <div className="mt-4">
+            <NeedComparisonTable tools={selectedTools} rows={needComparisonRows} />
+          </div>
+        </section>
+      )}
+
+      {parsedNeed && getVsMiss.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">What you get, what you might miss</h2>
+          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {getVsMiss.map((data) => (
+              <GetVsMissCard key={data.tool.slug} data={data} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {selectedTools.length >= 2 && (
-        <div className="mt-8">
-          <ComparisonTable tools={selectedTools} />
-        </div>
+        <section className="mt-12">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">
+            Which one should you choose?
+          </h2>
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {displayedVerdicts.map((verdict) => (
+              <VerdictCard key={verdict.tool.slug} verdict={verdict} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {selectedTools.length >= 2 && (
+        <section className="mt-10">
+          <AskAboutNeeds tools={selectedTools} />
+        </section>
+      )}
+
+      {selectedTools.length >= 2 && (
+        <section className="mt-10">
+          <button
+            type="button"
+            onClick={() => setDetailedOpen((o) => !o)}
+            className="focus-ring flex w-full items-center justify-between gap-2 rounded-2xl border border-border bg-surface px-5 py-4 text-left transition-colors hover:bg-stone-50"
+            aria-expanded={detailedOpen}
+          >
+            <span>
+              <span className="font-semibold text-foreground">See detailed comparison</span>
+              <span className="ml-2 text-sm text-muted">Full pricing, features and pros/cons table</span>
+            </span>
+            <ChevronDown size={18} className={`shrink-0 text-muted transition-transform ${detailedOpen ? "rotate-180" : ""}`} />
+          </button>
+          {detailedOpen && (
+            <div className="mt-4">
+              <ComparisonTable tools={selectedTools} />
+            </div>
+          )}
+        </section>
       )}
 
       {selectedTools.length >= 2 && (
@@ -130,19 +276,6 @@ export default function CompareClient({ initialSlugs = [] }: { initialSlugs?: st
               Offers and pricing may change. Always confirm current terms on the provider&apos;s website.
             </p>
             <AffiliateDisclosure className="text-foreground/60" />
-          </div>
-        </section>
-      )}
-
-      {selectedTools.length >= 2 && (
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            Which one should you choose?
-          </h2>
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {getCompareVerdicts(selectedTools).map((verdict) => (
-              <VerdictCard key={verdict.tool.slug} verdict={verdict} />
-            ))}
           </div>
         </section>
       )}

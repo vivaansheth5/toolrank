@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
-import SearchBar from "@/components/SearchBar";
+import NeedInput from "@/components/NeedInput";
 import CategoryCard from "@/components/CategoryCard";
 import ToolCard from "@/components/ToolCard";
 import DealCard from "@/components/DealCard";
@@ -8,7 +8,6 @@ import Section from "@/components/Section";
 import { categories } from "@/data/categories";
 import { tools, getToolById } from "@/data/tools";
 import { deals } from "@/data/deals";
-import { searchSuggestions } from "@/lib/search";
 
 export default function Home() {
   const popularTools = [...tools].sort((a, b) => b.popularity - a.popularity).slice(0, 9);
@@ -24,41 +23,30 @@ export default function Home() {
           </span>
 
           <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
-            Stop searching.
+            What are you
             <br />
-            <span className="text-gradient-brand">Find the right tool.</span>
+            <span className="text-gradient-brand">trying to get done?</span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted">
-            Discover the best AI tools and software for exactly what you&apos;re trying to accomplish —
-            without wasting hours comparing options.
+            Tell us in your own words — we&apos;ll match you with the AI tools and software that actually fit,
+            and explain exactly why.
           </p>
 
           <div className="mx-auto mt-8 max-w-2xl">
-            <SearchBar variant="hero" />
+            <NeedInput />
           </div>
 
-          <div className="mx-auto mt-4 flex max-w-2xl flex-wrap items-center justify-center gap-2">
-            {searchSuggestions.map((example) => (
-              <Link
-                key={example}
-                href={`/search?q=${encodeURIComponent(example)}`}
-                className="focus-ring rounded-full border border-border bg-surface px-3 py-1.5 text-xs text-muted transition-colors hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent hover:shadow-sm"
-              >
-                {example}
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-8">
-            <Link
-              href="/find-my-tool"
-              className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-accent-warm px-5 py-2.5 text-sm font-medium text-accent-warm-foreground shadow-glow-warm transition-all hover:-translate-y-0.5 hover:bg-accent-warm-hover"
-            >
+          <p className="mt-6 text-sm text-muted">
+            Prefer a classic search or a quick questionnaire?{" "}
+            <Link href="/search" className="font-medium text-accent hover:text-accent-hover">
+              Search
+            </Link>{" "}
+            ·{" "}
+            <Link href="/find-my-tool" className="font-medium text-accent hover:text-accent-hover">
               Find My Tool
-              <ArrowRight size={15} />
             </Link>
-          </div>
+          </p>
         </div>
       </section>
 
