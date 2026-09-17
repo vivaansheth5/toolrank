@@ -54,7 +54,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
         <div className="mt-8">
           <EmptyState
             title="No tools yet in this category"
-            description="Check back soon — we're actively adding to the ToolDhundho catalog."
+            description="Check back soon — we're actively adding to the ToolDhundho.com catalog."
           />
         </div>
       ) : (

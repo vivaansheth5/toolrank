@@ -16,7 +16,7 @@ const sora = Sora({
   display: "swap",
 });
 
-const SITE_NAME = "ToolDhundho";
+const SITE_NAME = "ToolDhundho.com";
 const SITE_DESCRIPTION =
   "Stop searching. Find the right AI tool or software for exactly what you're trying to accomplish — browse categories, compare tools and get personalized recommendations.";
 

@@ -200,7 +200,7 @@ export default function ExploreClient({
         Explore AI &amp; Software
       </h1>
       <p className="mt-2 max-w-2xl text-muted">
-        Browse the full ToolDhundho catalog and filter down to exactly what fits your workflow, budget and team.
+        Browse the full ToolDhundho.com catalog and filter down to exactly what fits your workflow, budget and team.
       </p>
 
       <div className="mt-6">

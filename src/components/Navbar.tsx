@@ -8,6 +8,7 @@ import SearchBar from "./SearchBar";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/explore", label: "Explore" },
   { href: "/find-my-tool", label: "Find My Tool" },
   { href: "/compare", label: "Compare" },
@@ -26,7 +27,7 @@ export default function Navbar() {
           onClick={() => setOpen(false)}
           className="focus-ring flex shrink-0 items-center gap-1.5 rounded-lg"
         >
-          <span className="text-lg font-semibold tracking-tight text-foreground">ToolDhundho</span>
+          <span className="text-lg font-semibold tracking-tight text-foreground">ToolDhundho.com</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

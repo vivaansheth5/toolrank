@@ -82,7 +82,7 @@ export default function Home() {
       <Section
         eyebrow="Trending"
         title="Popular right now"
-        subtitle="The most-viewed tools on ToolDhundho this month."
+        subtitle="The most-viewed tools on ToolDhundho.com this month."
         cta={{ label: "Explore all tools", href: "/explore" }}
         className="border-t border-border bg-surface"
       >
