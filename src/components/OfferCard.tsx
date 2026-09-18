@@ -66,7 +66,7 @@ export default function OfferCard({
             href={cta.href}
             isAffiliate={cta.isAffiliate}
             placement={placement}
-            variant={cta.isAffiliate ? "primary" : "secondary"}
+            variant="primary"
             className="mt-5"
           >
             {cta.label}
@@ -85,7 +85,7 @@ export default function OfferCard({
             href={cta.href}
             isAffiliate={cta.isAffiliate}
             placement={placement}
-            variant="secondary"
+            variant="primary"
             className="mt-5"
           >
             {cta.label}

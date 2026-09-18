@@ -56,7 +56,7 @@ export default function DealCard({ deal, tool }: { deal: Deal; tool: Tool }) {
         href={cta.href}
         isAffiliate={cta.isAffiliate}
         placement="deals_page"
-        variant={cta.isAffiliate ? "primary" : "secondary"}
+        variant="primary"
         className="mt-5"
       >
         {cta.label}

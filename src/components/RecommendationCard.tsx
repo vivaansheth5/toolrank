@@ -70,7 +70,7 @@ export default function RecommendationCard({
             href={cta.href}
             isAffiliate={cta.isAffiliate}
             placement="find_my_tool"
-            variant={cta.isAffiliate ? "primary" : "secondary"}
+            variant="primary"
           >
             {cta.label}
           </AffiliateCTA>
