@@ -31,7 +31,7 @@ export default function Navbar() {
           <span className="text-[10px] font-medium tracking-tight text-muted">Find the right tool &middot; Find the right deal</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href || pathname?.startsWith(link.href + "/");
             return (
@@ -49,7 +49,7 @@ export default function Navbar() {
           })}
         </nav>
 
-        <div className="ml-auto hidden w-full max-w-xs md:block">
+        <div className="hidden w-full max-w-xs md:block">
           <SearchBar variant="compact" />
         </div>
 
