@@ -33,8 +33,9 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
-            <Link href="/" className="text-lg font-semibold tracking-tight text-foreground">
-              ToolDhundho.com
+            <Link href="/" className="flex flex-col leading-tight">
+              <span className="text-lg font-semibold tracking-tight text-foreground">ToolDhundho.com</span>
+              <span className="text-xs font-medium text-muted">Find the right tool</span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-muted">
               Stop searching. Find the right AI tool or software for exactly what you&apos;re trying to do.

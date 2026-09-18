@@ -25,9 +25,10 @@ export default function Navbar() {
         <Link
           href="/"
           onClick={() => setOpen(false)}
-          className="focus-ring flex shrink-0 items-center gap-1.5 rounded-lg"
+          className="focus-ring flex shrink-0 flex-col leading-tight rounded-lg"
         >
           <span className="text-lg font-semibold tracking-tight text-foreground">ToolDhundho.com</span>
+          <span className="text-[11px] font-medium text-muted">Find the right tool</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
