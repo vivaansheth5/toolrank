@@ -1,6 +1,7 @@
 import { PRICE_TIER_LABELS } from "./utils";
 import { getMatchPercent, getMatchLabel } from "./needMatch";
 import { getNeedBasedVerdict } from "./needCompare";
+import { buildWhatWouldChangeRecommendation } from "./comparisonNarrative";
 import type { ParsedNeed } from "./needSignals";
 import type { Tool } from "@/data/types";
 
@@ -18,6 +19,11 @@ export interface QuestionAnswer {
   rows: QuestionAnswerRow[];
   /** Shown for the unmatched fallback case. */
   note?: string;
+  /** A single grounded paragraph rather than a per-tool row list — used for
+   *  questions whose answer is inherently about the comparison as a whole
+   *  (e.g. "what would change your recommendation?"), never a redirect back
+   *  to generic discovery. */
+  summary?: string;
 }
 
 /**
@@ -67,6 +73,18 @@ export function answerCommonComparisonQuestion(
             ? `Best fit based on what you told us — ${getMatchLabel(percents[tool.slug] ?? 0)}.`
             : `${getMatchLabel(percents[tool.slug] ?? 0)} for what you told us.`,
       })),
+    };
+  }
+
+  if (/\bwhat would change\b|\bwhat could change\b|\bunder what (circumstances|conditions)\b/.test(q)) {
+    if (tools.length < 2) {
+      return { matched: false, title: "What would change this recommendation", rows: [], note: NOT_ENOUGH_INFO };
+    }
+    return {
+      matched: true,
+      title: "What would change this recommendation",
+      rows: [],
+      summary: buildWhatWouldChangeRecommendation(tools, parsedNeed ?? null),
     };
   }
 

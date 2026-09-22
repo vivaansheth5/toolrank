@@ -8,28 +8,36 @@ import ToolCard from "@/components/ToolCard";
 import ToolLogo, { CATEGORY_RING } from "@/components/ToolLogo";
 import EmptyState from "@/components/EmptyState";
 import OfferCard from "@/components/OfferCard";
-import VerdictCard from "@/components/VerdictCard";
 import AffiliateDisclosure from "@/components/AffiliateDisclosure";
 import ComparisonEditorial from "@/components/ComparisonEditorial";
 import ComparisonFAQ from "@/components/ComparisonFAQ";
 import RequirementChip from "@/components/RequirementChip";
-import NeedFitCard from "@/components/NeedFitCard";
-import DimensionFitCards from "@/components/DimensionFitCards";
-import KeyDifferences from "@/components/KeyDifferences";
-import QuickTake from "@/components/QuickTake";
+import ProductContextCards from "@/components/ProductContextCards";
+import QuickTakeParagraph from "@/components/QuickTakeParagraph";
+import OverlapSection from "@/components/OverlapSection";
+import DifferenceCards from "@/components/DifferenceCards";
+import ScenarioCards from "@/components/ScenarioCards";
+import TradeoffMap from "@/components/TradeoffMap";
 import PricingComparisonSection from "@/components/PricingComparisonSection";
 import GetVsMissCard from "@/components/GetVsMissCard";
 import AskAboutNeeds from "@/components/AskAboutNeeds";
 import { tools } from "@/data/tools";
 import { getBestDealForTool } from "@/data/deals";
 import { getFeaturedComparisons } from "@/data/featuredComparisons";
-import { getCompareVerdicts } from "@/lib/verdict";
 import { buildComparisonEditorial } from "@/lib/comparisonContent";
 import { parseNeed, refineParsedNeed } from "@/lib/needSignals";
 import type { NeedRefinements } from "@/lib/needSignals";
-import { getMatchPercent } from "@/lib/needMatch";
-import { getWhatYouGetAndMiss, getNeedBasedVerdict, summarizeFit } from "@/lib/needCompare";
-import { buildKeyDifferences, buildQuickTake, buildPricingComparison } from "@/lib/comparisonIntelligence";
+import {
+  buildProductContext,
+  detectFundamentallyDifferentTypes,
+  buildQuickTakeParagraph,
+  buildOverlapSection,
+  buildDifferencesSection,
+  buildGetMissWithWhy,
+  buildScenarios,
+  buildTradeoffMap,
+  buildPricingComparison,
+} from "@/lib/comparisonNarrative";
 import { detectComparisonIntent } from "@/lib/comparisonIntent";
 import { BUDGET_REFINEMENT_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
 import type { ExperienceLevel, PriceTier, Strength } from "@/data/types";
@@ -97,45 +105,51 @@ export default function CompareClient({
     [baseParsedNeed, excludedChipIds, refinements]
   );
 
-  const matchPercents = useMemo(() => {
-    if (!parsedNeed) return {};
-    const entries = selectedTools.map((t) => [t.slug, getMatchPercent(t, parsedNeed)] as const);
-    return Object.fromEntries(entries);
-  }, [parsedNeed, selectedTools]);
-
-  const fitSummaries = useMemo(
-    () =>
-      parsedNeed ? selectedTools.map((t) => summarizeFit(t, matchPercents[t.slug] ?? 0, parsedNeed)) : [],
-    [parsedNeed, selectedTools, matchPercents]
+  // V3 decision-support narrative layer (lib/comparisonNarrative.ts):
+  // FACTS -> DIFFERENCES -> IMPLICATIONS -> USER-SPECIFIC TRADEOFFS ->
+  // DECISION SUPPORT. Every builder here accepts `parsedNeed: ParsedNeed |
+  // null` and degrades gracefully to the category's default dimension set
+  // when there's no stated need, so a plain multi-tool compare (no typed
+  // need text) still gets a real, non-generic comparison.
+  const productContext = useMemo(
+    () => (selectedTools.length >= 2 ? buildProductContext(selectedTools, comparisonIntent?.identifiedTools) : []),
+    [selectedTools, comparisonIntent]
+  );
+  const differentTypes = useMemo(
+    () => detectFundamentallyDifferentTypes(selectedTools),
+    [selectedTools]
   );
 
-  const getVsMiss = useMemo(
-    () => (parsedNeed ? selectedTools.map((t) => getWhatYouGetAndMiss(t, parsedNeed)) : []),
-    [parsedNeed, selectedTools]
+  const quickTakeText = useMemo(
+    () => (selectedTools.length >= 2 ? buildQuickTakeParagraph(selectedTools, parsedNeed) : ""),
+    [selectedTools, parsedNeed]
   );
 
-  const needVerdicts = useMemo(
-    () => (parsedNeed && selectedTools.length >= 2 ? getNeedBasedVerdict(selectedTools, parsedNeed, matchPercents) : []),
-    [parsedNeed, selectedTools, matchPercents]
+  const overlapItems = useMemo(
+    () => (selectedTools.length >= 2 ? buildOverlapSection(selectedTools, parsedNeed) : []),
+    [selectedTools, parsedNeed]
   );
 
-  // Comparison intelligence: category-aware, per-dimension evidence over
-  // the tools' own real data (lib/comparisonProfile.ts) — feeds "How these
-  // tools fit your needs", "Key differences" and "Quick take". Pricing is
-  // shown for any 2+ tool comparison since it's real structured data, not
-  // need-dependent.
-  const fitDimensionRows = useMemo(
-    () => (parsedNeed && selectedTools.length >= 2 ? buildKeyDifferences(selectedTools, parsedNeed, 10) : []),
-    [parsedNeed, selectedTools]
+  const differenceItems = useMemo(
+    () => (selectedTools.length >= 2 ? buildDifferencesSection(selectedTools, parsedNeed) : []),
+    [selectedTools, parsedNeed]
   );
-  const keyDifferenceRows = useMemo(
-    () => (parsedNeed && selectedTools.length >= 2 ? buildKeyDifferences(selectedTools, parsedNeed, 5) : []),
-    [parsedNeed, selectedTools]
+
+  const getMissRows = useMemo(
+    () => (selectedTools.length >= 2 ? selectedTools.map((t) => buildGetMissWithWhy(t, selectedTools, parsedNeed)) : []),
+    [selectedTools, parsedNeed]
   );
-  const quickTakeRows = useMemo(
-    () => (parsedNeed && selectedTools.length >= 2 ? buildQuickTake(selectedTools, parsedNeed) : []),
-    [parsedNeed, selectedTools]
+
+  const scenarioItems = useMemo(
+    () => (selectedTools.length >= 2 ? buildScenarios(selectedTools, parsedNeed) : []),
+    [selectedTools, parsedNeed]
   );
+
+  const tradeoffRows = useMemo(
+    () => (selectedTools.length >= 2 ? buildTradeoffMap(selectedTools, parsedNeed) : []),
+    [selectedTools, parsedNeed]
+  );
+
   const pricingRows = useMemo(
     () => (selectedTools.length >= 2 ? buildPricingComparison(selectedTools) : []),
     [selectedTools]
@@ -182,12 +196,11 @@ export default function CompareClient({
   const editorial = selectedTools.length >= 2 ? buildComparisonEditorial(selectedTools) : null;
   const featuredComparisons = getFeaturedComparisons();
 
-  const displayedVerdicts = parsedNeed
-    ? needVerdicts.map((v, i) => ({ tool: v.tool, label: i === 0 ? "Top pick for your need" : "Alternative", reason: v.reason }))
-    : getCompareVerdicts(selectedTools);
-
+  // Section J: "Still deciding?" — grounded in THIS comparison's own data,
+  // never a redirect back to generic discovery. Available whenever 2+ tools
+  // are selected, not only in exact-comparison mode.
   const suggestedQuestions = useMemo(() => {
-    if (!isExactComparison || selectedTools.length < 2) return undefined;
+    if (selectedTools.length < 2) return undefined;
     const [a, b] = selectedTools;
     const qs = [
       `What will I miss if I choose ${a.name}?`,
@@ -195,11 +208,12 @@ export default function CompareClient({
       "Which is cheaper?",
       "Which is easier for beginners?",
       "Which fits my needs better?",
+      "What would change your recommendation?",
     ];
     const topChip = parsedNeed?.chips[0];
     if (topChip) qs.push(`Which fits my ${topChip.label.toLowerCase()} needs better?`);
     return qs.slice(0, 6);
-  }, [isExactComparison, selectedTools, parsedNeed]);
+  }, [selectedTools, parsedNeed]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -347,74 +361,76 @@ export default function CompareClient({
         )}
       </div>
 
-      {selectedTools.length >= 2 && (
+      {productContext.length >= 2 && (
         <section className="mt-12">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            {parsedNeed ? "Which fits your needs better?" : "Which one should you choose?"}
-          </h2>
-          {isExactComparison && (
-            <p className="mt-1.5 max-w-2xl text-sm text-muted">
-              These trade-offs are about fit for what you told us, not a universal winner — either tool can be the
-              right call depending on what matters most to you.
-            </p>
-          )}
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {displayedVerdicts.map((verdict) => (
-              <VerdictCard key={verdict.tool.slug} verdict={verdict} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {parsedNeed && quickTakeRows.length > 0 && (
-        <section className="mt-10">
-          <QuickTake rows={quickTakeRows} />
-        </section>
-      )}
-
-      {selectedTools.length >= 2 && (
-        <section className="mt-10">
-          <AskAboutNeeds
-            tools={selectedTools}
-            parsedNeed={parsedNeed}
-            suggestedQuestions={suggestedQuestions}
-            title={isExactComparison ? "Want to dig deeper?" : "Is there anything specific you want to know?"}
-          />
-        </section>
-      )}
-
-      {parsedNeed && selectedTools.length >= 2 && (
-        <section className="mt-10">
-          <h2 className="text-xl font-bold tracking-tight text-foreground">How these tools fit your needs</h2>
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {fitSummaries.map((fit) => (
-              <NeedFitCard key={fit.tool.slug} fit={fit} />
-            ))}
-          </div>
-          {fitDimensionRows.length > 0 && (
-            <div className="mt-4">
-              <DimensionFitCards tools={selectedTools} rows={fitDimensionRows} />
-            </div>
-          )}
-        </section>
-      )}
-
-      {parsedNeed && keyDifferenceRows.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-xl font-bold tracking-tight text-foreground">Key differences</h2>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">What are these tools?</h2>
           <div className="mt-4">
-            <KeyDifferences differences={keyDifferenceRows} />
+            <ProductContextCards entries={productContext} differentTypes={differentTypes} />
           </div>
         </section>
       )}
 
-      {parsedNeed && getVsMiss.length > 0 && (
+      {quickTakeText && (
+        <section className="mt-10">
+          <QuickTakeParagraph text={quickTakeText} />
+        </section>
+      )}
+
+      {overlapItems.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Where they overlap</h2>
+          <p className="mt-1.5 max-w-2xl text-sm text-muted">
+            These aren&apos;t likely to be what decides this for you — both hold up well here.
+          </p>
+          <div className="mt-4">
+            <OverlapSection items={overlapItems} />
+          </div>
+        </section>
+      )}
+
+      {differenceItems.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Where they differ</h2>
+          <p className="mt-1.5 max-w-2xl text-sm text-muted">
+            The facts, what they mean in practice, and whether it&apos;s actually relevant to you.
+          </p>
+          <div className="mt-4">
+            <DifferenceCards differences={differenceItems} />
+          </div>
+        </section>
+      )}
+
+      {getMissRows.length > 0 && (
         <section className="mt-10">
           <h2 className="text-xl font-bold tracking-tight text-foreground">What you get, what you might miss</h2>
           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {getVsMiss.map((data) => (
+            {getMissRows.map((data) => (
               <GetVsMissCard key={data.tool.slug} data={data} />
             ))}
+          </div>
+        </section>
+      )}
+
+      {scenarioItems.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">How they handle what you&apos;ll actually do</h2>
+          <p className="mt-1.5 max-w-2xl text-sm text-muted">
+            Compared against real tasks, not abstract feature labels.
+          </p>
+          <div className="mt-4">
+            <ScenarioCards scenarios={scenarioItems} />
+          </div>
+        </section>
+      )}
+
+      {tradeoffRows.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Choose based on what you&apos;ll do most</h2>
+          <p className="mt-1.5 max-w-2xl text-sm text-muted">
+            No universal winner — pick the row that matches what matters most to you.
+          </p>
+          <div className="mt-4">
+            <TradeoffMap rows={tradeoffRows} />
           </div>
         </section>
       )}
@@ -468,6 +484,17 @@ export default function CompareClient({
 
       {selectedTools.length >= 2 && (
         <section className="mt-10">
+          <AskAboutNeeds
+            tools={selectedTools}
+            parsedNeed={parsedNeed}
+            suggestedQuestions={suggestedQuestions}
+            title="Still deciding?"
+          />
+        </section>
+      )}
+
+      {selectedTools.length >= 2 && (
+        <section className="mt-10">
           <button
             type="button"
             onClick={() => setDetailedOpen((o) => !o)}
@@ -475,7 +502,7 @@ export default function CompareClient({
             aria-expanded={detailedOpen}
           >
             <span>
-              <span className="font-semibold text-foreground">See detailed comparison</span>
+              <span className="font-semibold text-foreground">Detailed specifications</span>
               <span className="ml-2 text-sm text-muted">Full pricing, features and pros/cons table</span>
             </span>
             <ChevronDown size={18} className={`shrink-0 text-muted transition-transform ${detailedOpen ? "rotate-180" : ""}`} />

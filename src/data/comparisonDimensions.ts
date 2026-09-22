@@ -24,6 +24,11 @@ export interface ComparisonDimension {
   relatedChipIds: string[];
   /** One sentence explaining why this axis matters when deciding. */
   whyItMatters: string;
+  /** A short real-world task phrase this dimension maps to — powers the
+   *  scenario-comparison section (lib/comparisonNarrative.ts) so tools are
+   *  compared against what the user will actually DO, not just an abstract
+   *  capability label. */
+  scenario: string;
 }
 
 export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> = {
@@ -35,6 +40,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["writ", "draft", "blog", "content", "copy", "prose", "brainstorm"],
       relatedChipIds: ["writing-content"],
       whyItMatters: "Matters if you're drafting posts, essays, emails or other written content regularly.",
+      scenario: "Draft written content (posts, essays, emails)",
     },
     {
       id: "grammarClarity",
@@ -43,6 +49,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["grammar", "tone", "clarity", "spelling", "proofread"],
       relatedChipIds: ["writing-content"],
       whyItMatters: "Matters if you want polish and correctness checked automatically, not just generation.",
+      scenario: "Polish and proofread what you've written",
     },
     {
       id: "coding",
@@ -51,6 +58,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["code generation", "coding", "debug", "autocomplete", "programm"],
       relatedChipIds: ["coding", "python-coding"],
       whyItMatters: "Matters if you need help writing, explaining or debugging code, not just prose.",
+      scenario: "Debug a Python assignment",
     },
     {
       id: "research",
@@ -59,6 +67,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["research", "citation", "citations", "cited", "source-backed", "fact-check"],
       relatedChipIds: ["research"],
       whyItMatters: "Matters for academic or fact-checked work where sources need to be traceable.",
+      scenario: "Research an assignment with sources",
     },
     {
       id: "reasoning",
@@ -67,6 +76,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["reasoning", "nuanced", "thoughtful", "logic"],
       relatedChipIds: ["maths-statistics", "data-science-coursework"],
       whyItMatters: "Matters for multi-step problems — maths, logic, or working through a hard question.",
+      scenario: "Learn or work through a hard concept",
     },
     {
       id: "fileAnalysis",
@@ -75,6 +85,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["pdf", "file analysis", "data analysis", "document", "upload", "long document"],
       relatedChipIds: ["pdf-file-analysis", "data-analysis"],
       whyItMatters: "Matters if you regularly need to upload and work through PDFs, spreadsheets or long docs.",
+      scenario: "Work with lecture PDFs or long documents",
     },
     {
       id: "ecosystem",
@@ -83,6 +94,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["ecosystem", "plugin", "integrat", "custom gpt"],
       relatedChipIds: [],
       whyItMatters: "Matters if you want the tool to plug into other apps and workflows you already use.",
+      scenario: "Plug this into other apps you already use",
     },
     {
       id: "easeOfUse",
@@ -91,6 +103,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["easy", "intuitive", "approachable", "less robotic", "conversational"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you want to get started quickly without a learning curve.",
+      scenario: "Get started without a learning curve",
     },
     {
       id: "freePlanValue",
@@ -99,6 +112,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free tier", "free plan", "generous free"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint and you need real usage without paying.",
+      scenario: "Stay within a tight budget",
     },
   ],
   image: [
@@ -109,6 +123,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["text-to-image", "image generat", "generative fill"],
       relatedChipIds: ["image-generation"],
       whyItMatters: "The core capability — how the tool turns a prompt into an image.",
+      scenario: "Generate an image from a text prompt",
     },
     {
       id: "artisticStyle",
@@ -117,6 +132,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["stylized", "artistic", "illustration", "style control", "concept art"],
       relatedChipIds: ["image-generation"],
       whyItMatters: "Matters if you want a distinctive visual style rather than photorealism (or vice versa).",
+      scenario: "Create a distinctive visual style",
     },
     {
       id: "commercialLicensing",
@@ -125,6 +141,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["licens", "commercial", "public-domain"],
       relatedChipIds: [],
       whyItMatters: "Matters for professional/commercial work where usage rights need to be unambiguous.",
+      scenario: "Use the output in commercial work",
     },
     {
       id: "creativeToolIntegration",
@@ -133,6 +150,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["photoshop", "illustrator", "creative cloud", "integrat"],
       relatedChipIds: [],
       whyItMatters: "Matters if the image needs to flow into an existing design/editing pipeline.",
+      scenario: "Bring the image into an existing design pipeline",
     },
     {
       id: "editingControl",
@@ -141,6 +159,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["recolor", "upscal", "variation", "generative fill", "fine-grained"],
       relatedChipIds: [],
       whyItMatters: "Matters if you need to iterate and refine a result rather than accept the first output.",
+      scenario: "Refine and iterate on a generated image",
     },
     {
       id: "easeOfUse",
@@ -149,6 +168,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["easy", "accessible", "beginner"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you're not a trained designer and want fast, simple results.",
+      scenario: "Get a usable result without design training",
     },
     {
       id: "freePlanValue",
@@ -157,6 +177,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free plan", "free tier"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Try it before paying",
     },
   ],
   video: [
@@ -167,6 +188,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["timeline", "transcript-based editing", "multitrack"],
       relatedChipIds: ["video-editing"],
       whyItMatters: "How you actually cut and assemble footage — timeline vs. text-based editing feel very different.",
+      scenario: "Cut and assemble your footage",
     },
     {
       id: "aiEditing",
@@ -175,6 +197,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["ai overdub", "green screen", "motion tracking", "filler-word", "background removal"],
       relatedChipIds: ["ai-powered"],
       whyItMatters: "Matters if you want the tool to automate tedious cleanup work for you.",
+      scenario: "Automate cleanup (green screen, filler words)",
     },
     {
       id: "autoCaptions",
@@ -183,6 +206,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["caption", "subtitle", "speech-to-text"],
       relatedChipIds: ["captions"],
       whyItMatters: "Matters for social/accessible content where captions are expected by default.",
+      scenario: "Add captions automatically",
     },
     {
       id: "textToVideo",
@@ -191,6 +215,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["text-to-video", "image-to-video", "generative video"],
       relatedChipIds: [],
       whyItMatters: "Matters if you want to generate footage from a prompt rather than shoot/edit existing clips.",
+      scenario: "Generate a video from a text prompt",
     },
     {
       id: "templates",
@@ -199,6 +224,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["template", "trend-ready"],
       relatedChipIds: [],
       whyItMatters: "Matters for fast turnaround on common formats like reels or TikToks.",
+      scenario: "Use a template for fast turnaround",
     },
     {
       id: "voiceover",
@@ -207,6 +233,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["voice clon", "dubbing", "overdub"],
       relatedChipIds: ["voice-audio"],
       whyItMatters: "Matters if you need narration or multi-language dubbing built in.",
+      scenario: "Add narration or dubbing",
     },
     {
       id: "easeOfUse",
@@ -215,6 +242,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["intuitive", "approachable", "fast, template-driven"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you're new to video editing and want to move fast without a steep curve.",
+      scenario: "Edit quickly as a beginner",
     },
     {
       id: "freePlanValue",
@@ -223,6 +251,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free plan", "free-first", "free feature set"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Edit without a subscription",
     },
   ],
   audio: [
@@ -233,6 +262,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["text-to-speech", "voice clon", "lifelike"],
       relatedChipIds: ["voice-audio"],
       whyItMatters: "The core capability — how natural and controllable the generated voice is.",
+      scenario: "Generate a natural-sounding voice",
     },
     {
       id: "transcription",
@@ -241,6 +271,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["transcri", "meeting notes", "speech-to-text"],
       relatedChipIds: ["transcription"],
       whyItMatters: "Matters if you need spoken audio turned into accurate, searchable text.",
+      scenario: "Turn a recording into text",
     },
     {
       id: "dubbing",
@@ -249,6 +280,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["dubbing", "languages"],
       relatedChipIds: ["voice-audio"],
       whyItMatters: "Matters for multi-language content or localization work.",
+      scenario: "Localize content into another language",
     },
     {
       id: "integrations",
@@ -257,6 +289,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["api", "integrat", "zoom", "meet", "teams"],
       relatedChipIds: [],
       whyItMatters: "Matters if you want this wired into an existing workflow or app rather than used standalone.",
+      scenario: "Wire this into an existing workflow",
     },
     {
       id: "easeOfUse",
@@ -265,6 +298,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["easy", "automatically", "background"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you want this to just work without configuration.",
+      scenario: "Get set up without configuration",
     },
     {
       id: "freePlanValue",
@@ -273,6 +307,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free tier", "affordable", "free plan"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Try it without paying",
     },
   ],
   coding: [
@@ -283,6 +318,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["completion", "autocomplete", "suggest", "predictive"],
       relatedChipIds: ["coding", "python-coding"],
       whyItMatters: "The core day-to-day capability — how good the inline suggestions are as you type.",
+      scenario: "Get inline suggestions as you type",
     },
     {
       id: "multiFileEditing",
@@ -291,6 +327,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["multi-file", "codebase", "refactor"],
       relatedChipIds: ["python-coding"],
       whyItMatters: "Matters for larger projects where a change touches more than one file.",
+      scenario: "Make a change that touches multiple files",
     },
     {
       id: "chatDebugging",
@@ -299,6 +336,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["chat", "debug", "explain"],
       relatedChipIds: ["coding"],
       whyItMatters: "Matters when you want to ask questions about your code, not just get autocomplete.",
+      scenario: "Ask questions about your own code",
     },
     {
       id: "deployment",
@@ -307,6 +345,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["deploy", "hosting", "host"],
       relatedChipIds: [],
       whyItMatters: "Matters if you want to go from code to a running app without leaving the tool.",
+      scenario: "Ship code to a running app",
     },
     {
       id: "versionControl",
@@ -315,6 +354,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["git", "pull request", "repository", "code review", "version control"],
       relatedChipIds: [],
       whyItMatters: "Matters for team workflows built around reviewing and merging changes.",
+      scenario: "Review and merge changes with a team",
     },
     {
       id: "editorIntegration",
@@ -323,6 +363,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["editor", "vs code", "jetbrains", "drop-in replacement"],
       relatedChipIds: [],
       whyItMatters: "Matters if you want to keep your current editor setup rather than switch tools entirely.",
+      scenario: "Keep your current editor setup",
     },
     {
       id: "easeOfUse",
@@ -331,6 +372,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["zero-setup", "no local setup", "familiar"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you're newer to coding and want less setup friction.",
+      scenario: "Get started with minimal setup",
     },
     {
       id: "freePlanValue",
@@ -339,6 +381,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free tier", "free plan"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint, especially as a student.",
+      scenario: "Code on a student budget",
     },
   ],
   research: [
@@ -349,6 +392,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["citation", "citations", "cited", "source-backed", "trustworthy"],
       relatedChipIds: ["research"],
       whyItMatters: "Matters when you need to trace a claim back to where it came from.",
+      scenario: "Trace a claim back to its source",
     },
     {
       id: "focusModes",
@@ -357,6 +401,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["academic", "focus mode"],
       relatedChipIds: ["data-science-coursework", "research"],
       whyItMatters: "Matters for coursework-style research where you want results scoped to a domain.",
+      scenario: "Scope research to an academic domain",
     },
     {
       id: "fileAnalysis",
@@ -365,6 +410,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["pdf", "file and", "file question", "document"],
       relatedChipIds: ["pdf-file-analysis"],
       whyItMatters: "Matters if your research involves specific documents, not just open-web search.",
+      scenario: "Ask questions about a specific document",
     },
     {
       id: "speed",
@@ -373,6 +419,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["fast", "follow-up questions"],
       relatedChipIds: ["fast-workflow"],
       whyItMatters: "Matters if you're doing rapid, iterative lookups rather than one deep dive.",
+      scenario: "Do a rapid, iterative lookup",
     },
     {
       id: "easeOfUse",
@@ -381,6 +428,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["clean", "distraction-free"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you want a simple interface without extra clutter.",
+      scenario: "Search without a cluttered interface",
     },
     {
       id: "freePlanValue",
@@ -389,6 +437,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free plan", "free tier"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Research without paying",
     },
   ],
   productivity: [
@@ -399,6 +448,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["docs", "notes", "wiki"],
       relatedChipIds: ["writing-content"],
       whyItMatters: "Matters if the core job is writing and organizing notes/documents.",
+      scenario: "Write and organize notes and docs",
     },
     {
       id: "taskProjectManagement",
@@ -407,6 +457,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["task", "project", "kanban", "board", "goals"],
       relatedChipIds: ["team-management"],
       whyItMatters: "Matters if you need to track work items, not just write content.",
+      scenario: "Track tasks and project work",
     },
     {
       id: "automation",
@@ -415,6 +466,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["automat", "workflow"],
       relatedChipIds: ["automation"],
       whyItMatters: "Matters if you want repetitive steps handled without manual effort.",
+      scenario: "Automate a repetitive step",
     },
     {
       id: "aiAssist",
@@ -423,6 +475,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["ai-generated", "ai writing", "summar", "built-in ai"],
       relatedChipIds: ["ai-powered"],
       whyItMatters: "Matters if you want AI help without leaving the tool for a separate chatbot.",
+      scenario: "Get AI help without switching tools",
     },
     {
       id: "presentations",
@@ -431,6 +484,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["slide", "presentation", "deck"],
       relatedChipIds: ["presentations"],
       whyItMatters: "Matters if you regularly need to produce slide decks.",
+      scenario: "Put together a slide deck",
     },
     {
       id: "collaboration",
@@ -439,6 +493,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["team", "shared", "collaborat", "multiplayer"],
       relatedChipIds: ["team-management"],
       whyItMatters: "Matters if multiple people need to work in the same workspace.",
+      scenario: "Work in the same workspace as a team",
     },
     {
       id: "easeOfUse",
@@ -447,6 +502,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["easy", "simple", "fast to record", "one-click"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you want to get set up quickly without a steep learning curve.",
+      scenario: "Get productive without a steep setup",
     },
     {
       id: "freePlanValue",
@@ -455,6 +511,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free plan", "free tier"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Use it without a paid plan",
     },
   ],
   design: [
@@ -465,6 +522,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["drag-and-drop", "visual canvas", "visual, no-code"],
       relatedChipIds: ["design"],
       whyItMatters: "Matters if you want to design visually rather than write code by hand.",
+      scenario: "Design a landing page visually",
     },
     {
       id: "aiDesignTools",
@@ -473,6 +531,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["ai design", "ai site generation", "ai-assisted"],
       relatedChipIds: ["ai-powered"],
       whyItMatters: "Matters if you want AI to help generate a starting point, not just manual editing.",
+      scenario: "Generate a design starting point with AI",
     },
     {
       id: "templatesAssets",
@@ -481,14 +540,25 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["template", "asset library", "brand kit"],
       relatedChipIds: [],
       whyItMatters: "Matters if you want a fast starting point rather than a blank canvas.",
+      scenario: "Start from a template rather than a blank canvas",
     },
     {
       id: "cmsHosting",
       label: "CMS & hosting",
       emoji: "🌐",
       strongKeywords: ["cms", "hosting", "publishing"],
-      relatedChipIds: ["website-builder"],
-      whyItMatters: "Matters if the output needs to be a live, publishable website with dynamic content.",
+      relatedChipIds: ["website-builder", "scalability"],
+      whyItMatters: "Matters if the output needs to be a live, publishable website with dynamic content that can grow with you.",
+      scenario: "Publish a live, updatable website (CMS)",
+    },
+    {
+      id: "seo",
+      label: "SEO & search visibility",
+      emoji: "🔎",
+      strongKeywords: ["seo", "meta tags", "sitemap", "search visibility"],
+      relatedChipIds: ["marketing-growth"],
+      whyItMatters: "Matters if organic search visibility is part of why you're building the site.",
+      scenario: "Improve the site's search visibility (SEO)",
     },
     {
       id: "noCodeCustomCode",
@@ -497,6 +567,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["no-code", "full css control", "clean, production-grade code"],
       relatedChipIds: ["no-code", "coding"],
       whyItMatters: "Matters based on whether you want zero-code simplicity or full code-level control.",
+      scenario: "Add custom code beyond the visual editor",
     },
     {
       id: "collaboration",
@@ -505,6 +576,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["real-time", "multiplayer", "collaborat"],
       relatedChipIds: ["team-management"],
       whyItMatters: "Matters if a team needs to work in the same file at the same time.",
+      scenario: "Work in the same file as a team, in real time",
     },
     {
       id: "easeOfUse",
@@ -513,6 +585,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["beginner-friendly", "easy", "intuitive", "accessible"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you're not a trained designer/developer.",
+      scenario: "Design without formal training",
     },
     {
       id: "freePlanValue",
@@ -521,6 +594,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free plan", "free tier", "budget"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Build a site without paying upfront",
     },
   ],
   marketing: [
@@ -531,6 +605,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["copy", "content", "brand voice", "templates"],
       relatedChipIds: ["writing-content"],
       whyItMatters: "Matters if the core job is producing marketing copy at scale.",
+      scenario: "Produce marketing copy at scale",
     },
     {
       id: "seo",
@@ -539,6 +614,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["seo", "keyword", "backlink", "rank track", "site audit"],
       relatedChipIds: ["marketing-growth"],
       whyItMatters: "Matters if organic search visibility is part of your strategy.",
+      scenario: "Improve organic search visibility",
     },
     {
       id: "crmSales",
@@ -547,6 +623,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["crm", "sales", "deal tracking", "leads"],
       relatedChipIds: ["marketing-growth", "startup"],
       whyItMatters: "Matters if you need to track contacts and deals, not just publish content.",
+      scenario: "Track contacts and deals",
     },
     {
       id: "automationWorkflows",
@@ -555,6 +632,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["automat", "workflow", "campaign"],
       relatedChipIds: ["automation"],
       whyItMatters: "Matters if you want repeat campaigns to run without manual work each time.",
+      scenario: "Run a campaign without repeat manual work",
     },
     {
       id: "easeOfUse",
@@ -563,6 +641,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["easy", "simple", "template-driven"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if you're not a trained marketer and want to move fast.",
+      scenario: "Market without specialist training",
     },
     {
       id: "freePlanValue",
@@ -571,6 +650,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free plan", "free crm", "free tier"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Start without a paid plan",
     },
   ],
   business: [
@@ -581,6 +661,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["chat", "messag", "meeting", "huddle"],
       relatedChipIds: ["team-management"],
       whyItMatters: "Matters if the core job is keeping a team in sync in real time.",
+      scenario: "Keep a team in sync in real time",
     },
     {
       id: "projectWorkManagement",
@@ -589,6 +670,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["board", "work management", "task"],
       relatedChipIds: ["team-management"],
       whyItMatters: "Matters if you need to track and plan work, not just communicate.",
+      scenario: "Plan and track work across a team",
     },
     {
       id: "fileStorage",
@@ -597,6 +679,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["storage", "sync", "file sharing", "backup"],
       relatedChipIds: [],
       whyItMatters: "Matters if reliable file access across devices is the main job.",
+      scenario: "Access files reliably across devices",
     },
     {
       id: "formsSurveys",
@@ -605,6 +688,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["form", "survey"],
       relatedChipIds: [],
       whyItMatters: "Matters if you need to collect structured responses from people.",
+      scenario: "Collect structured responses from people",
     },
     {
       id: "officeProductivity",
@@ -613,6 +697,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["word", "excel", "powerpoint", "docs and sheets", "office"],
       relatedChipIds: ["writing-content", "presentations"],
       whyItMatters: "Matters if you need familiar document/spreadsheet/slide editing.",
+      scenario: "Edit familiar docs, sheets and slides",
     },
     {
       id: "easeOfUse",
@@ -621,6 +706,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["easy", "familiar", "straightforward"],
       relatedChipIds: ["beginner-friendly", "not-complicated"],
       whyItMatters: "Matters if your team needs to get productive with minimal onboarding.",
+      scenario: "Onboard a team with minimal training",
     },
     {
       id: "freePlanValue",
@@ -629,6 +715,7 @@ export const COMPARISON_DIMENSIONS: Record<CategorySlug, ComparisonDimension[]> 
       strongKeywords: ["free plan", "free tier"],
       relatedChipIds: ["free-budget", "affordable"],
       whyItMatters: "Matters if budget is a constraint before committing to a paid plan.",
+      scenario: "Run this without a paid plan",
     },
   ],
 };

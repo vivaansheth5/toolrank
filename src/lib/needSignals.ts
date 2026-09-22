@@ -315,6 +315,15 @@ const NEED_SIGNALS: { pattern: RegExp; chip: RequirementChip }[] = [
       tagHints: ["data analysis", "long documents", "pdf", "file"],
     },
   },
+  {
+    pattern: /\bscalab(le|ility)\b|\bgrows? with (my|our|the) (business|team|site|traffic)\b/,
+    chip: {
+      id: "scalability",
+      label: "Scalability",
+      emoji: "📈",
+      tagHints: ["scalable", "enterprise", "cms", "hosting"],
+    },
+  },
 ];
 
 /**

@@ -78,7 +78,9 @@ export default function AskAboutNeeds({
       {answer && (
         <div className="mt-4 rounded-xl border border-border bg-stone-50/60 p-4">
           <p className="text-sm font-semibold text-foreground">{answer.title}</p>
-          {answer.matched ? (
+          {answer.summary ? (
+            <p className="mt-1.5 text-sm text-foreground/80">{answer.summary}</p>
+          ) : answer.matched ? (
             <ul className="mt-2 space-y-1.5">
               {answer.rows.map((row) => (
                 <li key={row.tool.id} className="text-sm text-foreground/80">

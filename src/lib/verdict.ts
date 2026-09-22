@@ -21,59 +21,60 @@ export const STRENGTH_PHRASES: Record<Strength, string> = {
 };
 
 /**
- * Deterministic "which one should you choose" verdicts for a set of
- * compared tools, built entirely from existing tool metadata (rating,
- * pricing tier, free plan, strengths, tagline). No AI call — mirrors the
- * same transparent, explainable approach used by lib/recommend.ts.
+ * Deterministic per-tool fit summaries for a set of compared tools, built
+ * entirely from existing tool metadata (rating, pricing tier, free plan,
+ * strengths, tagline). No AI call — mirrors the same transparent,
+ * explainable approach used by lib/recommend.ts.
+ *
+ * Deliberately never declares a "Best overall" / "Best value" winner: each
+ * tool gets its own fact-grounded label ("Highest-rated", "Lowest starting
+ * price", "Known for X") so the reader can weigh the actual tradeoff rather
+ * than be handed a single global pick.
  *
  * IMPORTANT: this must never read affiliate/deal data. Recommendation and
  * monetization are deliberately independent — whether a tool has an offer
- * never changes its verdict or ranking here.
+ * never changes anything here.
  */
 export function getCompareVerdicts(tools: Tool[]): CompareVerdict[] {
   if (tools.length < 2) return [];
 
-  const remaining = [...tools];
-  const verdicts: CompareVerdict[] = [];
+  const highestRated = [...tools].sort((a, b) => b.rating - a.rating || b.popularity - a.popularity)[0];
+  const lowestPrice = [...tools].sort((a, b) => {
+    const tierDiff = tierRank(a.pricing.tier) - tierRank(b.pricing.tier);
+    if (tierDiff !== 0) return tierDiff;
+    if (a.freePlan !== b.freePlan) return a.freePlan ? -1 : 1;
+    return b.rating - a.rating;
+  })[0];
 
-  const overall = [...remaining].sort(
-    (a, b) => b.rating - a.rating || b.popularity - a.popularity
-  )[0];
-  verdicts.push({
-    tool: overall,
-    label: "Best overall",
-    reason: `Choose ${overall.name} if you want the strongest all-round pick — rated ${overall.rating.toFixed(1)}/5, the highest of the group.`,
-  });
-  remaining.splice(remaining.indexOf(overall), 1);
-
-  if (remaining.length > 0) {
-    const value = [...remaining].sort((a, b) => {
-      const tierDiff = tierRank(a.pricing.tier) - tierRank(b.pricing.tier);
-      if (tierDiff !== 0) return tierDiff;
-      if (a.freePlan !== b.freePlan) return a.freePlan ? -1 : 1;
-      return b.rating - a.rating;
-    })[0];
-    verdicts.push({
-      tool: value,
-      label: "Best value",
-      reason: value.freePlan
-        ? `Choose ${value.name} if price is the deciding factor: it has a free plan and the lowest cost to start of the group.`
-        : `Choose ${value.name} if price is the deciding factor: it has the lowest starting price of the group.`,
-    });
-    remaining.splice(remaining.indexOf(value), 1);
-  }
-
-  for (const tool of remaining) {
+  return tools.map((tool) => {
     const primaryStrength = tool.strengths[0];
     const strengthLabel = primaryStrength ? STRENGTH_PHRASES[primaryStrength] : undefined;
-    verdicts.push({
-      tool,
-      label: strengthLabel ? `Best for ${strengthLabel}` : "Worth a look",
-      reason: strengthLabel
-        ? `Choose ${tool.name} if your priority is ${strengthLabel}: ${tool.tagline}`
-        : `Choose ${tool.name} as a solid alternative: ${tool.tagline}`,
-    });
-  }
+    const notes: string[] = [];
 
-  return verdicts;
+    if (tool.slug === highestRated.slug) {
+      notes.push(`is the highest-rated in this group at ${tool.rating.toFixed(1)}/5`);
+    }
+    if (tool.slug === lowestPrice.slug) {
+      notes.push(
+        tool.freePlan ? "has a free plan and the lowest cost to start here" : "has the lowest starting price here"
+      );
+    }
+    if (strengthLabel) {
+      notes.push(`stands out for ${strengthLabel}`);
+    }
+
+    let label = "Also worth a look";
+    if (tool.slug === highestRated.slug) label = "Highest-rated";
+    else if (tool.slug === lowestPrice.slug) label = "Lowest starting price";
+    else if (strengthLabel) label = `Known for ${strengthLabel}`;
+
+    return {
+      tool,
+      label,
+      reason:
+        notes.length > 0
+          ? `${tool.name} ${notes.join(" and ")} — worth it if that's what matters most to you.`
+          : `${tool.name}: ${tool.tagline}`,
+    };
+  });
 }
