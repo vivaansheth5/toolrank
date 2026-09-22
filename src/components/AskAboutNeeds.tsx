@@ -6,23 +6,58 @@ import { answerCommonComparisonQuestion, type QuestionAnswer } from "@/lib/answe
 import type { ParsedNeed } from "@/lib/needSignals";
 import type { Tool } from "@/data/types";
 
-export default function AskAboutNeeds({ tools, parsedNeed }: { tools: Tool[]; parsedNeed?: ParsedNeed | null }) {
+export default function AskAboutNeeds({
+  tools,
+  parsedNeed,
+  suggestedQuestions,
+  title = "Is there anything specific you want to know?",
+}: {
+  tools: Tool[];
+  parsedNeed?: ParsedNeed | null;
+  /** Quick-tap questions shown above the input — e.g. on an exact-comparison
+   *  page ("Which is cheaper?", "What will I miss if I choose X?"). Each one
+   *  runs through the SAME deterministic Q&A over these same `tools`; never
+   *  navigates anywhere or falls back to the recommendation engine. */
+  suggestedQuestions?: string[];
+  title?: string;
+}) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<QuestionAnswer | null>(null);
 
+  function ask(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    setQuestion(trimmed);
+    setAnswer(answerCommonComparisonQuestion(trimmed, tools, parsedNeed));
+  }
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const trimmed = question.trim();
-    if (!trimmed) return;
-    setAnswer(answerCommonComparisonQuestion(trimmed, tools, parsedNeed));
+    ask(question);
   }
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
       <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
         <MessageCircleQuestion size={16} className="text-accent" />
-        Is there anything specific you want to know?
+        {title}
       </h3>
+
+      {suggestedQuestions && suggestedQuestions.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {suggestedQuestions.map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => ask(q)}
+              className="focus-ring rounded-full border border-border bg-stone-50/60 px-3 py-1.5 text-xs font-medium text-foreground/80 transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="mt-3 flex items-center gap-2">
         <input
           type="text"

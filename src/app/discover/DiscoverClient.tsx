@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import NeedInput from "@/components/NeedInput";
 import RequirementChip from "@/components/RequirementChip";
@@ -12,22 +13,53 @@ import { matchToolsToNeed, explainMatch } from "@/lib/needMatch";
 import { getWhatYouGetAndMiss } from "@/lib/needCompare";
 import { parseNeed, refineParsedNeed, QUICK_START_NEEDS } from "@/lib/needSignals";
 import type { NeedRefinements } from "@/lib/needSignals";
+import { detectComparisonIntent } from "@/lib/comparisonIntent";
 import { AUDIENCE_LABELS, BUDGET_REFINEMENT_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
 import type { ExperienceLevel, PriceTier, Strength } from "@/data/types";
+
+/** Exact-tool-comparison intent overrides discovery entirely: when the user
+ *  names 2+ known tools and asks to compare them, we skip the
+ *  recommendation engine and go straight to the existing direct-comparison
+ *  route (/compare?tools=...) rather than showing unrelated "recommended"
+ *  tools instead of the ones they explicitly asked about. */
+function comparisonRedirectHref(text: string): string | null {
+  const result = detectComparisonIntent(text);
+  if (!result.isComparisonIntent || result.identifiedTools.length < 2) return null;
+  const params = new URLSearchParams();
+  params.set("tools", result.identifiedTools.map((m) => m.tool.slug).join(","));
+  params.set("need", text);
+  return `/compare?${params.toString()}`;
+}
 
 const MAX_COMPARE = 3;
 const BUDGET_OPTIONS: PriceTier[] = ["free", "under-500", "500-1000", "1000-plus"];
 const EXPERIENCE_OPTIONS: ExperienceLevel[] = ["beginner", "intermediate", "advanced"];
 const PRIORITY_OPTIONS: Strength[] = ["ease-of-use", "features", "price", "quality", "speed"];
 
-type Step = "input" | "understanding" | "results";
+type Step = "input" | "understanding" | "results" | "redirecting";
 
 export default function DiscoverClient({ initialNeed }: { initialNeed: string }) {
-  const [step, setStep] = useState<Step>(initialNeed ? "understanding" : "input");
+  const router = useRouter();
+  const initialRedirectHref = useMemo(
+    () => (initialNeed ? comparisonRedirectHref(initialNeed) : null),
+    [initialNeed]
+  );
+  const [step, setStep] = useState<Step>(
+    initialRedirectHref ? "redirecting" : initialNeed ? "understanding" : "input"
+  );
   const [needText, setNeedText] = useState(initialNeed);
   const [excludedChipIds, setExcludedChipIds] = useState<Set<string>>(new Set());
   const [refinements, setRefinements] = useState<NeedRefinements>({});
   const [selected, setSelected] = useState<string[]>([]);
+
+  // Covers direct/home-hero entry (?need=... already names 2+ tools to
+  // compare) — handleNeedSubmit below covers the in-page textarea. The
+  // initial `step` above already skips rendering the wrong UI for a frame;
+  // this effect just performs the actual navigation.
+  useEffect(() => {
+    if (initialRedirectHref) router.replace(initialRedirectHref);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialRedirectHref]);
 
   const baseParsedNeed = useMemo(() => parseNeed(needText), [needText]);
   const parsedNeed = useMemo(
@@ -40,6 +72,11 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
 
   function handleNeedSubmit(text: string) {
     setNeedText(text);
+    const href = comparisonRedirectHref(text);
+    if (href) {
+      router.push(href);
+      return;
+    }
     setExcludedChipIds(new Set());
     setSelected([]);
     setStep("understanding");
@@ -82,6 +119,13 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8">
+      {step === "redirecting" && (
+        <div className="flex flex-col items-center gap-3 py-20 text-center">
+          <Sparkles size={20} className="animate-pulse text-accent-warm" />
+          <p className="text-sm font-medium text-muted">Taking you straight to the comparison you asked for…</p>
+        </div>
+      )}
+
       {step === "input" && (
         <div className="flex flex-col items-center text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-surface px-3 py-1 text-xs font-medium text-muted shadow-sm">
