@@ -99,6 +99,18 @@ function toNeedMatch(r: ToolScore): NeedMatch {
   };
 }
 
+/**
+ * Turns the transparent match percentage into an understandable label
+ * rather than presenting the number itself as a scientific measurement.
+ * The percentage still drives sorting/thresholds internally; this is only
+ * ever what gets shown to the user.
+ */
+export function getMatchLabel(matchPercent: number): "Strong match" | "Good match" | "Possible match" {
+  if (matchPercent >= 70) return "Strong match";
+  if (matchPercent >= 45) return "Good match";
+  return "Possible match";
+}
+
 /** Transparent 0–97 match percentage for one tool — no pool filtering, no
  *  ranking, just this tool's own score. Used on the compare page where the
  *  tool list is already fixed by the user's selection. */

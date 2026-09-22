@@ -276,7 +276,62 @@ const NEED_SIGNALS: { pattern: RegExp; chip: RequirementChip }[] = [
       priorityHint: "ease-of-use",
     },
   },
+  {
+    pattern: /\bdata science\b|\bdsai\b|\bmachine learning\b|\bcollege (student|coursework|assignment)/,
+    chip: {
+      id: "data-science-coursework",
+      label: "Data science coursework",
+      emoji: "🧪",
+      tagHints: ["data analysis", "coding", "reasoning"],
+      typeHint: "AI",
+    },
+  },
+  {
+    pattern: /\bpython\b|\bpandas\b|\bnumpy\b|\bjupyter\b|\bcoding project(s)?\b|\bscript(s|ing)?\b/,
+    chip: {
+      id: "python-coding",
+      label: "Python & coding projects",
+      emoji: "🐍",
+      tagHints: ["coding", "code editor", "developer tools"],
+      categoryHint: "coding",
+    },
+  },
+  {
+    pattern: /\bmath(s)?\b|\bstatistic(s)?\b|\bstats\b|\bcalculus\b|\balgebra\b|\bquantitative\b/,
+    chip: {
+      id: "maths-statistics",
+      label: "Maths & statistics help",
+      emoji: "📐",
+      tagHints: ["reasoning"],
+      typeHint: "AI",
+    },
+  },
+  {
+    pattern: /\bpdf(s)?\b|\bfile analysis\b|\banalyz(e|ing) (a |my )?file(s)?\b|\bupload(ing)? (a |my )?(file|document)(s)?\b|\bdocument(s)? analysis\b/,
+    chip: {
+      id: "pdf-file-analysis",
+      label: "PDF / file analysis",
+      emoji: "📄",
+      tagHints: ["data analysis", "long documents", "pdf", "file"],
+    },
+  },
 ];
+
+/**
+ * Bucketed USD budget extracted straight from a "$X/month" style phrase in
+ * the raw text, e.g. "around $20/month" or "$20 budget". Only ever set from
+ * an explicit dollar figure the user typed — never inferred from anything
+ * else — same "explicit signal only" rule as every other budgetHint.
+ */
+function extractDollarBudgetHint(lower: string): PriceTier | undefined {
+  const match = lower.match(/\$\s?(\d+(?:\.\d+)?)/);
+  if (!match) return undefined;
+  const amount = parseFloat(match[1]);
+  if (amount <= 0) return "free";
+  if (amount <= 10) return "under-500";
+  if (amount <= 20) return "500-1000";
+  return "1000-plus";
+}
 
 export interface ParsedNeed {
   rawText: string;
@@ -284,11 +339,15 @@ export interface ParsedNeed {
   categoryHint?: CategorySlug;
   typeHint?: ToolType;
   experienceHint?: ExperienceLevel;
-  /** Only ever set from an explicit signal (text phrase or refinement chip
-   *  the user picked) — never inferred, per the "budget only influences
-   *  recommendations when explicitly expressed" requirement. */
+  /** Only ever set from an explicit signal (text phrase, "$X/month" figure,
+   *  or refinement chip the user picked) — never inferred, per the "budget
+   *  only influences recommendations when explicitly expressed"
+   *  requirement. */
   budgetHint?: PriceTier;
   priorityHints: Strength[];
+  /** Dollar figure parsed from the raw text (if any), carried forward so
+   *  refineParsedNeed doesn't lose it when it recomputes from chips alone. */
+  textBudgetHint?: PriceTier;
 }
 
 export interface NeedRefinements {
@@ -320,7 +379,8 @@ export function parseNeed(rawText: string, refinements: NeedRefinements = {}): P
   const categoryHint = chips.find((c) => c.categoryHint)?.categoryHint;
   const typeHint = chips.find((c) => c.typeHint)?.typeHint;
   const experienceHint = refinements.experience ?? chips.find((c) => c.experienceHint)?.experienceHint;
-  const budgetHint = refinements.budget ?? chips.find((c) => c.budgetHint)?.budgetHint;
+  const textBudgetHint = extractDollarBudgetHint(lower);
+  const budgetHint = refinements.budget ?? textBudgetHint ?? chips.find((c) => c.budgetHint)?.budgetHint;
 
   const priorityHints = Array.from(
     new Set([
@@ -329,7 +389,7 @@ export function parseNeed(rawText: string, refinements: NeedRefinements = {}): P
     ])
   );
 
-  return { rawText, chips, categoryHint, typeHint, experienceHint, budgetHint, priorityHints };
+  return { rawText, chips, categoryHint, typeHint, experienceHint, budgetHint, priorityHints, textBudgetHint };
 }
 
 /**
@@ -348,7 +408,7 @@ export function refineParsedNeed(
   const categoryHint = chips.find((c) => c.categoryHint)?.categoryHint;
   const typeHint = chips.find((c) => c.typeHint)?.typeHint;
   const experienceHint = refinements.experience ?? chips.find((c) => c.experienceHint)?.experienceHint;
-  const budgetHint = refinements.budget ?? chips.find((c) => c.budgetHint)?.budgetHint;
+  const budgetHint = refinements.budget ?? parsedNeed.textBudgetHint ?? chips.find((c) => c.budgetHint)?.budgetHint;
 
   const priorityHints = Array.from(
     new Set([
@@ -357,7 +417,16 @@ export function refineParsedNeed(
     ])
   );
 
-  return { rawText: parsedNeed.rawText, chips, categoryHint, typeHint, experienceHint, budgetHint, priorityHints };
+  return {
+    rawText: parsedNeed.rawText,
+    chips,
+    categoryHint,
+    typeHint,
+    experienceHint,
+    budgetHint,
+    priorityHints,
+    textBudgetHint: parsedNeed.textBudgetHint,
+  };
 }
 
 export const QUICK_START_NEEDS: { emoji: string; label: string; needText: string }[] = [

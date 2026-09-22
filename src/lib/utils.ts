@@ -11,6 +11,16 @@ export const PRICE_TIER_LABELS: Record<PriceTier, string> = {
   "1000-plus": "₹1,000+/mo",
 };
 
+/** USD-denominated labels for the need-based budget refinement UI only —
+ *  a display-only alias over the same PriceTier buckets used everywhere
+ *  else, so the underlying data model never changes. */
+export const BUDGET_REFINEMENT_LABELS: Record<PriceTier, string> = {
+  free: "Free",
+  "under-500": "Under $10/month",
+  "500-1000": "Under $20/month",
+  "1000-plus": "Under $50/month",
+};
+
 export const AUDIENCE_LABELS: Record<Audience, string> = {
   students: "Students",
   creators: "Creators",

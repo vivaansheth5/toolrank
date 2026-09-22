@@ -204,7 +204,7 @@ export default function CompareClient({
       {selectedTools.length >= 2 && (
         <section className="mt-12">
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            Which one should you choose?
+            {parsedNeed ? "Which fits your needs better?" : "Which one should you choose?"}
           </h2>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {displayedVerdicts.map((verdict) => (
@@ -216,7 +216,7 @@ export default function CompareClient({
 
       {selectedTools.length >= 2 && (
         <section className="mt-10">
-          <AskAboutNeeds tools={selectedTools} />
+          <AskAboutNeeds tools={selectedTools} parsedNeed={parsedNeed} />
         </section>
       )}
 

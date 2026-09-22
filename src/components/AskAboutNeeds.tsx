@@ -3,9 +3,10 @@
 import { useState, type FormEvent } from "react";
 import { MessageCircleQuestion, Send } from "lucide-react";
 import { answerCommonComparisonQuestion, type QuestionAnswer } from "@/lib/answerQuestion";
+import type { ParsedNeed } from "@/lib/needSignals";
 import type { Tool } from "@/data/types";
 
-export default function AskAboutNeeds({ tools }: { tools: Tool[] }) {
+export default function AskAboutNeeds({ tools, parsedNeed }: { tools: Tool[]; parsedNeed?: ParsedNeed | null }) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<QuestionAnswer | null>(null);
 
@@ -13,7 +14,7 @@ export default function AskAboutNeeds({ tools }: { tools: Tool[] }) {
     e.preventDefault();
     const trimmed = question.trim();
     if (!trimmed) return;
-    setAnswer(answerCommonComparisonQuestion(trimmed, tools));
+    setAnswer(answerCommonComparisonQuestion(trimmed, tools, parsedNeed));
   }
 
   return (
@@ -27,7 +28,7 @@ export default function AskAboutNeeds({ tools }: { tools: Tool[] }) {
           type="text"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="e.g. What will I miss if I choose CapCut?"
+          placeholder={parsedNeed ? "e.g. Why did you recommend this?" : "e.g. What will I miss if I choose CapCut?"}
           className="focus-ring min-w-0 flex-1 rounded-full border border-border-strong bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted"
         />
         <button

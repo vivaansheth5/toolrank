@@ -9,9 +9,10 @@ import ToolMatchCard from "@/components/ToolMatchCard";
 import EmptyState from "@/components/EmptyState";
 import { tools } from "@/data/tools";
 import { matchToolsToNeed, explainMatch } from "@/lib/needMatch";
+import { getWhatYouGetAndMiss } from "@/lib/needCompare";
 import { parseNeed, refineParsedNeed, QUICK_START_NEEDS } from "@/lib/needSignals";
 import type { NeedRefinements } from "@/lib/needSignals";
-import { AUDIENCE_LABELS, PRICE_TIER_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
+import { AUDIENCE_LABELS, BUDGET_REFINEMENT_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
 import type { ExperienceLevel, PriceTier, Strength } from "@/data/types";
 
 const MAX_COMPARE = 3;
@@ -55,6 +56,10 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
 
   function setRefinement<K extends keyof NeedRefinements>(key: K, value: NeedRefinements[K]) {
     setRefinements((prev) => ({ ...prev, [key]: prev[key] === value ? undefined : value }));
+  }
+
+  function clearBudget() {
+    setRefinements((prev) => ({ ...prev, budget: undefined }));
   }
 
   function toggleSelectTool(slug: string) {
@@ -160,12 +165,18 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
                 {BUDGET_OPTIONS.map((tier) => (
                   <RequirementChip
                     key={tier}
-                    label={PRICE_TIER_LABELS[tier]}
+                    label={BUDGET_REFINEMENT_LABELS[tier]}
                     active={refinements.budget === tier}
                     onClick={() => setRefinement("budget", tier)}
                     size="sm"
                   />
                 ))}
+                <RequirementChip
+                  label="Flexible"
+                  active={refinements.budget === undefined}
+                  onClick={clearBudget}
+                  size="sm"
+                />
               </div>
             </div>
             <div>
@@ -238,6 +249,7 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
             <div className="mt-6 space-y-4">
               {matches.map((match) => {
                 const { reasons } = explainMatch(match, parsedNeed);
+                const { get, miss } = getWhatYouGetAndMiss(match.tool, parsedNeed);
                 return (
                   <ToolMatchCard
                     key={match.tool.slug}
@@ -248,6 +260,8 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
                       .slice(0, 2)
                       .map((a) => AUDIENCE_LABELS[a])
                       .join(" & ")}`}
+                    get={get}
+                    miss={miss}
                     selectable
                     selected={selected.includes(match.tool.slug)}
                     onToggleSelect={toggleSelectTool}

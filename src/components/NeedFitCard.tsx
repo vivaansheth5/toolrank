@@ -3,7 +3,7 @@ import ToolLogo from "./ToolLogo";
 import type { ToolFitSummary } from "@/lib/needCompare";
 
 export default function NeedFitCard({ fit }: { fit: ToolFitSummary }) {
-  const { tool, emoji, label, matchPercent } = fit;
+  const { tool, emoji, label } = fit;
 
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
@@ -17,7 +17,6 @@ export default function NeedFitCard({ fit }: { fit: ToolFitSummary }) {
           {label}
         </p>
       </div>
-      <span className="shrink-0 text-sm font-semibold text-muted">{matchPercent}%</span>
     </div>
   );
 }

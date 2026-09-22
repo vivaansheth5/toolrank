@@ -1,4 +1,5 @@
 import { getNeedProfile } from "./needProfile";
+import { getMatchLabel } from "./needMatch";
 import type { ParsedNeed, RequirementChip } from "./needSignals";
 import type { Tool } from "@/data/types";
 import { STRENGTH_PHRASES } from "./verdict";
@@ -48,9 +49,10 @@ export interface ToolFitSummary {
 
 /**
  * "How these tools fit your needs" summary card content — a plain-language
- * fit label per tool, derived from its match percentage plus one explicit
- * experience-level check (the "more advanced than you need" case called
- * out in the spec).
+ * label per tool (the same Strong/Good/Possible match vocabulary used on
+ * the results page), plus one explicit experience-level check (the "more
+ * advanced than you need" case called out in the spec). The percentage is
+ * never shown as a standalone number — only the label is.
  */
 export function summarizeFit(tool: Tool, matchPercent: number, parsedNeed: ParsedNeed): ToolFitSummary {
   if (
@@ -60,9 +62,9 @@ export function summarizeFit(tool: Tool, matchPercent: number, parsedNeed: Parse
   ) {
     return { tool, matchPercent, emoji: "🟡", label: "More advanced than you need" };
   }
-  if (matchPercent >= 65) return { tool, matchPercent, emoji: "🟢", label: "Strong fit" };
-  if (matchPercent >= 35) return { tool, matchPercent, emoji: "🟡", label: "Partial fit" };
-  return { tool, matchPercent, emoji: "🔴", label: "Weak fit" };
+  const label = getMatchLabel(matchPercent);
+  const emoji = label === "Strong match" ? "🟢" : label === "Good match" ? "🟡" : "🔴";
+  return { tool, matchPercent, emoji, label };
 }
 
 export interface GetVsMiss {

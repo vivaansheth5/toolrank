@@ -1,15 +1,24 @@
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Minus } from "lucide-react";
 import ToolLogo, { CATEGORY_ACCENT } from "./ToolLogo";
 import PricingBadge from "./PricingBadge";
+import { getMatchLabel } from "@/lib/needMatch";
 import { cn } from "@/lib/utils";
 import type { Tool } from "@/data/types";
+
+const LABEL_STYLE: Record<ReturnType<typeof getMatchLabel>, string> = {
+  "Strong match": "bg-success-soft text-success",
+  "Good match": "bg-accent-soft text-accent",
+  "Possible match": "bg-stone-100 text-stone-600",
+};
 
 export default function ToolMatchCard({
   tool,
   matchPercent,
   reasons,
   bestFor,
+  get,
+  miss,
   selectable = false,
   selected = false,
   onToggleSelect,
@@ -18,11 +27,14 @@ export default function ToolMatchCard({
   matchPercent: number;
   reasons: string[];
   bestFor?: string;
+  get?: string[];
+  miss?: string[];
   selectable?: boolean;
   selected?: boolean;
   onToggleSelect?: (slug: string) => void;
 }) {
   const accent = CATEGORY_ACCENT[tool.category];
+  const label = getMatchLabel(matchPercent);
 
   return (
     <div
@@ -34,10 +46,9 @@ export default function ToolMatchCard({
     >
       <div className="flex items-center gap-4 sm:flex-col sm:items-center sm:gap-2">
         <ToolLogo name={tool.name} category={tool.category} size="lg" />
-        <div className="flex flex-col items-center">
-          <span className="text-2xl font-bold tracking-tight text-foreground">{matchPercent}%</span>
-          <span className="text-[11px] font-medium uppercase tracking-wide text-muted">Match</span>
-        </div>
+        <span className={cn("whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", LABEL_STYLE[label])}>
+          {label}
+        </span>
       </div>
 
       <div className="min-w-0 flex-1">
@@ -75,7 +86,7 @@ export default function ToolMatchCard({
 
         {reasons.length > 0 && (
           <div className="mt-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Why this matches</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Why this fits</p>
             <ul className="mt-1.5 grid grid-cols-1 gap-1 sm:grid-cols-2">
               {reasons.map((reason) => (
                 <li key={reason} className="flex items-start gap-1.5 text-sm text-foreground/80">
@@ -84,6 +95,37 @@ export default function ToolMatchCard({
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {((get && get.length > 0) || (miss && miss.length > 0)) && (
+          <div className="mt-4 grid grid-cols-1 gap-4 rounded-xl border border-border bg-stone-50/60 p-3 sm:grid-cols-2">
+            {get && get.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-success">What you get</p>
+                <ul className="mt-1.5 space-y-1">
+                  {get.map((item) => (
+                    <li key={item} className="flex items-start gap-1.5 text-sm text-foreground/80">
+                      <Check size={13} className="mt-0.5 shrink-0 text-success" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {miss && miss.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">What you might miss</p>
+                <ul className="mt-1.5 space-y-1">
+                  {miss.map((item) => (
+                    <li key={item} className="flex items-start gap-1.5 text-sm text-foreground/80">
+                      <Minus size={13} className="mt-0.5 shrink-0 text-muted" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 

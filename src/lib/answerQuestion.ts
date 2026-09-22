@@ -1,5 +1,11 @@
 import { PRICE_TIER_LABELS } from "./utils";
+import { getMatchPercent, getMatchLabel } from "./needMatch";
+import { getNeedBasedVerdict } from "./needCompare";
+import type { ParsedNeed } from "./needSignals";
 import type { Tool } from "@/data/types";
+
+/** Required verbatim whenever we genuinely have nothing verified to say. */
+const NOT_ENOUGH_INFO = "I don't have enough verified information to answer that yet.";
 
 export interface QuestionAnswerRow {
   tool: Tool;
@@ -21,8 +27,48 @@ export interface QuestionAnswer {
  * generic (title + rows) so this function's body can later be replaced
  * with an LLM call without the calling UI (AskAboutNeeds) changing at all.
  */
-export function answerCommonComparisonQuestion(question: string, tools: Tool[]): QuestionAnswer {
+export function answerCommonComparisonQuestion(
+  question: string,
+  tools: Tool[],
+  parsedNeed?: ParsedNeed | null
+): QuestionAnswer {
   const q = question.toLowerCase();
+
+  if (/\bwhy (did|do|would|does) you recommend\b|\bwhy (is|are|was) (this|these|it) recommend/.test(q)) {
+    if (!parsedNeed || tools.length === 0) {
+      return { matched: false, title: "Why this was recommended", rows: [], note: NOT_ENOUGH_INFO };
+    }
+    const percents = Object.fromEntries(tools.map((t) => [t.slug, getMatchPercent(t, parsedNeed)] as const));
+    const verdicts = getNeedBasedVerdict(tools, parsedNeed, percents);
+    return {
+      matched: true,
+      title: "Why this was recommended",
+      rows: verdicts.map((v) => ({ tool: v.tool, value: v.reason })),
+    };
+  }
+
+  if (
+    /\bwhich (one |tool )?fits? (my|your|our) needs? better\b|\bwhich (one|tool) is (the )?better fit\b|\bwhich (one|tool) should i (choose|pick)\b/.test(
+      q
+    )
+  ) {
+    if (!parsedNeed || tools.length === 0) {
+      return { matched: false, title: "Which fits your needs better", rows: [], note: NOT_ENOUGH_INFO };
+    }
+    const percents = Object.fromEntries(tools.map((t) => [t.slug, getMatchPercent(t, parsedNeed)] as const));
+    const ranked = [...tools].sort((a, b) => (percents[b.slug] ?? 0) - (percents[a.slug] ?? 0));
+    return {
+      matched: true,
+      title: "Which fits your needs better",
+      rows: ranked.map((tool, i) => ({
+        tool,
+        value:
+          i === 0
+            ? `Best fit based on what you told us — ${getMatchLabel(percents[tool.slug] ?? 0)}.`
+            : `${getMatchLabel(percents[tool.slug] ?? 0)} for what you told us.`,
+      })),
+    };
+  }
 
   if (/\bmiss|missing|give up|trade.?off|downside|con(s)?\b/.test(q)) {
     return {
@@ -85,6 +131,6 @@ export function answerCommonComparisonQuestion(question: string, tools: Tool[]):
     matched: false,
     title: "Detailed comparison",
     rows: [],
-    note: "Here's the detailed comparison for the factors we have data for.",
+    note: NOT_ENOUGH_INFO,
   };
 }
