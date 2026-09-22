@@ -38,7 +38,9 @@ export default function GetVsMissCard({ data }: { data: GetVsMiss }) {
                 </li>
               ))
             ) : (
-              <li className="text-sm text-muted">No known limitations on record.</li>
+              <li className="text-sm text-muted">
+                We don&apos;t have enough verified information to make a specific claim here.
+              </li>
             )}
           </ul>
         </div>

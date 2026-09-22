@@ -4,11 +4,36 @@ import ToolLogo, { CATEGORY_COLORS } from "./ToolLogo";
 import Rating from "./Rating";
 import PricingBadge from "./PricingBadge";
 import AffiliateCTA from "./AffiliateCTA";
-import { AUDIENCE_LABELS, PRICE_TIER_LABELS } from "@/lib/utils";
+import { AUDIENCE_LABELS, PRICE_TIER_LABELS, cn } from "@/lib/utils";
 import { getCategory } from "@/data/categories";
 import { getBestDealForTool } from "@/data/deals";
 import { resolveOfferCta } from "@/lib/offers";
+import { getDimensionsForCategory } from "@/data/comparisonDimensions";
+import { getComparisonProfile, FIT_LEVEL_LABEL, type FitLevel } from "@/lib/comparisonProfile";
 import type { Tool } from "@/data/types";
+
+const LEVEL_STYLE: Record<FitLevel, string> = {
+  strong: "bg-success-soft text-success",
+  good: "bg-accent-soft text-accent",
+  basic: "bg-stone-100 text-stone-600",
+  limited: "bg-warning-soft text-warning",
+  notAvailable: "bg-stone-100 text-stone-500",
+  unknown: "bg-stone-50 text-stone-400",
+};
+
+function SectionDivider({ label, span }: { label: string; span: number }) {
+  return (
+    <tr>
+      <th
+        colSpan={span}
+        scope="colgroup"
+        className="sticky left-0 bg-stone-50/80 px-4 py-2.5 text-left text-xs font-bold uppercase tracking-wide text-muted"
+      >
+        {label}
+      </th>
+    </tr>
+  );
+}
 
 function Row({
   label,
@@ -31,6 +56,14 @@ function Row({
 }
 
 export default function ComparisonTable({ tools }: { tools: Tool[] }) {
+  // Dimension rows only make sense when every compared tool shares a
+  // category (the schema is category-aware) — for a rare cross-category
+  // comparison the table just falls back to the original generic rows.
+  const sameCategory = tools.length > 0 && tools.every((t) => t.category === tools[0].category);
+  const dimensions = sameCategory ? getDimensionsForCategory(tools[0].category) : [];
+  const profiles = tools.map((t) => getComparisonProfile(t));
+  const colSpan = tools.length + 1;
+
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
       <table className="w-full min-w-[640px] border-collapse text-sm">
@@ -100,6 +133,34 @@ export default function ComparisonTable({ tools }: { tools: Tool[] }) {
               </td>
             ))}
           </Row>
+
+          {dimensions.length > 0 && (
+            <>
+              <SectionDivider label="Capabilities" span={colSpan} />
+              {dimensions.map((dim) => (
+                <Row key={dim.id} label={dim.label}>
+                  {tools.map((tool, i) => {
+                    const evidence = profiles[i][dim.id];
+                    return (
+                      <td key={tool.id} className="px-4 py-4 align-top">
+                        <span
+                          className={cn(
+                            "inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                            LEVEL_STYLE[evidence.level]
+                          )}
+                        >
+                          {FIT_LEVEL_LABEL[evidence.level]}
+                        </span>
+                        <p className="mt-1.5 text-xs text-foreground/70">{evidence.description}</p>
+                      </td>
+                    );
+                  })}
+                </Row>
+              ))}
+              <SectionDivider label="Audience & usability" span={colSpan} />
+            </>
+          )}
+
           <Row label="Best for">
             {tools.map((tool) => (
               <td key={tool.id} className="px-4 py-4 align-top text-foreground/80">

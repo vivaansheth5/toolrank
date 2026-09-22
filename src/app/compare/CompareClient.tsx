@@ -14,7 +14,10 @@ import ComparisonEditorial from "@/components/ComparisonEditorial";
 import ComparisonFAQ from "@/components/ComparisonFAQ";
 import RequirementChip from "@/components/RequirementChip";
 import NeedFitCard from "@/components/NeedFitCard";
-import NeedComparisonTable from "@/components/NeedComparisonTable";
+import DimensionFitCards from "@/components/DimensionFitCards";
+import KeyDifferences from "@/components/KeyDifferences";
+import QuickTake from "@/components/QuickTake";
+import PricingComparisonSection from "@/components/PricingComparisonSection";
 import GetVsMissCard from "@/components/GetVsMissCard";
 import AskAboutNeeds from "@/components/AskAboutNeeds";
 import { tools } from "@/data/tools";
@@ -25,7 +28,8 @@ import { buildComparisonEditorial } from "@/lib/comparisonContent";
 import { parseNeed, refineParsedNeed } from "@/lib/needSignals";
 import type { NeedRefinements } from "@/lib/needSignals";
 import { getMatchPercent } from "@/lib/needMatch";
-import { compareAgainstNeeds, getWhatYouGetAndMiss, getNeedBasedVerdict, summarizeFit } from "@/lib/needCompare";
+import { getWhatYouGetAndMiss, getNeedBasedVerdict, summarizeFit } from "@/lib/needCompare";
+import { buildKeyDifferences, buildQuickTake, buildPricingComparison } from "@/lib/comparisonIntelligence";
 import { detectComparisonIntent } from "@/lib/comparisonIntent";
 import { BUDGET_REFINEMENT_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
 import type { ExperienceLevel, PriceTier, Strength } from "@/data/types";
@@ -105,11 +109,6 @@ export default function CompareClient({
     [parsedNeed, selectedTools, matchPercents]
   );
 
-  const needComparisonRows = useMemo(
-    () => (parsedNeed && selectedTools.length >= 2 ? compareAgainstNeeds(selectedTools, parsedNeed) : []),
-    [parsedNeed, selectedTools]
-  );
-
   const getVsMiss = useMemo(
     () => (parsedNeed ? selectedTools.map((t) => getWhatYouGetAndMiss(t, parsedNeed)) : []),
     [parsedNeed, selectedTools]
@@ -118,6 +117,28 @@ export default function CompareClient({
   const needVerdicts = useMemo(
     () => (parsedNeed && selectedTools.length >= 2 ? getNeedBasedVerdict(selectedTools, parsedNeed, matchPercents) : []),
     [parsedNeed, selectedTools, matchPercents]
+  );
+
+  // Comparison intelligence: category-aware, per-dimension evidence over
+  // the tools' own real data (lib/comparisonProfile.ts) — feeds "How these
+  // tools fit your needs", "Key differences" and "Quick take". Pricing is
+  // shown for any 2+ tool comparison since it's real structured data, not
+  // need-dependent.
+  const fitDimensionRows = useMemo(
+    () => (parsedNeed && selectedTools.length >= 2 ? buildKeyDifferences(selectedTools, parsedNeed, 10) : []),
+    [parsedNeed, selectedTools]
+  );
+  const keyDifferenceRows = useMemo(
+    () => (parsedNeed && selectedTools.length >= 2 ? buildKeyDifferences(selectedTools, parsedNeed, 5) : []),
+    [parsedNeed, selectedTools]
+  );
+  const quickTakeRows = useMemo(
+    () => (parsedNeed && selectedTools.length >= 2 ? buildQuickTake(selectedTools, parsedNeed) : []),
+    [parsedNeed, selectedTools]
+  );
+  const pricingRows = useMemo(
+    () => (selectedTools.length >= 2 ? buildPricingComparison(selectedTools) : []),
+    [selectedTools]
   );
 
   const pickerTools = useMemo(() => {
@@ -345,6 +366,12 @@ export default function CompareClient({
         </section>
       )}
 
+      {parsedNeed && quickTakeRows.length > 0 && (
+        <section className="mt-10">
+          <QuickTake rows={quickTakeRows} />
+        </section>
+      )}
+
       {selectedTools.length >= 2 && (
         <section className="mt-10">
           <AskAboutNeeds
@@ -364,14 +391,19 @@ export default function CompareClient({
               <NeedFitCard key={fit.tool.slug} fit={fit} />
             ))}
           </div>
+          {fitDimensionRows.length > 0 && (
+            <div className="mt-4">
+              <DimensionFitCards tools={selectedTools} rows={fitDimensionRows} />
+            </div>
+          )}
         </section>
       )}
 
-      {parsedNeed && needComparisonRows.length > 0 && (
+      {parsedNeed && keyDifferenceRows.length > 0 && (
         <section className="mt-10">
-          <h2 className="text-xl font-bold tracking-tight text-foreground">Based on what you need</h2>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Key differences</h2>
           <div className="mt-4">
-            <NeedComparisonTable tools={selectedTools} rows={needComparisonRows} />
+            <KeyDifferences differences={keyDifferenceRows} />
           </div>
         </section>
       )}
@@ -383,6 +415,15 @@ export default function CompareClient({
             {getVsMiss.map((data) => (
               <GetVsMissCard key={data.tool.slug} data={data} />
             ))}
+          </div>
+        </section>
+      )}
+
+      {pricingRows.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Pricing</h2>
+          <div className="mt-4">
+            <PricingComparisonSection rows={pricingRows} />
           </div>
         </section>
       )}

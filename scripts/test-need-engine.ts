@@ -83,17 +83,23 @@ section("DSAI college student scenario (ChatGPT vs Claude)");
   assert(explainMatch(chatgptMatch, parsedNeed).reasons.length > 0, "ChatGPT gets non-empty 'why this fits' reasons");
   assert(explainMatch(claudeMatch, parsedNeed).reasons.length > 0, "Claude gets non-empty 'why this fits' reasons");
 
+  // getWhatYouGetAndMiss is now backed by the comparisonProfile engine
+  // (personalized, per-dimension evidence — see
+  // scripts/test-comparison-intelligence.ts for full traceability/no-
+  // fabrication coverage) rather than "miss is always exactly tool.cons".
   const chatgptFit = getWhatYouGetAndMiss(chatgpt, parsedNeed);
   const claudeFit = getWhatYouGetAndMiss(claude, parsedNeed);
   assert(chatgptFit.get.length > 0, "ChatGPT 'what you get' is non-empty");
   assert(claudeFit.get.length > 0, "Claude 'what you get' is non-empty");
+  const chatgptHaystack = [chatgpt.description, ...chatgpt.features, ...chatgpt.pros, ...chatgpt.cons].join(" ");
+  const claudeHaystack = [claude.description, ...claude.features, ...claude.pros, ...claude.cons].join(" ");
   assert(
-    JSON.stringify(chatgptFit.miss) === JSON.stringify(chatgpt.cons),
-    "ChatGPT 'what you might miss' is exactly tool.cons (never invented)"
+    chatgptFit.miss.every((line) => chatgptHaystack.includes(line)),
+    "ChatGPT 'what you might miss' lines are all real text from the tool's own record (never invented)"
   );
   assert(
-    JSON.stringify(claudeFit.miss) === JSON.stringify(claude.cons),
-    "Claude 'what you might miss' is exactly tool.cons (never invented)"
+    claudeFit.miss.every((line) => claudeHaystack.includes(line)),
+    "Claude 'what you might miss' lines are all real text from the tool's own record (never invented)"
   );
 
   const compared = [chatgpt, claude];

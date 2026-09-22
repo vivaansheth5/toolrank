@@ -1,5 +1,6 @@
 import { getNeedProfile } from "./needProfile";
 import { getMatchLabel } from "./needMatch";
+import { buildPersonalizedGetMiss } from "./comparisonIntelligence";
 import type { ParsedNeed, RequirementChip } from "./needSignals";
 import type { Tool } from "@/data/types";
 import { STRENGTH_PHRASES } from "./verdict";
@@ -74,25 +75,28 @@ export interface GetVsMiss {
 }
 
 /**
- * "What you get" / "What you might miss" — get is the tool's real features
- * ranked by relevance to the parsed need (falling back to its curated pros
- * if fewer than 3 features are relevant), miss is always exactly
- * tool.cons. Nothing here is invented: every line already exists on the
- * tool record.
+ * "What you get" / "What you might miss" — backed by lib/comparisonProfile
+ * + comparisonIntelligence's category-aware, per-dimension evidence engine
+ * rather than raw substring matching over a handful of feature strings.
+ * "get" is every relevant dimension where the tool has strong/good real
+ * evidence; "miss" is every relevant dimension with a stated limitation
+ * (limited/notAvailable). A dimension with genuinely inconclusive evidence
+ * lands in neither list rather than being forced into a false positive or
+ * negative. Nothing here is invented — every line is the tool's own
+ * feature/pro/con/description text; GetVsMissCard shows the required
+ * "not enough verified information" fallback when a list ends up empty.
  */
 export function getWhatYouGetAndMiss(tool: Tool, parsedNeed: ParsedNeed): GetVsMiss {
-  const lowerChips = parsedNeed.chips.flatMap((c) => c.tagHints);
-  const relevantFeatures = tool.features.filter((f) => {
-    const lower = f.toLowerCase();
-    return lowerChips.some((hint) => lower.includes(hint));
-  });
-
-  const get =
-    relevantFeatures.length >= 3
-      ? relevantFeatures.slice(0, 5)
-      : Array.from(new Set([...relevantFeatures, ...tool.pros])).slice(0, 5);
-
-  return { tool, get, miss: tool.cons };
+  const result = buildPersonalizedGetMiss(tool, [tool], parsedNeed);
+  return {
+    tool,
+    // Two different dimensions can legitimately share the same underlying
+    // evidence sentence (e.g. one feature covering both "coding" and
+    // "reasoning") — de-duplicate by text so the UI never shows the same
+    // line twice.
+    get: Array.from(new Set(result.get.map((g) => g.text))),
+    miss: Array.from(new Set(result.miss.map((m) => m.text))),
+  };
 }
 
 /**
