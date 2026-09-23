@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { MessageCircleQuestion, Send } from "lucide-react";
 import { answerCommonComparisonQuestion, type QuestionAnswer } from "@/lib/answerQuestion";
+import { useCurrency } from "./CurrencyProvider";
 import type { ParsedNeed } from "@/lib/needSignals";
 import type { Tool } from "@/data/types";
 
@@ -23,12 +24,13 @@ export default function AskAboutNeeds({
 }) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<QuestionAnswer | null>(null);
+  const { currency } = useCurrency();
 
   function ask(text: string) {
     const trimmed = text.trim();
     if (!trimmed) return;
     setQuestion(trimmed);
-    setAnswer(answerCommonComparisonQuestion(trimmed, tools, parsedNeed));
+    setAnswer(answerCommonComparisonQuestion(trimmed, tools, parsedNeed, currency));
   }
 
   function handleSubmit(e: FormEvent) {

@@ -1,25 +1,12 @@
-import type { Audience, ExperienceLevel, PriceTier, Strength } from "@/data/types";
+import type { Audience, ExperienceLevel, Strength } from "@/data/types";
 
 export function cn(...classes: Array<string | false | null | undefined>): string {
   return classes.filter(Boolean).join(" ");
 }
 
-export const PRICE_TIER_LABELS: Record<PriceTier, string> = {
-  free: "Free",
-  "under-500": "Under ₹500/mo",
-  "500-1000": "₹500–₹1,000/mo",
-  "1000-plus": "₹1,000+/mo",
-};
-
-/** USD-denominated labels for the need-based budget refinement UI only —
- *  a display-only alias over the same PriceTier buckets used everywhere
- *  else, so the underlying data model never changes. */
-export const BUDGET_REFINEMENT_LABELS: Record<PriceTier, string> = {
-  free: "Free",
-  "under-500": "Under $10/month",
-  "500-1000": "Under $20/month",
-  "1000-plus": "Under $50/month",
-};
+// PriceTier display labels live in lib/currency.ts (getPriceTierLabel) —
+// they're currency-aware, so a single hardcoded map here would always be
+// wrong for someone. See lib/currency.ts for why.
 
 export const AUDIENCE_LABELS: Record<Audience, string> = {
   students: "Students",

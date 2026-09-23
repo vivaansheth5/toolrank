@@ -1,10 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Check, X } from "lucide-react";
 import ToolLogo, { CATEGORY_COLORS } from "./ToolLogo";
 import Rating from "./Rating";
 import PricingBadge from "./PricingBadge";
 import AffiliateCTA from "./AffiliateCTA";
-import { AUDIENCE_LABELS, PRICE_TIER_LABELS, cn } from "@/lib/utils";
+import { useCurrency } from "./CurrencyProvider";
+import { AUDIENCE_LABELS, cn } from "@/lib/utils";
+import { getPriceTierLabel } from "@/lib/currency";
 import { getCategory } from "@/data/categories";
 import { getBestDealForTool } from "@/data/deals";
 import { resolveOfferCta } from "@/lib/offers";
@@ -56,6 +60,7 @@ function Row({
 }
 
 export default function ComparisonTable({ tools }: { tools: Tool[] }) {
+  const { currency } = useCurrency();
   // Dimension rows only make sense when every compared tool shares a
   // category (the schema is category-aware) — for a rare cross-category
   // comparison the table just falls back to the original generic rows.
@@ -113,7 +118,7 @@ export default function ComparisonTable({ tools }: { tools: Tool[] }) {
               <td key={tool.id} className="px-4 py-4 align-top">
                 <div className="flex flex-col gap-1.5">
                   <PricingBadge model={tool.pricing.model} />
-                  <span className="text-xs text-muted">{PRICE_TIER_LABELS[tool.pricing.tier]}</span>
+                  <span className="text-xs text-muted">{getPriceTierLabel(tool.pricing.tier, currency)}</span>
                 </div>
               </td>
             ))}

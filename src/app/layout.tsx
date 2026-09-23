@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CurrencyProvider from "@/components/CurrencyProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -44,9 +45,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} ${sora.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <CurrencyProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </CurrencyProvider>
       </body>
     </html>
   );

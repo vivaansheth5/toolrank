@@ -20,6 +20,7 @@ import Rating from "@/components/Rating";
 import PricingBadge from "@/components/PricingBadge";
 import ToolCard from "@/components/ToolCard";
 import OfferCard from "@/components/OfferCard";
+import PriceTag from "@/components/PriceTag";
 import AffiliateDisclosure from "@/components/AffiliateDisclosure";
 import AffiliateCTA from "@/components/AffiliateCTA";
 import { tools, getToolBySlug } from "@/data/tools";
@@ -217,9 +218,13 @@ export default async function ToolDetailPage(props: PageProps<"/tools/[slug]">) 
                 <div className="h-1 bg-accent-warm" />
                 <div className="p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-muted">Starting price</p>
-                  <p className="mt-1.5 text-lg font-semibold text-foreground">
-                    {tool.pricing.startingPrice ?? "See website"}
-                  </p>
+                  <PriceTag
+                    vendorPriceString={tool.pricing.startingPrice}
+                    vendorCurrency={tool.pricing.baseCurrency}
+                    countryPrices={tool.pricing.countryPrices}
+                    fallback="See website"
+                    primaryClassName="mt-1.5 text-lg font-semibold text-foreground"
+                  />
                 </div>
               </div>
             </div>

@@ -39,7 +39,9 @@ import {
   buildPricingComparison,
 } from "@/lib/comparisonNarrative";
 import { detectComparisonIntent } from "@/lib/comparisonIntent";
-import { BUDGET_REFINEMENT_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
+import { EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
+import { useCurrency } from "@/components/CurrencyProvider";
+import { getPriceTierLabel } from "@/lib/currency";
 import type { ExperienceLevel, PriceTier, Strength } from "@/data/types";
 
 const MAX_COMPARE = 3;
@@ -63,6 +65,7 @@ export default function CompareClient({
   initialBudget?: string;
   initialPriority?: string;
 }) {
+  const { currency } = useCurrency();
   const [selected, setSelected] = useState<string[]>(initialSlugs.slice(0, MAX_COMPARE));
   const [query, setQuery] = useState("");
   const [detailedOpen, setDetailedOpen] = useState(false);
@@ -324,7 +327,7 @@ export default function CompareClient({
                 {BUDGET_OPTIONS.map((tier) => (
                   <RequirementChip
                     key={tier}
-                    label={BUDGET_REFINEMENT_LABELS[tier]}
+                    label={getPriceTierLabel(tier, currency)}
                     active={refinements.budget === tier}
                     onClick={() => setRefinement("budget", tier)}
                     size="sm"

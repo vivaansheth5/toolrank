@@ -2,6 +2,7 @@ import Link from "next/link";
 import ToolLogo, { CATEGORY_ACCENT } from "./ToolLogo";
 import OfferStatus from "./OfferStatus";
 import AffiliateCTA from "./AffiliateCTA";
+import PriceTag from "./PriceTag";
 import { getCategory } from "@/data/categories";
 import { resolveOfferCta } from "@/lib/offers";
 import type { Deal, Tool } from "@/data/types";
@@ -37,12 +38,21 @@ export default function DealCard({ deal, tool }: { deal: Deal; tool: Tool }) {
       <p className="mt-1.5 text-sm text-muted">{deal.description}</p>
 
       {(deal.offerPrice || deal.originalPrice) && (
-        <div className="mt-4 flex items-baseline gap-2">
+        <div className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
           {deal.offerPrice && (
-            <span className="text-lg font-bold text-foreground">{deal.offerPrice}</span>
+            <PriceTag
+              vendorPriceString={deal.offerPrice}
+              vendorCurrency={deal.currency}
+              primaryClassName="text-lg font-bold text-foreground"
+            />
           )}
           {deal.originalPrice && (
-            <span className="text-sm text-muted line-through">{deal.originalPrice}</span>
+            <PriceTag
+              vendorPriceString={deal.originalPrice}
+              vendorCurrency={deal.currency}
+              primaryClassName="text-sm text-muted line-through"
+              showOriginal={false}
+            />
           )}
         </div>
       )}

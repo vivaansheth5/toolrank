@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import SearchBar from "./SearchBar";
+import CurrencySelector from "./CurrencySelector";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -53,6 +54,8 @@ export default function Navbar() {
           <SearchBar variant="compact" />
         </div>
 
+        <CurrencySelector className="hidden md:inline-flex" />
+
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -85,6 +88,10 @@ export default function Navbar() {
               );
             })}
           </nav>
+          <div className="mt-4 border-t border-border pt-4">
+            <span className="mr-2 text-xs font-medium text-muted">Currency</span>
+            <CurrencySelector />
+          </div>
         </div>
       )}
     </header>

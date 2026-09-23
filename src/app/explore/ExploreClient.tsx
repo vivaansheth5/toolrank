@@ -5,13 +5,11 @@ import { SlidersHorizontal, X } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import ToolCard from "@/components/ToolCard";
 import EmptyState from "@/components/EmptyState";
-import { cn } from "@/lib/utils";
+import { cn, AUDIENCE_LABELS } from "@/lib/utils";
+import { useCurrency } from "@/components/CurrencyProvider";
+import { getPriceTierLabel } from "@/lib/currency";
 import { tools } from "@/data/tools";
 import { categories } from "@/data/categories";
-import {
-  AUDIENCE_LABELS,
-  PRICE_TIER_LABELS,
-} from "@/lib/utils";
 import type { Audience, CategorySlug, PriceTier, PricingModel, ToolType } from "@/data/types";
 
 type SortKey = "recommended" | "popular" | "rating" | "newest";
@@ -44,6 +42,7 @@ export default function ExploreClient({
   const [audiences, setAudiences] = useState<Audience[]>([]);
   const [sort, setSort] = useState<SortKey>("recommended");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const { currency } = useCurrency();
 
   const filtered = useMemo(() => {
     let list = tools.filter((tool) => {
@@ -159,7 +158,7 @@ export default function ExploreClient({
                 onChange={() => setPriceTiers((prev) => toggle(prev, tier))}
                 className="h-4 w-4 rounded border-border-strong text-accent focus:ring-accent"
               />
-              {PRICE_TIER_LABELS[tier]}
+              {getPriceTierLabel(tier, currency)}
             </label>
           ))}
         </div>

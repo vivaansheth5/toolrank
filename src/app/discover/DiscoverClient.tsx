@@ -14,7 +14,9 @@ import { getWhatYouGetAndMiss } from "@/lib/needCompare";
 import { parseNeed, refineParsedNeed, QUICK_START_NEEDS } from "@/lib/needSignals";
 import type { NeedRefinements } from "@/lib/needSignals";
 import { detectComparisonIntent } from "@/lib/comparisonIntent";
-import { AUDIENCE_LABELS, BUDGET_REFINEMENT_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
+import { AUDIENCE_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "@/lib/utils";
+import { useCurrency } from "@/components/CurrencyProvider";
+import { getPriceTierLabel } from "@/lib/currency";
 import type { ExperienceLevel, PriceTier, Strength } from "@/data/types";
 
 /** Exact-tool-comparison intent overrides discovery entirely: when the user
@@ -51,6 +53,7 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
   const [excludedChipIds, setExcludedChipIds] = useState<Set<string>>(new Set());
   const [refinements, setRefinements] = useState<NeedRefinements>({});
   const [selected, setSelected] = useState<string[]>([]);
+  const { currency } = useCurrency();
 
   // Covers direct/home-hero entry (?need=... already names 2+ tools to
   // compare) — handleNeedSubmit below covers the in-page textarea. The
@@ -209,7 +212,7 @@ export default function DiscoverClient({ initialNeed }: { initialNeed: string })
                 {BUDGET_OPTIONS.map((tier) => (
                   <RequirementChip
                     key={tier}
-                    label={BUDGET_REFINEMENT_LABELS[tier]}
+                    label={getPriceTierLabel(tier, currency)}
                     active={refinements.budget === tier}
                     onClick={() => setRefinement("budget", tier)}
                     size="sm"

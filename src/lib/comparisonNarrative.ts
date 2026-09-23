@@ -9,8 +9,9 @@ import {
 import { buildKeyDifferences } from "./comparisonIntelligence";
 import type { ParsedNeed } from "./needSignals";
 import type { MatchedToolMention } from "./comparisonIntent";
-import { BUDGET_REFINEMENT_LABELS, EXPERIENCE_LABELS, STRENGTH_LABELS } from "./utils";
-import type { Tool } from "@/data/types";
+import { EXPERIENCE_LABELS, STRENGTH_LABELS } from "./utils";
+import { getPriceTierLabel, DEFAULT_CURRENCY } from "./currency";
+import type { CurrencyCode, Tool } from "@/data/types";
 
 /**
  * V3 decision-support narrative layer, sitting on top of comparisonProfile
@@ -55,12 +56,17 @@ export interface UserContextSummary {
 
 /** Straight passthrough of the ParsedNeed the user already typed/refined —
  *  no interpretation, just labeled for display so the page can visibly
- *  recap "here's what we understood before we explain anything." */
-export function buildUserContextSummary(parsedNeed: ParsedNeed): UserContextSummary {
+ *  recap "here's what we understood before we explain anything." Budget
+ *  label is currency-aware display only — never changes budgetHint itself
+ *  or any matching/ranking downstream of it. */
+export function buildUserContextSummary(
+  parsedNeed: ParsedNeed,
+  currency: CurrencyCode = DEFAULT_CURRENCY
+): UserContextSummary {
   return {
     rawText: parsedNeed.rawText,
     chips: parsedNeed.chips.map((c) => ({ id: c.id, emoji: c.emoji, label: c.label })),
-    budgetLabel: parsedNeed.budgetHint ? BUDGET_REFINEMENT_LABELS[parsedNeed.budgetHint] : undefined,
+    budgetLabel: parsedNeed.budgetHint ? getPriceTierLabel(parsedNeed.budgetHint, currency) : undefined,
     experienceLabel: parsedNeed.experienceHint ? EXPERIENCE_LABELS[parsedNeed.experienceHint] : undefined,
     priorityLabels: parsedNeed.priorityHints.map((p) => STRENGTH_LABELS[p]),
   };

@@ -134,6 +134,8 @@ export interface PricingRow {
   model: Tool["pricing"]["model"];
   paidPlan?: string;
   startingPrice?: string;
+  baseCurrency?: Tool["pricing"]["baseCurrency"];
+  countryPrices?: Tool["pricing"]["countryPrices"];
   freePlan: boolean;
   lastVerified?: string;
 }
@@ -150,6 +152,8 @@ export function buildPricingComparison(tools: Tool[]): PricingRow[] {
     model: tool.pricing.model,
     paidPlan: tool.pricing.paidPlan,
     startingPrice: tool.pricing.startingPrice,
+    baseCurrency: tool.pricing.baseCurrency,
+    countryPrices: tool.pricing.countryPrices,
     freePlan: tool.freePlan,
     lastVerified: tool.lastVerified,
   }));

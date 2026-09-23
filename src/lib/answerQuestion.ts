@@ -1,9 +1,9 @@
-import { PRICE_TIER_LABELS } from "./utils";
 import { getMatchPercent, getMatchLabel } from "./needMatch";
 import { getNeedBasedVerdict } from "./needCompare";
 import { buildWhatWouldChangeRecommendation } from "./comparisonNarrative";
+import { getPriceTierLabel, localizeVendorPrice, DEFAULT_CURRENCY } from "./currency";
 import type { ParsedNeed } from "./needSignals";
-import type { Tool } from "@/data/types";
+import type { CurrencyCode, Tool } from "@/data/types";
 
 /** Required verbatim whenever we genuinely have nothing verified to say. */
 const NOT_ENOUGH_INFO = "I don't have enough verified information to answer that yet.";
@@ -36,7 +36,8 @@ export interface QuestionAnswer {
 export function answerCommonComparisonQuestion(
   question: string,
   tools: Tool[],
-  parsedNeed?: ParsedNeed | null
+  parsedNeed?: ParsedNeed | null,
+  currency: CurrencyCode = DEFAULT_CURRENCY
 ): QuestionAnswer {
   const q = question.toLowerCase();
 
@@ -114,12 +115,18 @@ export function answerCommonComparisonQuestion(
     return {
       matched: true,
       title: "Pricing comparison",
-      rows: tools.map((tool) => ({
-        tool,
-        value: `${PRICE_TIER_LABELS[tool.pricing.tier]}${
-          tool.pricing.startingPrice ? ` — ${tool.pricing.startingPrice}` : ""
-        }`,
-      })),
+      rows: tools.map((tool) => {
+        const localized = tool.pricing.startingPrice
+          ? localizeVendorPrice(tool.pricing.startingPrice, currency, {
+              vendorCurrency: tool.pricing.baseCurrency,
+              countryPrice: tool.pricing.countryPrices?.[currency],
+            })
+          : undefined;
+        return {
+          tool,
+          value: `${getPriceTierLabel(tool.pricing.tier, currency)}${localized ? ` — ${localized.primary}` : ""}`,
+        };
+      }),
     };
   }
 

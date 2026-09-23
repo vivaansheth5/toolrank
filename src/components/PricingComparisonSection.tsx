@@ -1,5 +1,6 @@
 import ToolLogo from "./ToolLogo";
 import PricingBadge from "./PricingBadge";
+import PriceTag from "./PriceTag";
 import type { PricingRow } from "@/lib/comparisonIntelligence";
 
 /**
@@ -21,9 +22,13 @@ export default function PricingComparisonSection({ rows }: { rows: PricingRow[] 
             <PricingBadge model={row.model} />
             {row.paidPlan && <span className="text-xs text-muted">{row.paidPlan} plan</span>}
           </div>
-          <p className="mt-2 text-lg font-bold tracking-tight text-foreground">
-            {row.startingPrice ?? "Pricing not verified"}
-          </p>
+          <PriceTag
+            vendorPriceString={row.startingPrice}
+            vendorCurrency={row.baseCurrency}
+            countryPrices={row.countryPrices}
+            fallback="Pricing not verified"
+            primaryClassName="mt-2 text-lg font-bold tracking-tight text-foreground"
+          />
           <p className="mt-1 text-xs font-medium text-success">
             {row.freePlan ? "Free plan available" : "No free plan"}
           </p>

@@ -1,6 +1,7 @@
 import ToolLogo, { CATEGORY_ACCENT } from "./ToolLogo";
 import OfferStatus from "./OfferStatus";
 import AffiliateCTA from "./AffiliateCTA";
+import PriceTag from "./PriceTag";
 import { resolveOfferCta } from "@/lib/offers";
 import { cn } from "@/lib/utils";
 import type { CtaPlacement, Deal, Tool } from "@/data/types";
@@ -45,12 +46,21 @@ export default function OfferCard({
           <p className="mt-3 text-sm font-medium text-foreground">{deal.title}</p>
 
           {(deal.offerPrice || deal.originalPrice) && (
-            <div className="mt-3 flex items-baseline gap-2">
+            <div className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1">
               {deal.offerPrice && (
-                <span className="text-xl font-bold text-foreground">{deal.offerPrice}</span>
+                <PriceTag
+                  vendorPriceString={deal.offerPrice}
+                  vendorCurrency={deal.currency}
+                  primaryClassName="text-xl font-bold text-foreground"
+                />
               )}
               {deal.originalPrice && (
-                <span className="text-sm text-muted line-through">{deal.originalPrice}</span>
+                <PriceTag
+                  vendorPriceString={deal.originalPrice}
+                  vendorCurrency={deal.currency}
+                  primaryClassName="text-sm text-muted line-through"
+                  showOriginal={false}
+                />
               )}
             </div>
           )}
@@ -76,9 +86,13 @@ export default function OfferCard({
         <>
           <p className="mt-4 text-sm font-medium text-foreground">No current verified offer</p>
           <p className="mt-1 text-sm text-muted">Here&apos;s standard pricing instead.</p>
-          <p className="mt-3 text-lg font-semibold text-foreground">
-            {tool.pricing.startingPrice ?? tool.pricing.model}
-          </p>
+          <PriceTag
+            vendorPriceString={tool.pricing.startingPrice}
+            vendorCurrency={tool.pricing.baseCurrency}
+            countryPrices={tool.pricing.countryPrices}
+            fallback={tool.pricing.model}
+            primaryClassName="mt-3 text-lg font-semibold text-foreground"
+          />
 
           <AffiliateCTA
             tool={tool}
