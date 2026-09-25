@@ -88,7 +88,9 @@
       background: var(--bg); border-bottom: 1px solid var(--line);
       padding: 4px 16px 20px; box-shadow: 0 20px 40px rgba(0,0,0,.5);
     }
-    .nav.open { display: flex; }
+    .menu-cb { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+    .menu-cb:checked ~ .nav { display: flex; }
+    .menu-cb:focus-visible + .menu-toggle { outline: 2px solid var(--gold); outline-offset: 2px; }
     .nav a:not(.btn) { padding: 15px 0; border-bottom: 1px solid var(--line); font-size: 17px; font-weight: 500; color: var(--text); }
     .nav .btn { margin-top: 16px; }
 
@@ -300,11 +302,12 @@
     .wa-float svg { width: 30px; height: 30px; }
 
     /* Reveal animation */
-    .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
-    .reveal.in { opacity: 1; transform: none; }
+    /* Content is only hidden for the fade-in when JavaScript runs, so it always shows without scripts. */
+    .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+    .js .reveal.in { opacity: 1; transform: none; }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .reveal { opacity: 1; transform: none; transition: none; }
+      .js .reveal { opacity: 1; transform: none; transition: none; }
     }
 
     /* Hover effects only on devices that can hover (avoids sticky hover on touch) */
@@ -361,7 +364,7 @@
       .brand-mark { width: 40px; height: 40px; }
       .brand-name { font-size: 22px; }
       .brand-sub { font-size: 9.5px; letter-spacing: .28em; }
-      .menu-toggle { display: none; }
+      .menu-toggle, .menu-cb { display: none; }
       .nav { position: static; display: flex; flex-direction: row; align-items: center; gap: 28px; padding: 0; background: none; border: 0; box-shadow: none; }
       .nav a:not(.btn) { padding: 0; border: 0; font-size: 14px; color: var(--muted); transition: color .2s; }
       .nav .btn { margin: 0; min-height: 0; padding: 10px 18px; font-size: 12.5px; }
@@ -419,6 +422,7 @@
       .steps { grid-template-columns: repeat(4, 1fr); gap: 22px; }
     }
   </style>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
@@ -454,9 +458,10 @@
           <div class="brand-sub">ALUMINIUM &amp; GLASS</div>
         </div>
       </a>
-      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+      <input type="checkbox" id="menu-cb" class="menu-cb" aria-label="Open menu" aria-controls="nav" />
+      <label for="menu-cb" class="menu-toggle" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      </button>
+      </label>
       <nav class="nav" id="nav">
         <a href="#about">About</a>
         <a href="#services">Services</a>
@@ -806,6 +811,7 @@
               <button type="submit" class="btn btn-wa" data-via="whatsapp"><svg><use href="#i-wa"/></svg>Send on WhatsApp</button>
               <button type="submit" class="btn btn-outline" data-via="email"><svg><use href="#i-mail"/></svg>Send by Email</button>
             </div>
+            <noscript><p class="form-note">This form needs JavaScript. Call <a href="tel:+917836869818" class="gold-text">+91 78368 69818</a> or <a href="https://wa.me/917836869818" class="gold-text">WhatsApp us</a> instead.</p></noscript>
             <p class="form-note" id="form-note" role="status">Prefer to talk? Call us on <a href="tel:+917836869818" class="gold-text">+91 78368 69818</a>.</p>
           </form>
         </div>
@@ -866,16 +872,9 @@
 
   <script>
     // Mobile menu
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.getElementById('nav');
-    toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', open);
-    });
-    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      nav.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }));
+    // Mobile menu opens via a CSS checkbox; close it after a link is tapped
+    const menuCb = document.getElementById('menu-cb');
+    document.querySelectorAll('#nav a').forEach(a => a.addEventListener('click', () => { menuCb.checked = false; }));
 
     // Footer year
     document.getElementById('year').textContent = new Date().getFullYear();
