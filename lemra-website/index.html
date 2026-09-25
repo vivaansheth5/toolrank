@@ -176,14 +176,15 @@
     /* Services */
     .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
     .service {
-      padding: 32px 28px; border-radius: var(--radius);
+      border-radius: var(--radius); overflow: hidden;
       background: var(--bg-2); border: 1px solid var(--line);
       transition: border-color .25s, transform .25s, background .25s;
     }
     .service:hover { border-color: rgba(212,164,55,.55); transform: translateY(-4px); background: #151517; }
-    .service .ico { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center;
-      background: rgba(212,164,55,.1); border: 1px solid rgba(212,164,55,.3); color: var(--gold-light); margin-bottom: 20px; }
-    .service .ico svg { width: 30px; height: 30px; }
+    .service-img { aspect-ratio: 4 / 3; overflow: hidden; border-bottom: 1px solid var(--line); }
+    .service-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .service:hover .service-img img { transform: scale(1.05); }
+    .service-body { padding: 24px 26px 28px; }
     .service h3 { font-family: "Oswald", sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; font-size: 21px; margin: 0 0 8px; }
     .service p { color: var(--muted); margin: 0; font-size: 15px; }
 
@@ -407,7 +408,7 @@
         </div>
 
         <div class="hero-visual">
-          <img src="images/hero-house.jpg" alt="Modern home with LEMRA slim-profile glass doors and glass balcony railing" />
+          <img src="images/hero-house.svg" alt="Illustration of a modern home with floor-to-ceiling glass doors and a glass balcony railing" />
           <div class="hero-badge">
             <div class="ico"><svg><use href="#i-check"/></svg></div>
             <div>
@@ -474,34 +475,46 @@
         </div>
         <div class="services-grid">
           <article class="service reveal">
-            <div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="26" height="24"/><path d="M16 4v24M3 16h26"/></svg></div>
-            <h3>UPVC Doors &amp; Windows</h3>
-            <p>Durable, weather-resistant UPVC doors and windows manufactured in-house to your exact sizes.</p>
+            <div class="service-img"><img src="images/upvc-windows-doors.svg" alt="UPVC Doors &amp; Windows" loading="lazy" /></div>
+            <div class="service-body">
+              <h3>UPVC Doors &amp; Windows</h3>
+              <p>Durable, weather-resistant UPVC doors and windows manufactured in-house to your exact sizes.</p>
+            </div>
           </article>
           <article class="service reveal">
-            <div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="26" height="20"/><path d="M12 6v20M20 6v20"/><path d="m22 16 3 0m-1.5-1.5L25 16l-1.5 1.5"/></svg></div>
-            <h3>Aluminium Sliding Windows</h3>
-            <p>Smooth-gliding aluminium sliding windows and slim-profile systems for wide, uninterrupted views.</p>
+            <div class="service-img"><img src="images/sliding-windows.svg" alt="Aluminium Sliding Windows" loading="lazy" /></div>
+            <div class="service-body">
+              <h3>Aluminium Sliding Windows</h3>
+              <p>Smooth-gliding aluminium sliding windows and slim-profile systems for wide, uninterrupted views.</p>
+            </div>
           </article>
           <article class="service reveal">
-            <div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 28h26"/><rect x="5" y="5" width="7" height="23"/><rect x="12.5" y="5" width="7" height="23"/><rect x="20" y="5" width="7" height="23"/></svg></div>
-            <h3>Glass Partitions</h3>
-            <p>Modern glass partitions for offices, cabins and conference rooms that keep spaces open and bright.</p>
+            <div class="service-img"><img src="images/glass-partitions.svg" alt="Glass Partitions" loading="lazy" /></div>
+            <div class="service-body">
+              <h3>Glass Partitions</h3>
+              <p>Modern glass partitions for offices, cabins and conference rooms that keep spaces open and bright.</p>
+            </div>
           </article>
           <article class="service reveal">
-            <div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h26"/><path d="M5 10v18M27 10v18M16 10v18"/><path d="M7 12h7v14H7zM18 12h7v14h-7z" opacity=".6"/><path d="M3 28h26"/></svg></div>
-            <h3>Glass Railings</h3>
-            <p>Elegant, safe glass railings for balconies, staircases and terraces with sleek hardware.</p>
+            <div class="service-img"><img src="images/glass-railings.svg" alt="Glass Railings" loading="lazy" /></div>
+            <div class="service-body">
+              <h3>Glass Railings</h3>
+              <p>Elegant, safe glass railings for balconies, staircases and terraces with sleek hardware.</p>
+            </div>
           </article>
           <article class="service reveal">
-            <div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 29V9l12-5 12 5v20z"/><path d="M4 15h24M4 22h24M10 6.5V29M16 4v25M22 6.5V29"/></svg></div>
-            <h3>Glass Facades</h3>
-            <p>Striking structural glazing and glass facades that give buildings a premium, contemporary look.</p>
+            <div class="service-img"><img src="images/glass-facade.svg" alt="Glass Facades" loading="lazy" /></div>
+            <div class="service-body">
+              <h3>Glass Facades</h3>
+              <p>Striking structural glazing and glass facades that give buildings a premium, contemporary look.</p>
+            </div>
           </article>
           <article class="service reveal">
-            <div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3 28 9.5v13L16 29 4 22.5v-13z"/><path d="M4 9.5 16 16l12-6.5M16 16v13"/></svg></div>
-            <h3>Toughened Glass Work</h3>
-            <p>Toughened glass doors, shower enclosures, shopfronts and custom glass work built for safety.</p>
+            <div class="service-img"><img src="images/shower-enclosure.svg" alt="Toughened Glass Work" loading="lazy" /></div>
+            <div class="service-body">
+              <h3>Toughened Glass Work</h3>
+              <p>Toughened glass doors, shower enclosures, shopfronts and custom glass work built for safety.</p>
+            </div>
           </article>
         </div>
       </div>
@@ -519,62 +532,62 @@
         <div class="product-grid">
           <!-- Slim profile sliding doors -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/sliding-doors.jpg" alt="Slim Profile Sliding Doors" loading="lazy" /></div>
+            <div class="product-art"><img src="images/sliding-doors.svg" alt="Slim Profile Sliding Doors" loading="lazy" /></div>
             <div class="product-body"><h3>Slim Profile Sliding Doors</h3><p>Ultra-thin frames with maximum glass for seamless indoor-outdoor living.</p></div>
           </article>
           <!-- Glass partitions -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/glass-partitions.jpg" alt="Glass Partitions" loading="lazy" /></div>
+            <div class="product-art"><img src="images/glass-partitions.svg" alt="Glass Partitions" loading="lazy" /></div>
             <div class="product-body"><h3>Glass Partitions</h3><p>Clean, open workspaces with sound and privacy separation.</p></div>
           </article>
           <!-- Premium windows -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/premium-windows.jpg" alt="Premium Windows" loading="lazy" /></div>
+            <div class="product-art"><img src="images/premium-windows.svg" alt="Premium Windows" loading="lazy" /></div>
             <div class="product-body"><h3>Premium Windows</h3><p>Large-format windows with strong frames and clear, wide views.</p></div>
           </article>
           <!-- Bi-fold doors -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/bifold-doors.jpg" alt="Bi-Fold Doors" loading="lazy" /></div>
+            <div class="product-art"><img src="images/bifold-doors.svg" alt="Bi-Fold Doors" loading="lazy" /></div>
             <div class="product-body"><h3>Bi-Fold Doors</h3><p>Panels that fold neatly aside to open up the entire opening.</p></div>
           </article>
           <!-- Toughened door -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/toughened-door.jpg" alt="Toughened Glass Doors" loading="lazy" /></div>
+            <div class="product-art"><img src="images/toughened-door.svg" alt="Toughened Glass Doors" loading="lazy" /></div>
             <div class="product-body"><h3>Toughened Glass Doors</h3><p>Slim-profile sliding and swing doors in safety-toughened glass.</p></div>
           </article>
           <!-- Awning windows -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/awning-windows.jpg" alt="Awning Windows" loading="lazy" /></div>
+            <div class="product-art"><img src="images/awning-windows.svg" alt="Awning Windows" loading="lazy" /></div>
             <div class="product-body"><h3>Awning Windows</h3><p>Top-hung sashes that open outward for ventilation, even in the rain.</p></div>
           </article>
           <!-- Casement windows -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/casement-windows.jpg" alt="Casement Windows" loading="lazy" /></div>
+            <div class="product-art"><img src="images/casement-windows.svg" alt="Casement Windows" loading="lazy" /></div>
             <div class="product-body"><h3>Casement Windows</h3><p>Side-hinged windows with excellent sealing and full ventilation.</p></div>
           </article>
           <!-- Fixed windows -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/fixed-windows.jpg" alt="Fixed Windows" loading="lazy" /></div>
+            <div class="product-art"><img src="images/fixed-windows.svg" alt="Fixed Windows" loading="lazy" /></div>
             <div class="product-body"><h3>Fixed Windows</h3><p>Non-opening picture windows that frame the view and flood rooms with light.</p></div>
           </article>
           <!-- Corner windows -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/corner-windows.jpg" alt="Corner Windows" loading="lazy" /></div>
+            <div class="product-art"><img src="images/corner-windows.svg" alt="Corner Windows" loading="lazy" /></div>
             <div class="product-body"><h3>Corner Windows</h3><p>Wrap-around glazing that opens up two sides of a room.</p></div>
           </article>
           <!-- Tilt & turn -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/tilt-turn-windows.jpg" alt="Tilt &amp; Turn Windows" loading="lazy" /></div>
+            <div class="product-art"><img src="images/tilt-turn-windows.svg" alt="Tilt &amp; Turn Windows" loading="lazy" /></div>
             <div class="product-body"><h3>Tilt &amp; Turn Windows</h3><p>One handle to tilt for airflow or turn fully open for easy cleaning.</p></div>
           </article>
           <!-- Sliding windows -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/sliding-windows.jpg" alt="Sliding Windows" loading="lazy" /></div>
+            <div class="product-art"><img src="images/sliding-windows.svg" alt="Sliding Windows" loading="lazy" /></div>
             <div class="product-body"><h3>Sliding Windows</h3><p>Aluminium and UPVC sliders that save space and glide effortlessly.</p></div>
           </article>
           <!-- Glass railings -->
           <article class="product reveal">
-            <div class="product-art"><img src="images/glass-railings.jpg" alt="Glass Railings" loading="lazy" /></div>
+            <div class="product-art"><img src="images/glass-railings.svg" alt="Glass Railings" loading="lazy" /></div>
             <div class="product-body"><h3>Glass Railings</h3><p>Frameless and framed railings for balconies, stairs and terraces.</p></div>
           </article>
         </div>

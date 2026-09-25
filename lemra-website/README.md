@@ -11,5 +11,5 @@ It is separate from the ToolRank Next.js app.
 To change phone numbers, email or address, search `index.html` for `7836869818`, `9810405078`,
 `kaifkhantyagi@gmail.com` and `Masuri`.
 
-Product and hero photos in `images/` are the AI-generated renders cropped from the LEMRA flyer.
-To use higher-resolution or real project photos, replace the files and keep the same names.
+Images in `images/` are custom SVG illustrations (scalable, lightweight).
+To use real project photos instead, add them to `images/` and update the matching `src` in `index.html`.
