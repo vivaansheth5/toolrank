@@ -1,6 +1,6 @@
 # LEMRA Aluminium & Glass – Landing Page
 
-A single-file, dependency-free landing page for LEMRA Aluminium & Glass (LEMRA Construction Pvt. Ltd.).
+A mobile-first, dependency-free landing page for LEMRA Aluminium & Glass (LEMRA Construction Pvt. Ltd.).
 It is separate from the ToolRank Next.js app.
 
 - **Preview:** open `index.html` in any browser.
