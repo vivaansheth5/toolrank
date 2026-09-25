@@ -11,5 +11,5 @@ It is separate from the ToolRank Next.js app.
 To change phone numbers, email or address, search `index.html` for `7836869818`, `9810405078`,
 `kaifkhantyagi@gmail.com` and `Masuri`.
 
-Images in `images/` are custom SVG illustrations (scalable, lightweight).
+Images in `images/` are AI-generated photos (made with ChatGPT from `IMAGE_PROMPTS.md`), resized for the web.
 To use real project photos instead, add them to `images/` and update the matching `src` in `index.html`.
