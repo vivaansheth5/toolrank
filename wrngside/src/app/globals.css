@@ -318,6 +318,58 @@ html.lenis body {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
 }
+/* Placeholders sized to each section's measured height, so a section that
+   renders for the first time (after a long jump or a restored scroll) barely
+   moves anything. Once rendered, "auto" remembers the real size. */
+.wanted.cv-auto {
+  contain-intrinsic-size: auto calc(260px + 287vw);
+}
+.craft.cv-auto {
+  contain-intrinsic-size: auto 780px;
+}
+.community.cv-auto {
+  contain-intrinsic-size: auto calc(200px + 183vw);
+}
+.wronglist.cv-auto {
+  contain-intrinsic-size: auto 750px;
+}
+.footer.cv-auto {
+  contain-intrinsic-size: auto 920px;
+}
+@media (min-width: 768px) {
+  .wanted.cv-auto {
+    contain-intrinsic-size: auto calc(260px + 260vw);
+  }
+  .craft.cv-auto {
+    contain-intrinsic-size: auto 850px;
+  }
+  .community.cv-auto {
+    contain-intrinsic-size: auto calc(200px + 166vw);
+  }
+  .wronglist.cv-auto {
+    contain-intrinsic-size: auto 820px;
+  }
+  .footer.cv-auto {
+    contain-intrinsic-size: auto 945px;
+  }
+}
+@media (min-width: 1024px) {
+  .wanted.cv-auto {
+    contain-intrinsic-size: auto calc(470px + 45vw);
+  }
+  .craft.cv-auto {
+    contain-intrinsic-size: auto calc(490px + 12vw);
+  }
+  .community.cv-auto {
+    contain-intrinsic-size: auto calc(250px + 17vw);
+  }
+  .wronglist.cv-auto {
+    contain-intrinsic-size: auto clamp(800px, 400px + 42vw, 1040px);
+  }
+  .footer.cv-auto {
+    contain-intrinsic-size: auto calc(530px + 8vw);
+  }
+}
 .no-scrollbar {
   scrollbar-width: none;
 }

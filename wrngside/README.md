@@ -177,7 +177,7 @@ Measured in headless Chromium:
 
 | Page | LCP | CLS | Note |
 | --- | --- | --- | --- |
-| Home | 1.9–2.1 s | 0.000 | about 230 KB gzipped JS before load plus 22 KB after |
+| Home | 1.6–2.1 s | ≤ 0.010 | about 235 KB gzipped JS before load plus 22 KB after (bag drawer and SplitText) |
 | Shop | ~1.0 s | 0.000 | |
 | Product | ~0.95 s | 0.000 | |
 | About | ~0.8 s | 0.000 | |
