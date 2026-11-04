@@ -8,7 +8,7 @@ import { CableDivider } from "@/components/ui/CableDivider";
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="footer theme-night" aria-labelledby="footer-title">
+    <footer className="footer theme-night cv-auto" aria-labelledby="footer-title">
       <h2 id="footer-title" className="sr-only">
         WRNGSIDE
       </h2>

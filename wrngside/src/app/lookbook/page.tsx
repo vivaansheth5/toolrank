@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { lookbook, site } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
-import { getProductsByHandles } from "@/lib/commerce";
+import { getProductsByHandles, toListing } from "@/lib/commerce";
 import { LookbookView } from "@/components/lookbook/LookbookView";
 import { Lines } from "@/components/ui/Lines";
 import "@/components/lookbook/lookbook.css";
@@ -15,7 +15,7 @@ export const viewport: Viewport = { themeColor: site.themeColor.night };
 
 export default async function LookbookPage() {
   const handles = [...new Set(lookbook.chapters.flatMap((c) => c.products))];
-  const list = await getProductsByHandles(handles);
+  const list = (await getProductsByHandles(handles)).map(toListing);
   const products = Object.fromEntries(list.map((p) => [p.handle, p]));
   return (
     <main id="main" data-theme="night" className="theme-night lookbook-page">

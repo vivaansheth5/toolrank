@@ -12,6 +12,13 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
+  // Art in public/ keeps its file name when it's replaced (real photos and
+  // scene plates drop into the same paths), so cache for a day and refresh
+  // in the background rather than forever.
+  async headers() {
+    const cache = [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }];
+    return ["/scene/:path*", "/products/:handle/:colour/:file", "/campaign/:path*", "/textures/:path*", "/og/:path*"].map((source) => ({ source, headers: cache }));
+  },
 };
 
 export default nextConfig;

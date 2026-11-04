@@ -9,6 +9,16 @@
   align-items: flex-start;
   gap: 12px;
 }
+@media (max-width: 640px) {
+  /* Count under the title: the row never depends on the exact font width. */
+  .shop-title {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .shop-count {
+    margin-top: 0;
+  }
+}
 .shop-count {
   margin-top: 0.4em;
   color: var(--muted);
@@ -58,6 +68,22 @@ html[data-header="shown"] .filterbar {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+}
+.filterbar-right {
+  min-width: 0;
+}
+@media (max-width: 1023px) {
+  /* Phones: the select speaks for itself ("Sort by" stays for screen readers). */
+  .sort > [aria-hidden="true"] {
+    display: none;
+  }
+}
+@media (max-width: 479px) {
+  .filterbar-row,
+  .filterbar-right {
+    gap: 8px;
+  }
 }
 .sort-select {
   appearance: none;
@@ -76,6 +102,9 @@ html[data-header="shown"] .filterbar {
   background-size: 5px 5px;
   background-repeat: no-repeat;
   min-height: 44px;
+  min-width: 0;
+  max-width: 100%;
+  text-overflow: ellipsis;
   cursor: pointer;
 }
 @media (min-width: 1024px) {
@@ -208,11 +237,16 @@ html[data-header="shown"] .filterbar {
 /* ───────────── product card ───────────── */
 .pcard {
   display: grid;
+  /* One column that can never outgrow the card (a sale price wraps instead). */
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   align-content: start;
 }
 .pcard-media {
   position: relative;
+  /* Width drives the 4:5 ratio. Without it, a card stretched to a taller
+     neighbour in its row takes its width from that height and spills out. */
+  width: 100%;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: var(--dust);
@@ -374,6 +408,8 @@ html[data-header="shown"] .filterbar {
 }
 .pcard-price {
   font-size: 13px;
+  justify-content: flex-end;
+  text-align: right;
 }
 
 /* ───────────── load more / empty ───────────── */

@@ -97,7 +97,7 @@ export function WrongList() {
   };
 
   return (
-    <section ref={section} className="wronglist" aria-labelledby="wl-title">
+    <section ref={section} className="wronglist cv-auto" aria-labelledby="wl-title">
       <div className="wl-pole" aria-hidden="true">
         <span className="wl-plate">
           <span>{hindi.danger}</span>

@@ -6,7 +6,7 @@ import { Lines } from "@/components/ui/Lines";
 export function Community() {
   const tilts = [-2.6, 1.8, -1.2, 2.9, -2.1, 1.1];
   return (
-    <section className="community wrap" aria-labelledby="comm-title">
+    <section className="community wrap cv-auto" aria-labelledby="comm-title">
       <div className="sec-head">
         <h2 id="comm-title" className="t-h2">
           <Lines lines={[community.hashtag]} />

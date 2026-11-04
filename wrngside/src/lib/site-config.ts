@@ -223,6 +223,8 @@ export const copy = {
   hero: {
     headline: ["FRESH", "OFF THE", "WIRE."],
     sub: "DROP {drop} — SCROLL THE LINE →",
+    /** Same line on touch screens, where the line is swiped. */
+    subTouch: "DROP {drop} — SWIPE THE LINE →",
     hintDesktop: "SCROLL OR DRAG",
     hintTouch: "SWIPE THE LINE",
     skip: "SKIP THE LINE",

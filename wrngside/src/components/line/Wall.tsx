@@ -8,8 +8,8 @@ import { Lines } from "@/components/ui/Lines";
  * x positions are in P units along the wall.
  */
 export function Wall({ dropNumber, dropName, pieces }: { dropNumber: string; dropName: string; pieces: number }) {
-  const sub = fill(copy.hero.sub, { drop: dropNumber });
-  const [subText] = sub.split("→");
+  const [subText] = fill(copy.hero.sub, { drop: dropNumber }).split("→");
+  const [subTouch] = fill(copy.hero.subTouch, { drop: dropNumber }).split("→");
   return (
     <div className="lyr lyr-wall" data-depth="0.8">
       <div className="wall-base" aria-hidden="true" />
@@ -30,7 +30,8 @@ export function Wall({ dropNumber, dropName, pieces }: { dropNumber: string; dro
             <Lines lines={[...copy.hero.headline]} mode="mount" />
           </h1>
           <p className="poster-sub t-mono-lg">
-            {subText.trim()} <span className="poster-arrow" aria-hidden="true">→</span>
+            <span className="hint-desk">{subText.trim()}</span>
+            <span className="hint-touch">{subTouch.trim()}</span> <span className="poster-arrow" aria-hidden="true">→</span>
           </p>
         </div>
         <span className="tape tape-tl" aria-hidden="true" />

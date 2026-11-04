@@ -13,6 +13,22 @@ import { mapWheel, setLenis } from "@/lib/scroll";
  * loop, ScrollTrigger updates on Lenis scroll, lag smoothing off.
  */
 export function SmoothScroll() {
+  // Sections with content-visibility: auto report a placeholder height until
+  // they first render; re-measure scroll triggers when one does.
+  useEffect(() => {
+    let t = 0;
+    const onState = (e: Event) => {
+      if ((e as Event & { skipped?: boolean }).skipped) return;
+      window.clearTimeout(t);
+      t = window.setTimeout(() => ScrollTrigger.refresh(), 120);
+    };
+    document.addEventListener("contentvisibilityautostatechange", onState, true);
+    return () => {
+      window.clearTimeout(t);
+      document.removeEventListener("contentvisibilityautostatechange", onState, true);
+    };
+  }, []);
+
   useEffect(() => {
     const fine = window.matchMedia(FINE_POINTER).matches;
     const reduced = window.matchMedia(REDUCED_MOTION).matches;

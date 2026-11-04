@@ -13,6 +13,7 @@ import { ui, uiStore } from "@/lib/stores";
 import { useStore } from "@/lib/store";
 import { Announcer } from "./Announcer";
 import { NotifyDialog } from "@/components/ui/NotifyDialog";
+import { hasFinePointer } from "@/lib/device";
 
 // Overlays load on first use (and on idle), keeping them out of the first paint.
 const loadCart = () => import("@/components/cart/CartDrawer");
@@ -54,14 +55,22 @@ function GlobalKeys() {
       }
     };
     window.addEventListener("keydown", onKey);
+    // The bag is tiny and always preloaded. Search carries the catalogue (~30 KB),
+    // so phones fetch it on intent (a finger on a search button), not at idle.
+    const fine = hasFinePointer();
+    const onIntent = (e: PointerEvent) => {
+      if ((e.target as Element).closest?.(".hdr-search, .menu-search")) void loadSearch();
+    };
+    if (!fine) window.addEventListener("pointerdown", onIntent, { capture: true, passive: true });
     const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
     const preload = () => {
       void loadCart();
-      void loadSearch();
+      if (fine) void loadSearch();
     };
     const id = idle ? idle(preload) : window.setTimeout(preload, 2500);
     return () => {
       window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onIntent, { capture: true });
       if (!idle) window.clearTimeout(id);
     };
   }, []);

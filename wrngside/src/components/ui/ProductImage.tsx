@@ -6,6 +6,10 @@ import { useCallback, useState } from "react";
 /**
  * Product image on a dust well. Fades in from a blurred colour placeholder and
  * never pops. `tint` seeds the placeholder until real blurDataURLs exist.
+ *
+ * Priority images (the first row, often the LCP element) are visible from the
+ * server HTML and paint the moment they arrive: their fade would otherwise
+ * wait for JavaScript to hydrate.
  */
 export function ProductImage({
   src,
@@ -26,7 +30,7 @@ export function ProductImage({
   fit?: "cover" | "contain";
   onReady?: () => void;
 }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(priority);
   const ref = useCallback(
     (img: HTMLImageElement | null) => {
       if (img?.complete && img.naturalWidth > 0) {

@@ -28,7 +28,7 @@ function CareIcons() {
 /** THE WRONG SIDE: the inside of a garment. Stitches draw themselves as the labels slide in. */
 export function Craft() {
   return (
-    <section className="craft theme-night" aria-labelledby="craft-title">
+    <section className="craft theme-night cv-auto" aria-labelledby="craft-title">
       <div className="craft-fabric" aria-hidden="true">
         <svg className="craft-stitches" viewBox="0 0 1200 700" preserveAspectRatio="none">
           <path className="st st-1" d="M0 120 C300 140 600 100 1200 130" />

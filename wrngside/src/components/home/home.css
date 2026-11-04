@@ -413,6 +413,7 @@ html.js .craft:has(.is-in) .st {
 /* ───────────── community ───────────── */
 .community {
   padding-block: clamp(64px, 10vh, 128px);
+  overflow-x: clip;
 }
 .polaroids {
   display: grid;

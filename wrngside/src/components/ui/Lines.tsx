@@ -19,6 +19,7 @@ import { loadSplitText } from "@/lib/split-text";
  */
 export function Lines({ lines, mode = "inview", delay = 0, className = "" }: { lines: string[]; mode?: "mount" | "inview"; delay?: number; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
+  const longest = Math.max(1, ...lines.flatMap((l) => l.split(/\s+/)).map((w) => w.length));
 
   useGSAP(
     (_ctx, contextSafe) => {
@@ -53,7 +54,7 @@ export function Lines({ lines, mode = "inview", delay = 0, className = "" }: { l
   );
 
   return (
-    <span ref={ref} className={`lines ${className}`} data-mode={mode} style={{ "--d": `${delay}ms` } as React.CSSProperties}>
+    <span ref={ref} className={`lines ${className}`} data-mode={mode} style={{ "--d": `${delay}ms`, "--longest": longest } as React.CSSProperties}>
       {lines.map((l, i) => (
         <span key={`${i}:${l}`} className="ln" style={{ "--i": i } as React.CSSProperties}>
           <span>{l}</span>

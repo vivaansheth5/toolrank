@@ -345,6 +345,13 @@
   display: flex;
   transform: rotate(-0.6deg);
 }
+@media (max-width: 640px) {
+  /* Clear the two-row HUD on phones. */
+  .poster-hero {
+    top: 16%;
+    height: 60%;
+  }
+}
 .poster-hero-paper {
   position: absolute;
   inset: 0;
@@ -1319,13 +1326,13 @@
   .hud {
     bottom: 40px;
   }
-  .line-hint {
-    bottom: 140px;
-  }
 }
 @media (max-width: 640px) {
   .hud {
     grid-template-columns: auto 1fr;
+  }
+  .hud-skip {
+    justify-self: end;
   }
   .hud-progress {
     order: 3;
@@ -1362,6 +1369,10 @@
   }
   .hint-touch {
     display: inline;
+  }
+  /* "SCROLL OR DRAG" is a desktop hint; on touch the poster says SWIPE. */
+  .line-hint {
+    display: none;
   }
 }
 .line-nav {

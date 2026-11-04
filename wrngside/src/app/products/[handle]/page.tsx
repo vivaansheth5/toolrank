@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { renderTime } from "@/lib/time";
 import { notFound } from "next/navigation";
-import { getAllProductsSync, getProduct, getPairings, getReviews, categoryLabel, dropById } from "@/lib/commerce";
+import { getAllProductsSync, getProduct, getPairings, getReviews, categoryLabel, dropById, toListing } from "@/lib/commerce";
 import { site, seo } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
 import { ProductView } from "@/components/product/ProductView";
@@ -35,7 +35,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[hand
   const { handle } = await params;
   const p = await getProduct(handle);
   if (!p) notFound();
-  const [pairs, reviews] = await Promise.all([getPairings(handle), getReviews(handle)]);
+  const [pairs, reviews] = await Promise.all([getPairings(handle).then((l) => l.map(toListing)), getReviews(handle)]);
   const renderedAt = renderTime();
   const drop = dropById(p.wrng.drop);
   const avg = reviews.length ? reviews.reduce((a, r) => a + r.rating, 0) / reviews.length : 0;

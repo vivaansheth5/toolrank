@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { renderTime } from "@/lib/time";
 import { drops, site } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
-import { getDropProducts } from "@/lib/commerce";
+import { getDropProducts, toListing } from "@/lib/commerce";
 import { formatLongDate } from "@/lib/format";
 import { DropLock } from "@/components/drops/DropLock";
 import { ProductCard } from "@/components/shop/ProductCard";
@@ -20,9 +20,9 @@ export const viewport: Viewport = { themeColor: site.themeColor.night };
 
 export default async function DropsPage() {
   const next = drops.list.find((d) => d.id === drops.next)!;
-  const nextPieces = await getDropProducts(next.id);
+  const nextPieces = (await getDropProducts(next.id)).map(toListing);
   const others = drops.list.filter((d) => d.id !== next.id);
-  const lists = await Promise.all(others.map((d) => getDropProducts(d.id)));
+  const lists = await Promise.all(others.map((d) => getDropProducts(d.id).then((l) => l.map(toListing))));
   const now = renderTime();
   return (
     <main id="main" data-theme="night" className="theme-night drops-page">

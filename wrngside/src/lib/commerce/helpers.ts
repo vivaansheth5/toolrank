@@ -117,3 +117,26 @@ export const COLOUR_FAMILIES: { name: string; hex: string }[] = [
   { name: "Orange", hex: "#D4541F" },
 ];
 
+/**
+ * A product trimmed for listings (cards, rails, the drop and lookbook pages):
+ * no copy, galleries or care notes, and only the variants of the first colour,
+ * which is the one quick add uses. Same shape as Product, so every helper still
+ * works; it just keeps the page payload small.
+ */
+export function toListing(p: Product): Product {
+  const first = p.wrng.colours[0]?.name;
+  return {
+    ...p,
+    description: "",
+    tags: [],
+    images: [],
+    variants: p.variants.filter((v) => v.selectedOptions.some((o) => o.name === "Colour" && o.value === first)),
+    wrng: {
+      ...p.wrng,
+      care: [],
+      details: [],
+      fabric: "",
+      colours: p.wrng.colours.map((c) => ({ ...c, media: { ...c.media, insideOut: "", model: [] } })),
+    },
+  };
+}

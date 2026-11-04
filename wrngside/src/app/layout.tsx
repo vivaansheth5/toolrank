@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import "./shell.css";
 import { archivo, geist, geistMono, teko } from "./fonts";
@@ -67,7 +68,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Ticker />
           <Header />
           {children}
-          <Footer />
+          {/* Hydrates on its own, after the page above it. */}
+          <Suspense>
+            <Footer />
+          </Suspense>
         </AppShell>
         <div className="grain" aria-hidden="true" />
         <JsonLd data={organization} />
