@@ -1,0 +1,324 @@
+/**
+ * Mock commerce provider. Same function names and return shapes a Shopify
+ * Storefront provider would expose; swap the bodies, keep the signatures.
+ */
+import { catalog, lineOrder, bestSellers, pairings, reviews as rawReviews, type RawProduct } from "./mock/catalog";
+import type { Category, Collection, Image, Money, Product, ProductFilters, ProductVariant, Review, SortKey } from "./types";
+import { formatPrice } from "../format";
+import { commerce, drops } from "../site-config";
+
+export type { Product, Collection, Review };
+
+const money = (n: number): Money => ({ amount: n.toFixed(2), currencyCode: "INR" });
+
+const CATEGORY_LABEL: Record<Category, string> = {
+  tees: "TEES",
+  outerwear: "OUTERWEAR",
+  bottoms: "BOTTOMS",
+  extras: "EXTRAS",
+};
+
+export const categoryLabel = (c: Category) => CATEGORY_LABEL[c];
+export const categories: Category[] = ["tees", "outerwear", "bottoms", "extras"];
+
+function img(url: string, alt: string, w = 800, h = 1000): Image {
+  return { url, altText: alt, width: w, height: h };
+}
+
+function reshape(raw: RawProduct): Product {
+  const colours = raw.colours.map((c) => {
+    const base = `/products/${raw.handle}/${c.slug}`;
+    const media =
+      c.slug === raw.colours[0].slug
+        ? raw.images
+        : { cutout: `${base}/cutout.svg`, front: `${base}/front.svg`, back: `${base}/back.svg`, insideOut: `${base}/inside-out.svg`, model: [`${base}/model-1.svg`] };
+    return { name: c.name, slug: c.slug, hex: c.hex, media };
+  });
+  const name = `${raw.title} ${raw.type}`;
+  const variants: ProductVariant[] = [];
+  raw.colours.forEach((c, ci) => {
+    raw.sizes.forEach((s, si) => {
+      variants.push({
+        id: `gid://shopify/ProductVariant/${raw.id.split("/").pop()}${ci}${si}`,
+        title: `${c.name} / ${s.label}`,
+        sku: `WS-${raw.handle.slice(0, 6).toUpperCase()}-${c.slug.slice(0, 3).toUpperCase()}-${s.label.replace(/\W/g, "")}`,
+        availableForSale: s.available,
+        quantityAvailable: s.stock,
+        selectedOptions: [
+          { name: "Colour", value: c.name },
+          { name: "Size", value: s.label },
+        ],
+        price: money(raw.price),
+        compareAtPrice: raw.compareAtPrice ? money(raw.compareAtPrice) : null,
+        image: img(colours[ci].media.front, `${name} in ${c.name}, front`),
+      });
+    });
+  });
+  const primary = colours[0];
+  const images = [
+    img(primary.media.front, `${name} in ${primary.name}, front`),
+    img(primary.media.back, `${name} in ${primary.name}, back`),
+    img(primary.media.insideOut, `${name} in ${primary.name}, inside out`),
+    ...primary.media.model.map((m, i) => img(m, `${name} in ${primary.name}, on the line at night ${i + 1}`)),
+  ];
+  const available = raw.sizes.some((s) => s.available);
+  return {
+    id: raw.id,
+    handle: raw.handle,
+    title: raw.title,
+    description: raw.description,
+    vendor: "WRNGSIDE",
+    productType: raw.type,
+    tags: raw.tags,
+    availableForSale: available,
+    priceRange: { minVariantPrice: money(raw.price), maxVariantPrice: money(raw.price) },
+    compareAtPriceRange: raw.compareAtPrice ? { maxVariantPrice: money(raw.compareAtPrice) } : null,
+    featuredImage: images[0],
+    images,
+    options: [
+      { id: `${raw.id}/colour`, name: "Colour", values: raw.colours.map((c) => c.name) },
+      { id: `${raw.id}/size`, name: "Size", values: raw.sizes.map((s) => s.label) },
+    ],
+    variants,
+    seo: {
+      title: `${raw.title} ${raw.type.toUpperCase()} — ${formatPrice(raw.price)}`,
+      description: `${raw.description} ${raw.gsm ? `${raw.gsm} GSM. ` : ""}Free shipping over ${formatPrice(commerce.freeShippingThreshold)}. COD available.`,
+    },
+    updatedAt: "2026-10-30T12:00:00+05:30",
+    wrng: {
+      type: raw.type,
+      category: raw.category,
+      kind: raw.kind,
+      colours,
+      sizes: raw.sizes,
+      gsm: raw.gsm,
+      fit: raw.fit,
+      fabric: raw.fabric,
+      care: raw.care,
+      details: raw.details,
+      hangStyle: raw.hangStyle,
+      weight: raw.weight,
+      drop: raw.drop,
+      isNew: raw.isNew,
+      isLimited: raw.isLimited,
+      restocking: Boolean(raw.restocking),
+      releaseAt: raw.releaseAt ?? null,
+      sizeChart: raw.sizeChart,
+      dims: raw.dims,
+      price: raw.price,
+      compareAtPrice: raw.compareAtPrice ?? null,
+    },
+  };
+}
+
+const products: Product[] = catalog.map(reshape);
+const byHandle = new Map(products.map((p) => [p.handle, p]));
+
+/* ───────────────────────── queries ───────────────────────── */
+
+export async function getProduct(handle: string): Promise<Product | undefined> {
+  return byHandle.get(handle);
+}
+
+export function getProductSync(handle: string): Product | undefined {
+  return byHandle.get(handle);
+}
+
+export async function getAllProducts(): Promise<Product[]> {
+  return products;
+}
+
+export function getAllProductsSync(): Product[] {
+  return products;
+}
+
+export async function getProductsByHandles(handles: readonly string[]): Promise<Product[]> {
+  return handles.map((h) => byHandle.get(h)).filter((p): p is Product => Boolean(p));
+}
+
+export function getProductsByHandlesSync(handles: readonly string[]): Product[] {
+  return handles.map((h) => byHandle.get(h)).filter((p): p is Product => Boolean(p));
+}
+
+/** The live drop, in hanging order. */
+export async function getLineProducts(): Promise<Product[]> {
+  return getProductsByHandlesSync(lineOrder);
+}
+
+export async function getBestSellers(): Promise<Product[]> {
+  return getProductsByHandlesSync(bestSellers);
+}
+
+export async function getPairings(handle: string): Promise<Product[]> {
+  return getProductsByHandlesSync(pairings[handle] ?? []);
+}
+
+export async function getReviews(handle: string): Promise<Review[]> {
+  return rawReviews.filter((r) => r.handle === handle).map((r, i) => ({ ...r, id: `${handle}-${i}` }));
+}
+
+export async function getDropProducts(dropId: string): Promise<Product[]> {
+  return products.filter((p) => p.wrng.drop === dropId);
+}
+
+export const collections: Collection[] = [
+  {
+    handle: "all",
+    title: "EVERYTHING",
+    description: "Every piece on the wire right now, plus what's coming back.",
+    seo: { title: "Shop everything", description: "Heavyweight tees, hoodies, jackets, cargos and extras from WRNGSIDE." },
+    path: "/shop",
+  },
+  ...categories.map((c) => ({
+    handle: c,
+    title: CATEGORY_LABEL[c],
+    description:
+      c === "tees"
+        ? "240 GSM and up. Boxy, oversized, built to be worn to death."
+        : c === "outerwear"
+          ? "Hoodies, overshirts and jackets for the hour the city cools down."
+          : c === "bottoms"
+            ? "Cargos, sweats and shorts with room to move."
+            : "Caps, socks, totes and the small stuff that finishes a fit.",
+    seo: { title: `Shop ${CATEGORY_LABEL[c].toLowerCase()}`, description: `WRNGSIDE ${c}: limited drops, made in India, COD available.` },
+    path: `/shop/${c}`,
+  })),
+];
+
+export async function getCollection(handle: string): Promise<Collection | undefined> {
+  return collections.find((c) => c.handle === handle);
+}
+
+/** Products shown in listings (excludes pieces still locked behind a drop). */
+export async function getCollectionProducts(handle: string): Promise<Product[]> {
+  const list = handle === "all" ? products : products.filter((p) => p.wrng.category === handle);
+  return list;
+}
+
+/* ───────────────────────── helpers ───────────────────────── */
+
+export const priceOf = (p: Product) => p.wrng.price;
+
+export function fitTag(p: Product): string {
+  if (p.wrng.category === "extras") return "One size";
+  const first = p.wrng.fit.split(/[ ,.]/)[0];
+  return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+}
+
+export function totalStock(p: Product) {
+  return p.wrng.sizes.reduce((a, s) => a + (s.available ? s.stock : 0), 0);
+}
+
+export function isLocked(p: Product, now: number, unlocked = false) {
+  return Boolean(p.wrng.releaseAt && Date.parse(p.wrng.releaseAt) > now && !unlocked);
+}
+
+export type Badge = "NEW" | "LOW STOCK" | "SOLD OUT" | "RESTOCKING" | "LIMITED" | "LOCKED";
+
+/** Badges come straight from stock data: no invented urgency. */
+export function badgesFor(p: Product, now: number, unlocked = false): Badge[] {
+  if (isLocked(p, now, unlocked)) return ["LOCKED"];
+  if (!p.availableForSale) return [p.wrng.restocking ? "RESTOCKING" : "SOLD OUT"];
+  const out: Badge[] = [];
+  if (p.wrng.isNew) out.push("NEW");
+  if (totalStock(p) <= commerce.lowStockProductThreshold) out.push("LOW STOCK");
+  return out;
+}
+
+export function variantFor(p: Product, colourName: string, size: string) {
+  return p.variants.find(
+    (v) => v.selectedOptions.some((o) => o.name === "Colour" && o.value === colourName) && v.selectedOptions.some((o) => o.name === "Size" && o.value === size),
+  );
+}
+
+export function accessibleName(p: Product, colour?: string) {
+  return `${p.title} ${p.wrng.type}, ${(colour ?? p.wrng.colours[0].name).toLowerCase()}, ${formatPrice(p.wrng.price)}`;
+}
+
+export function sortProducts(list: Product[], sort: SortKey): Product[] {
+  const copy = [...list];
+  const dropNum = (p: Product) => Number(p.wrng.drop.replace(/\D/g, "")) || 0;
+  switch (sort) {
+    case "new":
+      return copy.sort((a, b) => dropNum(b) - dropNum(a) || Number(b.wrng.isNew) - Number(a.wrng.isNew));
+    case "price-asc":
+      return copy.sort((a, b) => a.wrng.price - b.wrng.price);
+    case "price-desc":
+      return copy.sort((a, b) => b.wrng.price - a.wrng.price);
+    default: {
+      // Featured: live drop in line order, then available pieces, then sold out.
+      const lineIdx = (p: Product) => {
+        const i = lineOrder.indexOf(p.handle);
+        return i === -1 ? 100 : i;
+      };
+      return copy.sort((a, b) => Number(!a.availableForSale) - Number(!b.availableForSale) || lineIdx(a) - lineIdx(b));
+    }
+  }
+}
+
+export const PRICE_BANDS: { label: string; range: [number, number] }[] = [
+  { label: "Under ₹1,500", range: [0, 1499] },
+  { label: "₹1,500 – ₹2,999", range: [1500, 2999] },
+  { label: "₹3,000 – ₹4,499", range: [3000, 4499] },
+  { label: "₹4,500 and up", range: [4500, 1_000_000] },
+];
+
+export function filterProducts(list: Product[], f: ProductFilters): Product[] {
+  return list.filter((p) => {
+    if (f.category && f.category !== "all" && p.wrng.category !== f.category) return false;
+    if (f.sizes?.length && !p.wrng.sizes.some((s) => s.available && f.sizes!.includes(s.label))) return false;
+    if (f.colours?.length && !p.wrng.colours.some((c) => f.colours!.includes(colourFamily(c.name)))) return false;
+    if (f.fits?.length && !f.fits.includes(fitTag(p))) return false;
+    if (f.price && (p.wrng.price < f.price[0] || p.wrng.price > f.price[1])) return false;
+    return true;
+  });
+}
+
+/** Group colour names into filterable families. */
+export function colourFamily(name: string) {
+  const n = name.toLowerCase();
+  if (n.includes("black") || n.includes("ink") || n.includes("charcoal")) return "Black";
+  if (n.includes("bone") || n.includes("natural") || n.includes("mixed")) return "Bone";
+  if (n.includes("ash")) return "Grey";
+  if (n.includes("olive")) return "Olive";
+  if (n.includes("duck") || n.includes("rust")) return "Brown";
+  if (n.includes("orange")) return "Orange";
+  return name;
+}
+
+export const COLOUR_FAMILIES: { name: string; hex: string }[] = [
+  { name: "Black", hex: "#151515" },
+  { name: "Bone", hex: "#E3DCCD" },
+  { name: "Grey", hex: "#8E8C87" },
+  { name: "Olive", hex: "#545536" },
+  { name: "Brown", hex: "#6C5233" },
+  { name: "Orange", hex: "#D4541F" },
+];
+
+/** Simple ranked search over titles, types, tags and colours. */
+export function searchProductsSync(query: string, limit = 8): Product[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  const terms = q.split(/\s+/);
+  const scored = products
+    .map((p) => {
+      const title = p.title.toLowerCase();
+      const hay = [title, p.wrng.type, p.wrng.category, ...p.tags, ...p.wrng.colours.map((c) => c.name.toLowerCase())].join(" ");
+      let score = 0;
+      if (title.startsWith(q)) score += 12;
+      if (title.includes(q)) score += 8;
+      for (const t of terms) {
+        if (hay.includes(t)) score += 3;
+        else if (t.length > 3 && hay.includes(t.slice(0, -1))) score += 1;
+        else return { p, score: 0 };
+      }
+      return { p, score };
+    })
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score);
+  return scored.slice(0, limit).map((s) => s.p);
+}
+
+export const liveDrop = () => drops.list.find((d) => d.id === drops.live)!;
+export const nextDrop = () => drops.list.find((d) => d.id === drops.next)!;
+export const dropById = (id: string) => drops.list.find((d) => d.id === id);

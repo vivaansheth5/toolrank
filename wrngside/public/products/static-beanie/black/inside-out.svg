@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" preserveAspectRatio="xMidYMid meet"><defs>
+<radialGradient id="pfvig" cx="50%" cy="45%" r="75%">
+<stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.09"/>
+</radialGradient>
+<linearGradient id="pfflr" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity="0.16"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.04"/>
+</linearGradient>
+<filter id="pfsil1" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="pfsil2" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/><feGaussianBlur stdDeviation="26"/></filter>
+<filter id="pfn" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.8"/></filter>
+<g id="pfg">
+<filter id="ggrain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="9" result="n"/>
+<feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.2 0 0 0 -1.12"/>
+</filter>
+<filter id="ggrainL" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="16" result="n"/>
+<feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -0.82"/>
+</filter>
+<filter id="gb4" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+<filter id="gb10" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+<filter id="gb22" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter><g transform="translate(400 180.8) scale(2.4)">
+<defs>
+<clipPath id="bnc"><path d="M-110 150 Q-118 10 0 2 Q118 10 110 150 Z"/></clipPath>
+<linearGradient id="bnv" x1="0" y1="-6" x2="0" y2="272" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#fff" stop-opacity="0.24"/>
+<stop offset="0.35" stop-color="#fff" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.41"/>
+</linearGradient>
+<linearGradient id="bnh" x1="-125" y1="0" x2="125" y2="0" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#000" stop-opacity="0.28"/>
+<stop offset="0.18" stop-color="#000" stop-opacity="0"/>
+<stop offset="0.82" stop-color="#000" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.33"/>
+</linearGradient>
+</defs>
+<path d="M-110 150 Q-118 10 0 2 Q118 10 110 150 Z" fill="#2a2a2a"/>
+<g clip-path="url(#bnc)">
+<rect x="-125" y="-6" width="250" height="278" fill="url(#bnv)"/>
+<rect x="-125" y="-6" width="250" height="278" fill="url(#bnh)"/>
+<path d="M-43 19.5L-67.9 148.8L-52.1 151.2L-37 20.5Z" fill="#000" opacity="0.5" filter="url(#gb10)"/>
+<path d="M12 10.6L18 140.9L42 139.1L28 9.4Z" fill="#fff" opacity="0.1" filter="url(#gb10)"/>
+<rect x="-125" y="-6" width="250" height="278" filter="url(#ggrain)" opacity="0.28"/>
+<rect x="-125" y="-6" width="250" height="278" filter="url(#ggrainL)" opacity="0.1"/>
+</g>
+<path d="M-110 150 Q-118 10 0 2 Q118 10 110 150 Z" fill="none" stroke="#000" stroke-opacity="0.6" stroke-width="1.4"/><defs><clipPath id="bnr"><path d="M-110 150 Q-118 10 0 2 Q118 10 110 150 Z"/></clipPath></defs><path d="M-110 150 Q-66 60 -16.5 6M-101 150 Q-60.599999999999994 60 -15.149999999999999 6M-92 150 Q-55.199999999999996 60 -13.799999999999999 6M-83 150 Q-49.8 60 -12.45 6M-74 150 Q-44.4 60 -11.1 6M-65 150 Q-39 60 -9.75 6M-56 150 Q-33.6 60 -8.4 6M-47 150 Q-28.2 60 -7.05 6M-38 150 Q-22.8 60 -5.7 6M-29 150 Q-17.4 60 -4.35 6M-20 150 Q-12 60 -3 6M-11 150 Q-6.6 60 -1.65 6M-2 150 Q-1.2 60 -0.3 6M7 150 Q4.2 60 1.05 6M16 150 Q9.6 60 2.4 6M25 150 Q15 60 3.75 6M34 150 Q20.4 60 5.1 6M43 150 Q25.8 60 6.45 6M52 150 Q31.2 60 7.8 6M61 150 Q36.6 60 9.15 6M70 150 Q42 60 10.5 6M79 150 Q47.4 60 11.85 6M88 150 Q52.8 60 13.2 6M97 150 Q58.199999999999996 60 14.549999999999999 6M106 150 Q63.599999999999994 60 15.899999999999999 6" clip-path="url(#bnr)" stroke="#000" stroke-opacity="0.5" stroke-width="3" fill="none"/><defs><clipPath id="bnc"><path d="M-116 140 L116 140 L120 268 L-120 268 Z"/></clipPath></defs>
+<path d="M-116 140 L116 140 L120 268 L-120 268 Z" fill="#333333"/>
+<g clip-path="url(#bnc)"><path d="M-122 140V270M-113 140V270M-104 140V270M-95 140V270M-86 140V270M-77 140V270M-68 140V270M-59 140V270M-50 140V270M-41 140V270M-32 140V270M-23 140V270M-14 140V270M-5 140V270M4 140V270M13 140V270M22 140V270M31 140V270M40 140V270M49 140V270M58 140V270M67 140V270M76 140V270M85 140V270M94 140V270M103 140V270M112 140V270M121 140V270" stroke="#fff" stroke-opacity="0.12249999999999998" stroke-width="1.1" fill="none"/>
+<path d="M-122 140V270M-113 140V270M-104 140V270M-95 140V270M-86 140V270M-77 140V270M-68 140V270M-59 140V270M-50 140V270M-41 140V270M-32 140V270M-23 140V270M-14 140V270M-5 140V270M4 140V270M13 140V270M22 140V270M31 140V270M40 140V270M49 140V270M58 140V270M67 140V270M76 140V270M85 140V270M94 140V270M103 140V270M112 140V270M121 140V270" transform="translate(4.5 0)" stroke="#000" stroke-opacity="0.35" stroke-width="1.6" fill="none"/></g>
+<path d="M-116 140 L116 140 L120 268 L-120 268 Z" fill="none" stroke="#000" stroke-opacity="0.6" stroke-width="1.2"/><path d="M-116 140 L116 140" stroke="#000" stroke-opacity="0.35" stroke-width="4"/><rect x="-40" y="182" width="80" height="44" fill="#0f0f0f"/><path d="M-27.62 209.24L-27.62 209.24Q-28.77 209.24-29.63 208.78Q-30.50 208.31-31.00 207.48Q-31.52 206.65-31.61 205.53L-31.61 205.53L-29.98 205.43Q-29.88 206.19-29.57 206.72Q-29.25 207.25-28.74 207.51Q-28.23 207.77-27.55 207.77L-27.55 207.77Q-26.89 207.77-26.45 207.60Q-26.00 207.43-25.75 207.09Q-25.52 206.76-25.52 206.28L-25.52 206.28Q-25.52 205.81-25.74 205.46Q-25.96 205.12-26.55 204.82Q-27.13 204.53-28.26 204.22L-28.26 204.22Q-29.36 203.91-30.05 203.53Q-30.73 203.15-31.05 202.59Q-31.36 202.03-31.36 201.20L-31.36 201.20Q-31.36 200.28-30.94 199.59Q-30.51 198.89-29.71 198.50Q-28.91 198.11-27.78 198.11L-27.78 198.11Q-26.67 198.11-25.88 198.54Q-25.09 198.98-24.64 199.75Q-24.18 200.53-24.08 201.56L-24.08 201.56L-25.70 201.65Q-25.77 201.03-26.03 200.57Q-26.30 200.10-26.75 199.84Q-27.20 199.58-27.82 199.58L-27.82 199.58Q-28.71 199.58-29.23 200Q-29.75 200.42-29.75 201.13L-29.75 201.13Q-29.75 201.57-29.54 201.88Q-29.32 202.19-28.80 202.42Q-28.27 202.66-27.33 202.93L-27.33 202.93Q-26.05 203.27-25.30 203.73Q-24.55 204.19-24.23 204.80Q-23.89 205.41-23.89 206.28L-23.89 206.28Q-23.89 207.16-24.36 207.83Q-24.82 208.50-25.66 208.87Q-26.49 209.24-27.62 209.24Z M-15.87 209L-17.43 209L-17.43 199.84L-20.55 199.84L-20.55 198.35L-12.75 198.35L-12.75 199.84L-15.87 199.84L-15.87 209Z M-8.05 209L-9.69 209L-6.57 198.35L-4.53 198.35L-1.41 209L-3.04 209L-5.55 199.99L-8.05 209ZM-3.15 206.22L-7.95 206.22L-7.47 204.77L-3.63 204.77L-3.15 206.22Z M6.33 209L4.77 209L4.77 199.84L1.65 199.84L1.65 198.35L9.45 198.35L9.45 199.84L6.33 199.84L6.33 209Z M19.98 209L13.32 209L13.32 207.51L15.87 207.51L15.87 199.84L13.32 199.84L13.32 198.35L19.98 198.35L19.98 199.84L17.43 199.84L17.43 207.51L19.98 207.51L19.98 209Z M27.80 209.24L27.80 209.24Q26.50 209.24 25.61 208.56Q24.72 207.89 24.25 206.65Q23.79 205.40 23.79 203.69L23.79 203.69Q23.79 201.97 24.25 200.72Q24.72 199.47 25.61 198.79Q26.50 198.11 27.80 198.11L27.80 198.11Q29.25 198.11 30.25 199.07Q31.25 200.03 31.56 201.75L31.56 201.75L29.91 201.84Q29.68 200.74 29.12 200.16Q28.56 199.58 27.80 199.58L27.80 199.58Q27.02 199.58 26.49 200.06Q25.96 200.54 25.70 201.46Q25.43 202.37 25.43 203.69L25.43 203.69Q25.43 205.00 25.70 205.90Q25.96 206.81 26.49 207.29Q27.02 207.77 27.80 207.77L27.80 207.77Q28.62 207.77 29.20 207.14Q29.79 206.51 29.98 205.29L29.98 205.29L31.62 205.37Q31.35 207.20 30.34 208.22Q29.34 209.24 27.80 209.24Z" fill="#EEEAE3"/></g></g>
+</defs>
+<rect width="800" height="1000" fill="#DCD7CE"/>
+<rect width="800" height="1000" fill="url(#pfflr)"/>
+<use href="#pfg" filter="url(#pfsil2)" opacity="0.16" transform="translate(10 26)"/>
+<use href="#pfg" filter="url(#pfsil1)" opacity="0.18" transform="translate(4 9)"/>
+<use href="#pfg"/>
+<rect width="800" height="1000" fill="url(#pfvig)"/>
+<rect width="800" height="1000" filter="url(#pfn)" opacity="0.10"/></svg>

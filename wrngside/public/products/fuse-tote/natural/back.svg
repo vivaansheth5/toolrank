@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" preserveAspectRatio="xMidYMid meet"><defs>
+<radialGradient id="pfvig" cx="50%" cy="45%" r="75%">
+<stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.09"/>
+</radialGradient>
+<linearGradient id="pfflr" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity="0.16"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.04"/>
+</linearGradient>
+<filter id="pfsil1" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="pfsil2" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/><feGaussianBlur stdDeviation="26"/></filter>
+<filter id="pfn" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.8"/></filter>
+<g id="pfg">
+<filter id="ggrain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="55" result="n"/>
+<feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.2 0 0 0 -1.12"/>
+</filter>
+<filter id="ggrainL" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="62" result="n"/>
+<feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -0.82"/>
+</filter>
+<filter id="gb4" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+<filter id="gb10" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+<filter id="gb22" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter><g transform="translate(400 158) scale(1.0029)"><path d="M-130 290 Q-132 -4 -10 2" stroke="#beb39a" stroke-width="26" fill="none" stroke-linecap="round"/><path d="M-130 290 Q-132 -4 -10 2" stroke="#000" stroke-opacity="0.18" stroke-width="2" fill="none" transform="translate(-8 0)"/><path d="M-128 286 Q-128 6 -14 10" fill="none" stroke="#000" stroke-opacity="0.25" stroke-width="1.3" stroke-dasharray="5 3.5" stroke-linecap="round"/><path d="M130 290 Q132 -4 10 2" stroke="#beb39a" stroke-width="26" fill="none" stroke-linecap="round"/><path d="M130 290 Q132 -4 10 2" stroke="#000" stroke-opacity="0.18" stroke-width="2" fill="none" transform="translate(8 0)"/><path d="M128 286 Q128 6 14 10" fill="none" stroke="#000" stroke-opacity="0.25" stroke-width="1.3" stroke-dasharray="5 3.5" stroke-linecap="round"/><path d="M-200 270 L200 270 L206 690 L-206 690 Z" fill="#000" opacity="0.22" transform="translate(4 10)" filter="url(#gb10)"/>
+<defs>
+<clipPath id="ttc"><path d="M-200 270 L200 270 L206 690 L-206 690 Z"/></clipPath>
+<linearGradient id="ttv" x1="0" y1="-8" x2="0" y2="690" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#fff" stop-opacity="0.28"/>
+<stop offset="0.35" stop-color="#fff" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.23"/>
+</linearGradient>
+<linearGradient id="tth" x1="-210" y1="0" x2="210" y2="0" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#000" stop-opacity="0.11"/>
+<stop offset="0.18" stop-color="#000" stop-opacity="0"/>
+<stop offset="0.82" stop-color="#000" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.13"/>
+</linearGradient>
+</defs>
+<path d="M-200 270 L200 270 L206 690 L-206 690 Z" fill="#D8CBAF"/>
+<g clip-path="url(#ttc)">
+<rect x="-210" y="-8" width="420" height="698" fill="url(#ttv)"/>
+<rect x="-210" y="-8" width="420" height="698" fill="url(#tth)"/>
+<path d="M-124 299.8L-152 679.4L-128 680.6L-116 300.2Z" fill="#000" opacity="0.2" filter="url(#gb10)"/><path d="M87 290.2L100 680.5L120 679.5L93 289.8Z" fill="#000" opacity="0.2" filter="url(#gb10)"/>
+<path d="M-30 290.3L-26 670.4L6 669.6L-10 289.7Z" fill="#fff" opacity="0.22" filter="url(#gb10)"/>
+<rect x="-210" y="-8" width="420" height="698" filter="url(#ggrain)" opacity="0.1"/>
+<rect x="-210" y="-8" width="420" height="698" filter="url(#ggrainL)" opacity="0.07"/>
+</g>
+<path d="M-200 270 L200 270 L206 690 L-206 690 Z" fill="none" stroke="#000" stroke-opacity="0.18" stroke-width="1.4"/><defs><clipPath id="ttc2"><path d="M-200 270 L200 270 L206 690 L-206 690 Z"/></clipPath></defs><path d="M-206 274H206M-206 280H206M-206 286H206M-206 292H206M-206 298H206M-206 304H206M-206 310H206M-206 316H206M-206 322H206M-206 328H206M-206 334H206M-206 340H206M-206 346H206M-206 352H206M-206 358H206M-206 364H206M-206 370H206M-206 376H206M-206 382H206M-206 388H206M-206 394H206M-206 400H206M-206 406H206M-206 412H206M-206 418H206M-206 424H206M-206 430H206M-206 436H206M-206 442H206M-206 448H206M-206 454H206M-206 460H206M-206 466H206M-206 472H206M-206 478H206M-206 484H206M-206 490H206M-206 496H206M-206 502H206M-206 508H206M-206 514H206M-206 520H206M-206 526H206M-206 532H206M-206 538H206M-206 544H206M-206 550H206M-206 556H206M-206 562H206M-206 568H206M-206 574H206M-206 580H206M-206 586H206M-206 592H206M-206 598H206M-206 604H206M-206 610H206M-206 616H206M-206 622H206M-206 628H206M-206 634H206M-206 640H206M-206 646H206M-206 652H206M-206 658H206M-206 664H206M-206 670H206M-206 676H206M-206 682H206M-206 688H206" clip-path="url(#ttc2)" stroke="#000" stroke-opacity="0.05" stroke-width="1.5"/><path d="M-196 286 H196" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.3" stroke-dasharray="5 3.5" stroke-linecap="round"/><rect x="-136" y="270" width="32" height="40" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="4 3"/><rect x="104" y="270" width="32" height="40" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="4 3"/><rect x="-90" y="420" width="180" height="70" fill="none" stroke="#141414" stroke-width="10"/><rect x="-40" y="404" width="80" height="102" fill="#D8CBAF"/><path d="M-36 455 H36" stroke="#141414" stroke-width="8"/></g></g>
+</defs>
+<rect width="800" height="1000" fill="#DCD7CE"/>
+<rect width="800" height="1000" fill="url(#pfflr)"/>
+<use href="#pfg" filter="url(#pfsil2)" opacity="0.16" transform="translate(10 26)"/>
+<use href="#pfg" filter="url(#pfsil1)" opacity="0.18" transform="translate(4 9)"/>
+<use href="#pfg"/>
+<rect width="800" height="1000" fill="url(#pfvig)"/>
+<rect width="800" height="1000" filter="url(#pfn)" opacity="0.10"/></svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" preserveAspectRatio="xMidYMid meet"><defs>
+<radialGradient id="pfvig" cx="50%" cy="45%" r="75%">
+<stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.09"/>
+</radialGradient>
+<linearGradient id="pfflr" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity="0.16"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.04"/>
+</linearGradient>
+<filter id="pfsil1" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="pfsil2" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/><feGaussianBlur stdDeviation="26"/></filter>
+<filter id="pfn" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.8"/></filter>
+<g id="pfg">
+<filter id="ggrain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="18" result="n"/>
+<feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.2 0 0 0 -1.12"/>
+</filter>
+<filter id="ggrainL" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="25" result="n"/>
+<feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -0.82"/>
+</filter>
+<filter id="gb4" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+<filter id="gb10" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+<filter id="gb22" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter><g transform="translate(400 246.9) scale(0.9375)">
+<defs>
+<clipPath id="pfc"><path d="M-230 0 L230 0 L290 198 L280 520 L-20 520 L6 330 L-6 330 L20 520 L-280 520 L-290 198 Z"/></clipPath>
+<linearGradient id="pfv" x1="0" y1="-20" x2="0" y2="560" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#fff" stop-opacity="0.24"/>
+<stop offset="0.35" stop-color="#fff" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.41"/>
+</linearGradient>
+<linearGradient id="pfh" x1="-320" y1="0" x2="320" y2="0" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#000" stop-opacity="0.28"/>
+<stop offset="0.18" stop-color="#000" stop-opacity="0"/>
+<stop offset="0.82" stop-color="#000" stop-opacity="0"/>
+<stop offset="1" stop-color="#000" stop-opacity="0.33"/>
+</linearGradient>
+</defs>
+<path d="M-230 0 L230 0 L290 198 L280 520 L-20 520 L6 330 L-6 330 L20 520 L-280 520 L-290 198 Z" fill="#161616"/>
+<g clip-path="url(#pfc)">
+<rect x="-320" y="-20" width="640" height="580" fill="url(#pfv)"/>
+<rect x="-320" y="-20" width="640" height="580" fill="url(#pfh)"/>
+<path d="M-155 329.7L-174 479.1L-146 480.9L-145 330.3Z" fill="#000" opacity="0.5" filter="url(#gb10)"/><path d="M145 330.3L146 480.9L174 479.1L155 329.7Z" fill="#000" opacity="0.5" filter="url(#gb10)"/><path d="M-43 80.4L-15.9 310.8L-4.1 309.2L-37 79.6Z" fill="#000" opacity="0.5" filter="url(#gb10)"/>
+<path d="M-206 119.8L-220 439.7L-200 440.3L-194 120.2Z" fill="#fff" opacity="0.1" filter="url(#gb10)"/>
+<rect x="-320" y="-20" width="640" height="580" filter="url(#ggrain)" opacity="0.28"/>
+<rect x="-320" y="-20" width="640" height="580" filter="url(#ggrainL)" opacity="0.1"/>
+</g>
+<path d="M-230 0 L230 0 L290 198 L280 520 L-20 520 L6 330 L-6 330 L20 520 L-280 520 L-290 198 Z" fill="none" stroke="#000" stroke-opacity="0.6" stroke-width="1.4"/><defs><clipPath id="pfw"><path d="M-230 0 L230 0 L236 60 L-236 60 Z"/></clipPath></defs>
+<path d="M-230 0 L230 0 L236 60 L-236 60 Z" fill="#1f1f1f"/>
+<g clip-path="url(#pfw)"><path d="M-238 0V60M-232 0V60M-226 0V60M-220 0V60M-214 0V60M-208 0V60M-202 0V60M-196 0V60M-190 0V60M-184 0V60M-178 0V60M-172 0V60M-166 0V60M-160 0V60M-154 0V60M-148 0V60M-142 0V60M-136 0V60M-130 0V60M-124 0V60M-118 0V60M-112 0V60M-106 0V60M-100 0V60M-94 0V60M-88 0V60M-82 0V60M-76 0V60M-70 0V60M-64 0V60M-58 0V60M-52 0V60M-46 0V60M-40 0V60M-34 0V60M-28 0V60M-22 0V60M-16 0V60M-10 0V60M-4 0V60M2 0V60M8 0V60M14 0V60M20 0V60M26 0V60M32 0V60M38 0V60M44 0V60M50 0V60M56 0V60M62 0V60M68 0V60M74 0V60M80 0V60M86 0V60M92 0V60M98 0V60M104 0V60M110 0V60M116 0V60M122 0V60M128 0V60M134 0V60M140 0V60M146 0V60M152 0V60M158 0V60M164 0V60M170 0V60M176 0V60M182 0V60M188 0V60M194 0V60M200 0V60M206 0V60M212 0V60M218 0V60M224 0V60M230 0V60M236 0V60" stroke="#fff" stroke-opacity="0.12249999999999998" stroke-width="1.1" fill="none"/>
+<path d="M-238 0V60M-232 0V60M-226 0V60M-220 0V60M-214 0V60M-208 0V60M-202 0V60M-196 0V60M-190 0V60M-184 0V60M-178 0V60M-172 0V60M-166 0V60M-160 0V60M-154 0V60M-148 0V60M-142 0V60M-136 0V60M-130 0V60M-124 0V60M-118 0V60M-112 0V60M-106 0V60M-100 0V60M-94 0V60M-88 0V60M-82 0V60M-76 0V60M-70 0V60M-64 0V60M-58 0V60M-52 0V60M-46 0V60M-40 0V60M-34 0V60M-28 0V60M-22 0V60M-16 0V60M-10 0V60M-4 0V60M2 0V60M8 0V60M14 0V60M20 0V60M26 0V60M32 0V60M38 0V60M44 0V60M50 0V60M56 0V60M62 0V60M68 0V60M74 0V60M80 0V60M86 0V60M92 0V60M98 0V60M104 0V60M110 0V60M116 0V60M122 0V60M128 0V60M134 0V60M140 0V60M146 0V60M152 0V60M158 0V60M164 0V60M170 0V60M176 0V60M182 0V60M188 0V60M194 0V60M200 0V60M206 0V60M212 0V60M218 0V60M224 0V60M230 0V60M236 0V60" transform="translate(3 0)" stroke="#000" stroke-opacity="0.35" stroke-width="1.6" fill="none"/></g>
+<path d="M-230 0 L230 0 L236 60 L-236 60 Z" fill="none" stroke="#000" stroke-opacity="0.6" stroke-width="1.2"/><path d="M-30 60 Q-36 180 -60 220M30 60 Q40 170 64 216" stroke="#d9d4c9" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M0 60 Q-6 200 -30 300" fill="none" stroke="#000" stroke-opacity="0.35" stroke-width="1.3" stroke-dasharray="5 3.5" stroke-linecap="round"/><path d="M-222.50 450.34L-222.50 450.34Q-224.99 450.34-227.15 450.04Q-229.30 449.75-230.93 449.03Q-232.55 448.32-233.48 447.05Q-234.40 445.77-234.40 443.84L-234.40 443.84Q-234.40 443.78-234.40 443.69Q-234.40 443.59-234.37 443.48L-234.37 443.48L-227.62 443.48Q-227.65 443.59-227.65 443.69Q-227.65 443.78-227.65 443.87L-227.65 443.87Q-227.65 444.71-227.09 445.16Q-226.53 445.60-225.52 445.76Q-224.52 445.91-223.20 445.91L-223.20 445.91Q-222.67 445.91-222.09 445.90Q-221.52 445.88-220.97 445.81Q-220.43 445.74-219.99 445.60Q-219.56 445.46-219.29 445.23Q-219.03 444.99-219.03 444.62L-219.03 444.62Q-219.03 444.12-219.66 443.84Q-220.29 443.56-221.37 443.41Q-222.44 443.25-223.77 443.11Q-225.10 442.97-226.53 442.75Q-227.96 442.52-229.29 442.12Q-230.62 441.71-231.70 441.01Q-232.78 440.31-233.41 439.22Q-234.04 438.13-234.04 436.56L-234.04 436.56Q-234.04 434.88-233.15 433.70Q-232.27 432.53-230.76 431.80Q-229.25 431.07-227.29 430.74Q-225.33 430.40-223.20 430.40L-223.20 430.40Q-221.02 430.40-219.10 430.72Q-217.18 431.04-215.71 431.74Q-214.24 432.44-213.40 433.58Q-212.56 434.71-212.56 436.34L-212.56 436.34L-212.56 436.67L-219.25 436.67L-219.25 436.56Q-219.25 436-219.62 435.57Q-219.98 435.13-220.79 434.87Q-221.60 434.60-222.92 434.60L-222.92 434.60Q-224.26 434.60-225.16 434.77Q-226.06 434.94-226.49 435.23Q-226.92 435.52-226.92 435.86L-226.92 435.86Q-226.92 436.36-226.29 436.64Q-225.66 436.92-224.59 437.08Q-223.51 437.23-222.18 437.37Q-220.85 437.51-219.42 437.72Q-217.99 437.93-216.66 438.31Q-215.33 438.69-214.25 439.36Q-213.18 440.03-212.55 441.07Q-211.92 442.10-211.92 443.62L-211.92 443.62Q-211.92 446.00-213.30 447.48Q-214.69 448.96-217.08 449.65Q-219.48 450.34-222.50 450.34Z M-197.08 450.34L-197.08 450.34Q-201.05 450.34-203.66 449.23Q-206.26 448.12-207.55 445.98Q-208.84 443.84-208.84 440.73L-208.84 440.73L-208.84 430.74L-201.92 430.74L-201.92 440.42Q-201.92 442.83-200.65 444.18Q-199.37 445.52-197.08 445.52L-197.08 445.52Q-194.75 445.52-193.48 444.18Q-192.20 442.83-192.20 440.42L-192.20 440.42L-192.20 430.74L-185.29 430.74L-185.29 440.73Q-185.29 443.84-186.58 445.98Q-187.86 448.12-190.48 449.23Q-193.10 450.34-197.08 450.34Z M-174.23 450L-181.14 450L-181.14 430.74L-164.46 430.74Q-162.30 430.74-160.86 431.63Q-159.42 432.53-158.69 433.98Q-157.96 435.44-157.96 437.12L-157.96 437.12Q-157.96 439.05-158.81 440.55Q-159.67 442.05-161.32 442.94L-161.32 442.94L-157.51 450L-165.32 450L-168.24 443.98L-174.23 443.98L-174.23 450ZM-174.23 435.52L-174.23 439.19L-166.89 439.19Q-166.11 439.19-165.58 438.70Q-165.04 438.21-165.04 437.34L-165.04 437.34Q-165.04 436.76-165.30 436.35Q-165.55 435.94-165.95 435.73Q-166.36 435.52-166.89 435.52L-166.89 435.52L-174.23 435.52Z M-143.82 450.34L-143.82 450.34Q-149.67 450.34-152.61 447.87Q-155.55 445.41-155.55 440.37L-155.55 440.37Q-155.55 437.06-154.00 434.85Q-152.44 432.64-149.50 431.52Q-146.56 430.40-142.42 430.40L-142.42 430.40Q-139.96 430.40-137.79 430.86Q-135.62 431.32-133.95 432.23Q-132.28 433.14-131.35 434.52Q-130.41 435.89-130.41 437.71L-130.41 437.71L-137.13 437.71Q-137.13 437.12-137.52 436.64Q-137.91 436.17-138.61 435.85Q-139.31 435.52-140.21 435.36Q-141.10 435.19-142.11 435.19L-142.11 435.19Q-143.71 435.19-144.90 435.51Q-146.09 435.83-146.89 436.46Q-147.68 437.09-148.08 437.99Q-148.47 438.88-148.47 440.03L-148.47 440.03L-148.47 440.70Q-148.47 442.36-147.81 443.43Q-147.15 444.51-145.84 445.03Q-144.52 445.55-142.53 445.55L-142.53 445.55Q-141.10 445.55-139.87 445.30Q-138.64 445.04-137.90 444.53Q-137.16 444.01-137.16 443.28L-137.16 443.28L-137.16 443.17L-143.01 443.17L-143.01 439.25L-130.38 439.25L-130.38 450L-134.30 450L-134.92 447.87Q-136.04 448.68-137.38 449.24Q-138.72 449.80-140.32 450.07Q-141.92 450.34-143.82 450.34Z M-105.60 450L-126.40 450L-126.40 430.74L-105.82 430.74L-105.82 435.52L-119.46 435.52L-119.46 438.02L-107.70 438.02L-107.70 442.55L-119.46 442.55L-119.46 445.21L-105.60 445.21L-105.60 450Z" fill="#E9E4DA"/></g></g>
+</defs>
+<rect width="800" height="1000" fill="#DCD7CE"/>
+<rect width="800" height="1000" fill="url(#pfflr)"/>
+<use href="#pfg" filter="url(#pfsil2)" opacity="0.16" transform="translate(10 26)"/>
+<use href="#pfg" filter="url(#pfsil1)" opacity="0.18" transform="translate(4 9)"/>
+<use href="#pfg"/>
+<rect width="800" height="1000" fill="url(#pfvig)"/>
+<rect width="800" height="1000" filter="url(#pfn)" opacity="0.10"/></svg>

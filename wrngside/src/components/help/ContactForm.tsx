@@ -1,0 +1,59 @@
+"use client";
+
+import { useState } from "react";
+import { copy } from "@/lib/site-config";
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+export function ContactForm() {
+  const [f, setF] = useState({ name: "", email: "", order: "", msg: "" });
+  const [e, setE] = useState<Record<string, string | null>>({});
+  const [sent, setSent] = useState(false);
+  if (sent) return <p className="t-h3 contact-sent">GOT IT. WE&apos;LL REPLY WITHIN A WORKING DAY.</p>;
+  return (
+    <form
+      className="contact-form"
+      noValidate
+      onSubmit={(ev) => {
+        ev.preventDefault();
+        const errs = {
+          name: f.name.trim() ? null : copy.errors.required,
+          email: EMAIL.test(f.email.trim()) ? null : copy.errors.email,
+          msg: f.msg.trim().length > 4 ? null : copy.errors.required,
+        };
+        setE(errs);
+        if (!Object.values(errs).some(Boolean)) setSent(true);
+      }}
+    >
+      {(
+        [
+          ["name", "Name", "text"],
+          ["email", "Email", "email"],
+          ["order", "Order ID (optional)", "text"],
+        ] as const
+      ).map(([k, label, type]) => (
+        <div key={k} className="field">
+          <label htmlFor={`cf-${k}`}>{label}</label>
+          <input id={`cf-${k}`} className="input" type={type} value={f[k]} onChange={(x) => setF((s) => ({ ...s, [k]: x.target.value }))} aria-invalid={Boolean(e[k]) || undefined} aria-describedby={e[k] ? `cf-${k}-err` : undefined} />
+          {e[k] && (
+            <p id={`cf-${k}-err`} className="field-error" role="alert">
+              {e[k]}
+            </p>
+          )}
+        </div>
+      ))}
+      <div className="field">
+        <label htmlFor="cf-msg">Message</label>
+        <textarea id="cf-msg" className="input" rows={5} value={f.msg} onChange={(x) => setF((s) => ({ ...s, msg: x.target.value }))} aria-invalid={Boolean(e.msg) || undefined} aria-describedby={e.msg ? "cf-msg-err" : undefined} />
+        {e.msg && (
+          <p id="cf-msg-err" className="field-error" role="alert">
+            {e.msg}
+          </p>
+        )}
+      </div>
+      <button type="submit" className="btn btn-solid">
+        SEND
+      </button>
+    </form>
+  );
+}

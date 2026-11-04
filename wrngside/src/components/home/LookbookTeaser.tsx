@@ -1,0 +1,64 @@
+"use client";
+
+import Image from "next/image";
+import { useEffect, useRef } from "react";
+import { lookbook } from "@/lib/site-config";
+import { gsap } from "@/lib/gsap";
+import { REDUCED_MOTION } from "@/lib/device";
+import { TLink } from "@/components/ui/TLink";
+
+const LAYOUT = [
+  { x: 1, y: 2, w: 28, speed: 0.85, rot: -2.5 },
+  { x: 36, y: 0, w: 22, speed: 1.15, rot: 1.8 },
+  { x: 66, y: 6, w: 30, speed: 0.9, rot: -1.2 },
+  { x: 8, y: 54, w: 24, speed: 1.25, rot: 2.2 },
+  { x: 41, y: 50, w: 28, speed: 0.8, rot: -2 },
+  { x: 77, y: 60, w: 20, speed: 1.1, rot: 3 },
+];
+
+/** Parallax collage: images at different depths and tilts; hover straightens and lifts. */
+export function LookbookTeaser() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia(REDUCED_MOTION).matches) return;
+    const ctx = gsap.context(() => {
+      el.querySelectorAll<HTMLElement>("[data-speed]").forEach((card) => {
+        const s = Number(card.dataset.speed);
+        gsap.fromTo(card, { y: (s - 1) * 260 }, { y: (1 - s) * 260, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
+      });
+    }, el);
+    return () => ctx.revert();
+  }, []);
+  const items = [...lookbook.chapters, lookbook.chapters[0]].slice(0, 6);
+  return (
+    <section className="lbt theme-night" aria-labelledby="lbt-title">
+      <div className="wrap sec-head">
+        <h2 id="lbt-title" className="t-h2">
+          LOOKBOOK
+          <span className="t-meta lbt-sub">{lookbook.season}</span>
+        </h2>
+        <TLink href="/lookbook" className="t-meta link-u">
+          WALK THE CHAPTERS →
+        </TLink>
+      </div>
+      <div ref={ref} className="lbt-collage wrap">
+        {items.map((c, i) => {
+          const L = LAYOUT[i];
+          return (
+            <figure key={i} className="lbt-card" data-speed={L.speed} style={{ "--x": `${L.x}%`, "--y": `${L.y}%`, "--w": `${L.w}%`, "--r": `${L.rot}deg` } as React.CSSProperties}>
+              <TLink href={`/lookbook#chapter-${c.id}`} className="lbt-link" aria-label={`Chapter ${c.id}: ${c.title}, ${c.time}, ${c.place}`}>
+                <span className="lbt-img">
+                  <Image src={i === 5 ? "/campaign/community-03.svg" : c.image} alt="" fill sizes="(min-width: 1024px) 30vw, 60vw" loading="lazy" />
+                </span>
+              </TLink>
+              <figcaption className="t-meta">
+                {c.time} — {c.place}
+              </figcaption>
+            </figure>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
