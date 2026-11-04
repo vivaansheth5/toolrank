@@ -144,20 +144,20 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
             </div>
           ) : (
             <>
-              <div className="countdown" role="timer" aria-label={fill(ui.drops.timerLabel, { days: cd.days, hours: cd.hours, minutes: cd.minutes })}>
-                <Flap value={cd.days} label={ui.common.countdown.days} />
+              <div className="countdown" role="timer" data-release={releaseAt} aria-label={now === null ? ui.home.countdownIdle : fill(ui.drops.timerLabel, { days: cd.days, hours: cd.hours, minutes: cd.minutes })}>
+                <Flap value={now === null ? null : cd.days} label={ui.common.countdown.days} />
                 <span className="flap-sep" aria-hidden="true">
                   :
                 </span>
-                <Flap value={cd.hours} label={ui.common.countdown.hours} />
+                <Flap value={now === null ? null : cd.hours} label={ui.common.countdown.hours} />
                 <span className="flap-sep" aria-hidden="true">
                   :
                 </span>
-                <Flap value={cd.minutes} label={ui.common.countdown.minutes} />
+                <Flap value={now === null ? null : cd.minutes} label={ui.common.countdown.minutes} />
                 <span className="flap-sep" aria-hidden="true">
                   :
                 </span>
-                <Flap value={cd.seconds} label={ui.common.countdown.seconds} />
+                <Flap value={now === null ? null : cd.seconds} label={ui.common.countdown.seconds} />
               </div>
               <div className="dl-forms">
                 <form

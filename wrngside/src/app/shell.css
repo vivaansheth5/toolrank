@@ -914,7 +914,8 @@ html[data-header="hidden"] .site-header {
   opacity: 0.55;
   transition: opacity 600ms var(--ease-ui);
 }
-.pimg-img {
+/* Hidden until loaded only when JavaScript is there to reveal it. */
+html.js .pimg-img {
   opacity: 0;
   filter: blur(14px);
   transform: scale(1.02);

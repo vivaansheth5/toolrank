@@ -12,9 +12,12 @@ import { TLink } from "@/components/ui/TLink";
 import { Lines } from "@/components/ui/Lines";
 import "./countdown.css";
 
-/** A two-digit flap that flips when its value changes. */
-export function Flap({ value, label }: { value: number; label: string }) {
-  const v = pad2(value);
+/**
+ * A two-digit flap that flips when its value changes. `null` (before the
+ * browser knows the time) shows dashes rather than a made-up number.
+ */
+export function Flap({ value, label }: { value: number | null; label: string }) {
+  const v = value === null ? "--" : pad2(value);
   return (
     <span className="flap">
       <span className="flap-digits tabular" aria-hidden="true">
@@ -74,20 +77,20 @@ export function NextDrop() {
           </TLink>
         ) : (
           <>
-            <div className="countdown" role="timer" aria-label={now === null ? ui.home.countdownIdle : fill(ui.home.countdownLabel, { days: cd.days, hours: cd.hours, minutes: cd.minutes, number: drop.number })}>
-              <Flap value={cd.days} label={ui.common.countdown.days} />
+            <div className="countdown" role="timer" data-release={drop.releaseAt} aria-label={now === null ? ui.home.countdownIdle : fill(ui.home.countdownLabel, { days: cd.days, hours: cd.hours, minutes: cd.minutes, number: drop.number })}>
+              <Flap value={now === null ? null : cd.days} label={ui.common.countdown.days} />
               <span className="flap-sep" aria-hidden="true">
                 :
               </span>
-              <Flap value={cd.hours} label={ui.common.countdown.hours} />
+              <Flap value={now === null ? null : cd.hours} label={ui.common.countdown.hours} />
               <span className="flap-sep" aria-hidden="true">
                 :
               </span>
-              <Flap value={cd.minutes} label={ui.common.countdown.minutes} />
+              <Flap value={now === null ? null : cd.minutes} label={ui.common.countdown.minutes} />
               <span className="flap-sep" aria-hidden="true">
                 :
               </span>
-              <Flap value={cd.seconds} label={ui.common.countdown.seconds} />
+              <Flap value={now === null ? null : cd.seconds} label={ui.common.countdown.seconds} />
               <span className="t-meta flap-tz">{site.timeZoneLabel}</span>
             </div>
             {done ? (
