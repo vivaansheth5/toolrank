@@ -5,12 +5,13 @@ import { usePathname } from "next/navigation";
 import { TLink } from "@/components/ui/TLink";
 import { Logo } from "@/components/ui/Logo";
 import { RollLabel } from "@/components/ui/Roll";
-import { nav } from "@/lib/site-config";
+import { nav, ui as uiCopy } from "@/lib/site-config";
 import { ui, uiStore } from "@/lib/stores";
 import { useStore } from "@/lib/store";
 import { useCartCount } from "@/lib/commerce/cart-store";
 import { SoundToggle } from "@/components/sound/SoundToggle";
 import { SearchIcon } from "@/components/ui/Icons";
+import { fill } from "@/lib/format";
 
 /** Rolling bag count: the old number slides up, the new one rises from below. */
 function CountRoll({ value }: { value: number }) {
@@ -50,9 +51,9 @@ function BagButton() {
     last.current = count;
   }, [count]);
   return (
-    <button ref={ref} type="button" className="hdr-link roll-host bag-btn" data-bag-target onClick={ui.openCart} aria-label={`Bag, ${count} ${count === 1 ? "item" : "items"}`} aria-haspopup="dialog">
+    <button ref={ref} type="button" className="hdr-link roll-host bag-btn" data-bag-target onClick={ui.openCart} aria-label={fill(uiCopy.shell.bagLabel, { n: count, items: count === 1 ? uiCopy.shell.item : uiCopy.shell.items })} aria-haspopup="dialog">
       <span aria-hidden="true" className="roll-wrap">
-        <RollLabel text="BAG" />
+        <RollLabel text={uiCopy.shell.bag} />
       </span>
       <span aria-hidden="true" className="bag-count">
         (<CountRoll value={count} />)
@@ -101,7 +102,7 @@ export function Header() {
       <div className="hdr-row">
         <nav className="hdr-left" aria-label="Primary">
           <button type="button" className="hdr-link hdr-menu-btn roll-host" aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={ui.toggleMenu}>
-            <RollLabel text={menuOpen ? "CLOSE" : "MENU"} />
+            <RollLabel text={menuOpen ? uiCopy.shell.close : uiCopy.shell.menu} />
           </button>
           <ul className="hdr-nav">
             {nav.left.map((l) => (
@@ -113,19 +114,19 @@ export function Header() {
             ))}
           </ul>
         </nav>
-        <TLink href="/" className="hdr-logo" aria-label="WRNGSIDE — back to THE LINE">
+        <TLink href="/" className="hdr-logo" aria-label={uiCopy.shell.logoLabel}>
           <Logo />
         </TLink>
         <div className="hdr-right">
           <SoundToggle />
-          <button type="button" className="hdr-link roll-host hdr-search" onClick={ui.openSearch} aria-label="Search (press /)" aria-haspopup="dialog">
+          <button type="button" className="hdr-link roll-host hdr-search" onClick={ui.openSearch} aria-label={uiCopy.shell.searchLabel} aria-haspopup="dialog">
             <span className="hdr-search-text" aria-hidden="true">
-              <RollLabel text="SEARCH" />
+              <RollLabel text={uiCopy.shell.search} />
             </span>
             <SearchIcon className="hdr-search-icon" />
           </button>
           <TLink href="/account" className="hdr-link roll-host hdr-account">
-            <RollLabel text="ACCOUNT" />
+            <RollLabel text={uiCopy.shell.account} />
           </TLink>
           <BagButton />
         </div>

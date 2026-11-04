@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { renderTime } from "@/lib/time";
-import { drops, site } from "@/lib/site-config";
+import { drops, site, ui, copy, pageSeo } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
 import { getDropProducts, toListing } from "@/lib/commerce";
 import { formatLongDate } from "@/lib/format";
@@ -12,8 +12,8 @@ import "@/components/drops/drops.css";
 import { Lines } from "@/components/ui/Lines";
 
 export const metadata: Metadata = pageMeta({
-  title: "Drops",
-  description: "DROP 05 is locked. Countdown, access code and waitlist, plus the WRNGSIDE drop archive.",
+  title: pageSeo.drops.title,
+  description: pageSeo.drops.description,
   path: "/drops",
 });
 export const viewport: Viewport = { themeColor: site.themeColor.night };
@@ -30,7 +30,7 @@ export default async function DropsPage() {
       <CableDivider />
       <section id="archive" className="wrap archive" aria-labelledby="archive-title">
         <h2 id="archive-title" className="t-h1">
-          <Lines lines={["THE ARCHIVE"]} />
+          <Lines lines={[ui.pages.drops.archive]} />
         </h2>
         {others.map((d, i) => (
           <article key={d.id} className="arch-drop" data-status={d.status}>
@@ -40,10 +40,10 @@ export default async function DropsPage() {
                 <p className="t-meta">
                   {d.status === "live" ? (
                     <>
-                      <span className="live-dot" aria-hidden="true" /> LIVE NOW
+                      <span className="live-dot" aria-hidden="true" /> {ui.pages.drops.liveNow}
                     </>
                   ) : (
-                    "ARCHIVED"
+                    ui.pages.drops.archived
                   )}{" "}
                   · {d.releasedAt ? formatLongDate(d.releasedAt).toUpperCase() : ""} · {d.location}
                 </p>
@@ -51,7 +51,7 @@ export default async function DropsPage() {
                 <p className="text-muted arch-story">{d.story}</p>
                 {d.status === "live" && (
                   <TLink href="/" className="btn btn-signal arch-cta">
-                    SHOP THE LINE
+                    {copy.ctas.shopTheLine}
                   </TLink>
                 )}
               </div>

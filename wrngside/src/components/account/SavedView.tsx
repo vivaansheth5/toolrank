@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import { useSaved, toggleSaved } from "@/lib/stores";
 import { useHydrated } from "@/lib/store";
 import { getProductsByHandlesSync } from "@/lib/commerce";
-import { copy } from "@/lib/site-config";
-import { formatPrice } from "@/lib/format";
+import { copy, ui } from "@/lib/site-config";
+import { formatPrice, fill } from "@/lib/format";
 import { MiniLine } from "@/components/ui/MiniLine";
 import { TLink } from "@/components/ui/TLink";
 import { Lines } from "@/components/ui/Lines";
@@ -17,13 +17,13 @@ export function SavedView() {
   const products = useMemo(() => getProductsByHandlesSync(saved), [saved]);
   return (
     <div className="wrap pt-header saved">
-      <p className="t-meta text-muted">SAVED · {products.length} PEGGED</p>
+      <p className="t-meta text-muted">{fill(ui.saved.kicker, { n: products.length })}</p>
       <h1 className="t-h1">
-        <Lines lines={["YOUR LINE."]} mode="mount" />
+        <Lines lines={[...ui.saved.title]} mode="mount" />
       </h1>
       {!hydrated ? null : products.length === 0 ? (
         <div className="saved-empty">
-          <MiniLine items={[]} label="Your line is empty" />
+          <MiniLine items={[]} label={ui.saved.emptyLabel} />
           <p className="t-h2">{copy.emptySaved}</p>
           <TLink href="/" className="btn btn-signal">
             {copy.ctas.shopTheLine}
@@ -34,7 +34,7 @@ export function SavedView() {
           {Array.from({ length: Math.ceil(products.length / 4) }, (_, row) => (
             <MiniLine
               key={row}
-              label={`Saved pieces ${row * 4 + 1} to ${Math.min(products.length, row * 4 + 4)}`}
+              label={fill(ui.saved.rowLabel, { from: row * 4 + 1, to: Math.min(products.length, row * 4 + 4) })}
               items={products.slice(row * 4, row * 4 + 4).map((p) => ({
                 key: p.handle,
                 src: p.wrng.colours[0].media.cutout,
@@ -48,13 +48,13 @@ export function SavedView() {
                     <span className="mini-title">{p.title}</span>
                     <span className="t-meta">
                       {formatPrice(p.wrng.price)}
-                      {!p.availableForSale ? " · SOLD OUT" : ""}
+                      {!p.availableForSale ? ui.common.soldOutSuffix : ""}
                     </span>
                   </>
                 ),
                 action: (
-                  <button type="button" className="t-meta link-u" onClick={() => toggleSaved(p.handle)} aria-label={`Unpeg ${p.title}`}>
-                    UNPEG
+                  <button type="button" className="t-meta link-u" onClick={() => toggleSaved(p.handle)} aria-label={fill(ui.saved.unpegLabel, { title: p.title })}>
+                    {ui.saved.unpeg}
                   </button>
                 ),
               }))}

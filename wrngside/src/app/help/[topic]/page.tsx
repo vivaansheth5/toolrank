@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { TLink } from "@/components/ui/TLink";
 import { notFound } from "next/navigation";
-import { site, policies, commerce, contact, sizeCharts, type SizeChartKey } from "@/lib/site-config";
+import { site, policies, commerce, contact, sizeCharts, type SizeChartKey, ui } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
 import { fill, formatPrice } from "@/lib/format";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -46,7 +46,7 @@ function Body({ slug }: { slug: HelpSlug }) {
               <li key={p}>{fill(p, vars)}</li>
             ))}
           </ul>
-          <p className="text-muted">Standard shipping below the threshold: {formatPrice(commerce.standardShipping)}.</p>
+          <p className="text-muted">{fill(ui.help.standardShipping, { price: formatPrice(commerce.standardShipping) })}</p>
         </div>
       );
     case "returns":
@@ -59,7 +59,11 @@ function Body({ slug }: { slug: HelpSlug }) {
             ))}
           </ul>
           <p>
-            Start one from <TLink className="link-u" href="/help/track-order">Track Order</TLink> or message us on WhatsApp with your order ID.
+            {ui.help.returnsStart[0]}
+            <TLink className="link-u" href="/help/track-order">
+              {ui.help.trackOrderLink}
+            </TLink>
+            {ui.help.returnsStart[1]}
           </p>
         </div>
       );
@@ -71,7 +75,7 @@ function Body({ slug }: { slug: HelpSlug }) {
             .map((k) => (
               <section key={k} className="sg-block" aria-labelledby={`sg-${k}`}>
                 <h2 id={`sg-${k}`} className="t-h3">
-                  {k === "tee" ? "TEES & JERSEYS" : k === "longsleeve" ? "LONG SLEEVES" : k === "hoodie" ? "HOODIES" : k === "jacket" ? "JACKETS" : k === "overshirt" ? "OVERSHIRTS" : k === "cargos" ? "CARGOS" : k === "sweatpants" ? "SWEATPANTS" : k === "shorts" ? "SHORTS" : "SOCKS"}
+                  {ui.help.sizeChartTitles[k]}
                 </h2>
                 <SizeGuideTable chart={k} />
               </section>
@@ -89,21 +93,21 @@ function Body({ slug }: { slug: HelpSlug }) {
             <li>
               <a href={`https://wa.me/${contact.whatsappNumber}`} target="_blank" rel="noreferrer" className="help-card">
                 <WhatsAppIcon />
-                <span className="t-h3">WHATSAPP</span>
-                <span className="text-muted">Fastest. {contact.supportHours}.</span>
+                <span className="t-h3">{ui.common.channels.whatsapp}</span>
+                <span className="text-muted">{fill(ui.help.whatsappNote, { hours: contact.supportHours })}</span>
               </a>
             </li>
             <li>
               <a href={`mailto:${contact.supportEmail}`} className="help-card">
                 <MailIcon />
-                <span className="t-h3">EMAIL</span>
+                <span className="t-h3">{ui.common.channels.email}</span>
                 <span className="text-muted">{contact.supportEmail}</span>
               </a>
             </li>
             <li>
               <a href={contact.instagram} target="_blank" rel="noreferrer" className="help-card">
                 <InstagramIcon />
-                <span className="t-h3">INSTAGRAM</span>
+                <span className="t-h3">{ui.common.channels.instagram}</span>
                 <span className="text-muted">{contact.instagramHandle}</span>
               </a>
             </li>
@@ -122,8 +126,8 @@ export default async function HelpTopicPage({ params }: PageProps<"/help/[topic]
     <main id="main" data-theme="day" className="theme-day help-page">
       <PageHeader
         crumbs={[
-          { label: "HOME", href: "/" },
-          { label: "HELP", href: "/help" },
+          { label: ui.common.home, href: "/" },
+          { label: ui.common.help, href: "/help" },
           { label: t.title, href: `/help/${t.slug}` },
         ]}
         title={[t.title]}

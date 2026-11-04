@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import "./shell.css";
 import { archivo, geist, geistMono, teko } from "./fonts";
-import { site, seo } from "@/lib/site-config";
+import { site, seo, ui } from "@/lib/site-config";
 import { InlineScript } from "@/components/ui/InlineScript";
 import { AppShell } from "@/components/shell/AppShell";
 import { Header } from "@/components/shell/Header";
@@ -61,9 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <InlineScript html={boot} />
       </head>
       <body>
-        <a href="#main" className="skip-link">
-          Skip to content
-        </a>
+        <a href="#main" className="skip-link">{ui.common.skipToContent}</a>
         <AppShell>
           <Ticker />
           <Header />

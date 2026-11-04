@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { createStore, useStore } from "@/lib/store";
 import { useFocusTrap, useScrollLock } from "@/lib/hooks";
-import { copy } from "@/lib/site-config";
+import { copy, ui } from "@/lib/site-config";
 import { CloseIcon } from "./Icons";
 import { ContactField, validateContact, type ContactMode } from "./ContactField";
 import { announce } from "@/components/shell/Announcer";
+import { fill } from "@/lib/format";
 
 interface NotifyTarget {
   title: string;
@@ -55,16 +56,15 @@ export function NotifyDialog() {
         </button>
         {done ? (
           <div className="modal-body">
-            <p className="t-meta text-muted">ON THE LIST</p>
+            <p className="t-meta text-muted">{ui.notify.kicker}</p>
             <h2 id="notify-title" className="t-h2">
-              WE&apos;LL PING YOU.
+              {ui.notify.title}
             </h2>
             <p>
-              First word when {target.title}
-              {target.size ? ` in ${target.size}` : ""} is back on the wire. One message. No spam.
+              {fill(ui.notify.body, { title: target.title, size: target.size ? fill(ui.notify.inSize, { size: target.size }) : "" })}
             </p>
             <button type="button" className="btn btn-solid" onClick={close}>
-              DONE
+              {ui.notify.done}
             </button>
           </div>
         ) : (
@@ -81,11 +81,11 @@ export function NotifyDialog() {
                 signups.set((s) => [...new Set([...s, `${target.key}|${mode}:${value.trim()}`])]);
                 setBusy(false);
                 setDone(true);
-                announce(`You'll be notified about ${target.title}.`);
+                announce(fill(ui.notify.announced, { title: target.title }));
               }, 500);
             }}
           >
-            <p className="t-meta text-muted">{target.subtitle || "NOTIFY ME"}</p>
+            <p className="t-meta text-muted">{target.subtitle || copy.ctas.notifyMe}</p>
             <h2 id="notify-title" className="t-h2">
               {target.title}
               {target.size ? ` · ${target.size}` : ""}

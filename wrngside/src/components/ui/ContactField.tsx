@@ -1,6 +1,6 @@
 "use client";
 
-import { copy } from "@/lib/site-config";
+import { copy, ui } from "@/lib/site-config";
 
 export type ContactMode = "email" | "whatsapp";
 
@@ -55,12 +55,12 @@ export function ContactField({
               onValue("");
             }}
           >
-            {m === "email" ? "EMAIL" : "WHATSAPP"}
+            {m === "email" ? ui.common.contactModes.email : ui.common.contactModes.whatsapp}
           </button>
         ))}
       </div>
       <div className="field">
-        <label htmlFor={id}>{mode === "email" ? "Email address" : "WhatsApp number"}</label>
+        <label htmlFor={id}>{mode === "email" ? ui.common.contactModes.emailLabel : ui.common.contactModes.phoneLabel}</label>
         <div className="input-wrap">
           {mode === "whatsapp" && <span className="input-prefix t-mono">+91</span>}
           <input
@@ -69,7 +69,7 @@ export function ContactField({
             type={mode === "email" ? "email" : "tel"}
             inputMode={mode === "email" ? "email" : "numeric"}
             autoComplete={mode === "email" ? "email" : "tel-national"}
-            placeholder={mode === "email" ? "you@wherever.com" : "98XXXXXXXX"}
+            placeholder={mode === "email" ? ui.common.contactModes.emailPlaceholder : ui.common.contactModes.phonePlaceholder}
             value={value}
             onChange={(e) => onValue(e.target.value)}
             aria-invalid={Boolean(error) || undefined}

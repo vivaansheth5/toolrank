@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { sound } from "./sound";
+import { ui } from "@/lib/site-config";
 
 /** Tiny animated waveform. Sound is off by default and only starts on click. */
 export function SoundToggle() {
@@ -12,7 +13,7 @@ export function SoundToggle() {
       className="sound-toggle"
       data-on={on || undefined}
       aria-pressed={on}
-      aria-label={on ? "Sound on. Turn sound off" : "Sound off. Turn sound on"}
+      aria-label={on ? ui.shell.soundOn : ui.shell.soundOff}
       onClick={async () => {
         if (on) {
           sound.disable();

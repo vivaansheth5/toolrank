@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { copy, site } from "@/lib/site-config";
+import { copy, site, ui } from "@/lib/site-config";
 import { REDUCED_MOTION } from "@/lib/device";
 import { ScrollTrigger } from "@/lib/gsap";
+import { fill } from "@/lib/format";
 
 /** One huge statement, scrubbed word by word from 15% to 100% opacity. */
 export function Manifesto() {
@@ -35,13 +36,13 @@ export function Manifesto() {
     <div className="manifesto wrap">
       <h2 className="t-display manifesto-text" ref={ref} tabIndex={-1} aria-label={copy.manifesto}>
         {words.map((w, i) => (
-          <span key={i} className={`mw${w.includes("CROSSED") || w.includes("OVER") ? " mw-x" : ""}`} aria-hidden="true">
+          <span key={i} className={`mw${ui.home.manifestoAccent.some((a) => w.includes(a)) ? " mw-x" : ""}`} aria-hidden="true">
             {w}{" "}
           </span>
         ))}
       </h2>
       <p className="t-meta manifesto-cap">
-        EST. {site.established} — {site.city}, {site.country}
+        {fill(ui.home.est, { year: site.established, city: site.city, country: site.country })}
       </p>
     </div>
   );

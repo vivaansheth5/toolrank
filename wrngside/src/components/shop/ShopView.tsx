@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Product, SortKey, Category } from "@/lib/commerce/types";
 import { filterProducts, sortProducts, isLocked, fitTag, colourFamily, COLOUR_FAMILIES, PRICE_BANDS, categories, categoryLabel } from "@/lib/commerce/helpers";
-import { commerce, copy } from "@/lib/site-config";
+import { commerce, copy, ui } from "@/lib/site-config";
 import { useNow, useFocusTrap, useScrollLock } from "@/lib/hooks";
 import { getNavType, getScrollY, scrollToY } from "@/lib/scroll";
 import { accessStore } from "@/lib/stores";
@@ -11,6 +11,7 @@ import { useStore } from "@/lib/store";
 import { ProductCard } from "./ProductCard";
 import { TLink } from "@/components/ui/TLink";
 import { CloseIcon, GridIcon } from "@/components/ui/Icons";
+import { fill } from "@/lib/format";
 
 interface Filters {
   sizes: string[];
@@ -21,12 +22,7 @@ interface Filters {
 }
 
 const EMPTY: Filters = { sizes: [], colours: [], fits: [], price: null, sort: "featured" };
-const SORTS: { key: SortKey; label: string }[] = [
-  { key: "featured", label: "Featured" },
-  { key: "new", label: "New" },
-  { key: "price-asc", label: "Price low–high" },
-  { key: "price-desc", label: "Price high–low" },
-];
+const SORTS: { key: SortKey; label: string }[] = (["featured", "new", "price-asc", "price-desc"] as const).map((key) => ({ key, label: ui.shop.sorts[key] }));
 
 function readUrl(): Filters {
   const q = new URLSearchParams(window.location.search);
@@ -177,10 +173,10 @@ export function ShopView({ products, renderedAt, category }: { products: Product
   const filterGroups = (
     <>
       <fieldset className="fgroup">
-        <legend className="t-meta">CATEGORY</legend>
+        <legend className="t-meta">{ui.shop.groups.category}</legend>
         <div className="fgroup-row">
           <TLink href="/shop" className="chip" data-selected={category === "all" || undefined}>
-            ALL
+            {ui.shop.all}
           </TLink>
           {categories.map((c) => (
             <TLink key={c} href={`/shop/${c}`} className="chip" data-selected={category === c || undefined}>
@@ -190,7 +186,7 @@ export function ShopView({ products, renderedAt, category }: { products: Product
         </div>
       </fieldset>
       <fieldset className="fgroup">
-        <legend className="t-meta">SIZE</legend>
+        <legend className="t-meta">{ui.shop.groups.size}</legend>
         <div className="fgroup-row">
           {facet.sizes.map((s) => (
             <button key={s} type="button" className="chip" aria-pressed={f.sizes.includes(s)} onClick={() => toggle("sizes", s)}>
@@ -200,7 +196,7 @@ export function ShopView({ products, renderedAt, category }: { products: Product
         </div>
       </fieldset>
       <fieldset className="fgroup">
-        <legend className="t-meta">COLOUR</legend>
+        <legend className="t-meta">{ui.shop.groups.colour}</legend>
         <div className="fgroup-row">
           {facet.colours.map((c) => (
             <button key={c.name} type="button" className="chip chip-swatch" aria-pressed={f.colours.includes(c.name)} onClick={() => toggle("colours", c.name)}>
@@ -211,7 +207,7 @@ export function ShopView({ products, renderedAt, category }: { products: Product
         </div>
       </fieldset>
       <fieldset className="fgroup">
-        <legend className="t-meta">FIT</legend>
+        <legend className="t-meta">{ui.shop.groups.fit}</legend>
         <div className="fgroup-row">
           {facet.fits.map((x) => (
             <button key={x} type="button" className="chip" aria-pressed={f.fits.includes(x)} onClick={() => toggle("fits", x)}>
@@ -221,7 +217,7 @@ export function ShopView({ products, renderedAt, category }: { products: Product
         </div>
       </fieldset>
       <fieldset className="fgroup">
-        <legend className="t-meta">PRICE</legend>
+        <legend className="t-meta">{ui.shop.groups.price}</legend>
         <div className="fgroup-row">
           {PRICE_BANDS.map((b, i) => (
             <button key={b.label} type="button" className="chip" aria-pressed={f.price === i} onClick={() => update({ price: f.price === i ? null : i })}>
@@ -238,13 +234,13 @@ export function ShopView({ products, renderedAt, category }: { products: Product
       <div className="filterbar" role="region" aria-label="Filter and sort">
         <div className="wrap filterbar-row">
           <button type="button" className="filterbar-btn t-meta" onClick={() => setDrawer(true)} aria-expanded={drawer} aria-controls="filter-drawer">
-            FILTER{activeCount ? ` (${activeCount})` : ""}
+            {activeCount ? fill(ui.shop.filterCount, { n: activeCount }) : ui.shop.filter}
           </button>
           <div className="filterbar-inline">{filterGroups}</div>
           <div className="filterbar-right">
             <label className="sort t-meta">
-              <span className="sr-only">Sort by</span>
-              <span aria-hidden="true">SORT</span>
+              <span className="sr-only">{ui.shop.sortBy}</span>
+              <span aria-hidden="true">{ui.shop.sort}</span>
               <select value={f.sort} onChange={(e) => update({ sort: e.target.value as SortKey })} className="sort-select">
                 {SORTS.map((s) => (
                   <option key={s.key} value={s.key}>
@@ -270,10 +266,10 @@ export function ShopView({ products, renderedAt, category }: { products: Product
         {activeCount > 0 && (
           <div className="wrap active-filters t-meta">
             <span className="text-muted">
-              {result.length} {result.length === 1 ? "PIECE" : "PIECES"}
+              {result.length} {result.length === 1 ? ui.common.piece : ui.common.pieces}
             </span>
             <button type="button" className="link-u" onClick={() => update({ ...EMPTY, sort: f.sort })}>
-              CLEAR ALL
+              {ui.shop.clearAll}
             </button>
           </div>
         )}
@@ -288,7 +284,7 @@ export function ShopView({ products, renderedAt, category }: { products: Product
             </svg>
             <p className="t-h2">{copy.emptyShop}</p>
             <button type="button" className="btn btn-solid" onClick={() => update({ ...EMPTY })}>
-              RESET FILTERS
+              {ui.shop.resetFilters}
             </button>
           </div>
         ) : (
@@ -300,7 +296,7 @@ export function ShopView({ products, renderedAt, category }: { products: Product
             </div>
             <div className="loadmore">
               <p className="t-meta">
-                SHOWING {shown.length} OF {result.length}
+                {fill(ui.shop.showing, { shown: shown.length, total: result.length })}
               </p>
               <svg viewBox="0 0 300 16" className="loadmore-cable" aria-hidden="true" preserveAspectRatio="none">
                 <path d="M0 3 Q150 14 300 3" className="lm-track" />
@@ -327,7 +323,7 @@ export function ShopView({ products, renderedAt, category }: { products: Product
         <div className="drawer-backdrop" onClick={() => setDrawer(false)} aria-hidden="true" />
         <div id="filter-drawer" ref={drawerRef} className="drawer drawer-left theme-day" role="dialog" aria-modal="true" aria-label="Filters" inert={!drawer} data-lenis-prevent>
           <header className="drawer-head">
-            <h2 className="t-h3">FILTER</h2>
+            <h2 className="t-h3">{ui.shop.filter}</h2>
             <button type="button" className="icon-btn" onClick={() => setDrawer(false)} aria-label="Close filters">
               <CloseIcon />
             </button>
@@ -335,11 +331,11 @@ export function ShopView({ products, renderedAt, category }: { products: Product
           <div className="drawer-filters">{filterGroups}</div>
           <footer className="drawer-foot">
             <button type="button" className="btn btn-solid btn-block" onClick={() => setDrawer(false)}>
-              SHOW {result.length} {result.length === 1 ? "PIECE" : "PIECES"}
+              {fill(ui.shop.show, { n: result.length, pieces: result.length === 1 ? ui.common.piece : ui.common.pieces })}
             </button>
             {activeCount > 0 && (
               <button type="button" className="btn btn-block" onClick={() => update({ ...EMPTY, sort: f.sort })}>
-                CLEAR ALL
+                {ui.shop.clearAll}
               </button>
             )}
           </footer>

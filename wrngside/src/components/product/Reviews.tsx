@@ -1,7 +1,8 @@
 import Image from "next/image";
 import type { Review } from "@/lib/commerce/types";
-import { formatLongDate } from "@/lib/format";
+import { formatLongDate, fill } from "@/lib/format";
 import { Lines } from "@/components/ui/Lines";
+import { ui } from "@/lib/site-config";
 
 function Stars({ n }: { n: number }) {
   return (
@@ -21,14 +22,14 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
     <section className="wrap reviews" aria-labelledby="reviews-title">
       <div className="reviews-head">
         <h2 id="reviews-title" className="t-h2">
-          <Lines lines={["WORN, THEN REVIEWED"]} />
+          <Lines lines={[ui.product.reviews.title]} />
         </h2>
         {reviews.length > 0 ? (
           <p className="t-meta">
-            <Stars n={Math.round(avg)} /> {avg.toFixed(1)} / 5 · {reviews.length} {reviews.length === 1 ? "REVIEW" : "REVIEWS"}
+            <Stars n={Math.round(avg)} /> {avg.toFixed(1)} / 5 · {reviews.length} {reviews.length === 1 ? ui.product.reviews.review : ui.product.reviews.reviews}
           </p>
         ) : (
-          <p className="text-muted">No reviews yet. Wear it first, then tell us.</p>
+          <p className="text-muted">{ui.product.reviews.none}</p>
         )}
       </div>
       {reviews.length > 0 && (
@@ -42,11 +43,11 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
               <h3 className="t-h3">{r.title}</h3>
               <p>{r.body}</p>
               <p className="t-meta text-muted">
-                {r.name} · {r.city} · BOUGHT {r.size} · {r.fit.toUpperCase()}
+                {r.name} · {r.city} · {ui.product.reviews.bought} {r.size} · {r.fit.toUpperCase()}
               </p>
               {r.photo && (
                 <div className="review-photo">
-                  <Image src={r.photo} alt={`Photo from ${r.name}`} fill sizes="160px" loading="lazy" />
+                  <Image src={r.photo} alt={fill(ui.product.reviews.photoFrom, { name: r.name })} fill sizes="160px" loading="lazy" />
                 </div>
               )}
             </li>

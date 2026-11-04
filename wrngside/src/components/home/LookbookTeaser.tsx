@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { lookbook } from "@/lib/site-config";
+import { lookbook, ui } from "@/lib/site-config";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { REDUCED_MOTION } from "@/lib/device";
 import { TLink } from "@/components/ui/TLink";
 import { Lines } from "@/components/ui/Lines";
+import { fill } from "@/lib/format";
 
 const LAYOUT = [
   { x: 1, y: 2, w: 28, speed: 0.85, rot: -2.5 },
@@ -36,11 +37,11 @@ export function LookbookTeaser() {
     <section className="lbt theme-night" aria-labelledby="lbt-title">
       <div className="wrap sec-head">
         <h2 id="lbt-title" className="t-h2">
-          <Lines lines={["LOOKBOOK"]} />
+          <Lines lines={[ui.home.lookbook]} />
           <span className="t-meta lbt-sub">{lookbook.season}</span>
         </h2>
         <TLink href="/lookbook" className="t-meta link-u">
-          WALK THE CHAPTERS →
+          {ui.home.walkChapters}
         </TLink>
       </div>
       <div ref={ref} className="lbt-collage wrap">
@@ -48,7 +49,7 @@ export function LookbookTeaser() {
           const L = LAYOUT[i];
           return (
             <figure key={i} className="lbt-card" data-speed={L.speed} style={{ "--x": `${L.x}%`, "--y": `${L.y}%`, "--w": `${L.w}%`, "--r": `${L.rot}deg` } as React.CSSProperties}>
-              <TLink href={`/lookbook#chapter-${c.id}`} className="lbt-link" aria-label={`Chapter ${c.id}: ${c.title}, ${c.time}, ${c.place}`}>
+              <TLink href={`/lookbook#chapter-${c.id}`} className="lbt-link" aria-label={fill(ui.home.chapterLabel, { id: c.id, title: c.title, time: c.time, place: c.place })}>
                 <span className="lbt-img">
                   <Image src={i === 5 ? "/campaign/community-03.svg" : c.image} alt="" fill sizes="(min-width: 1024px) 30vw, 60vw" loading="lazy" />
                 </span>

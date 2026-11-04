@@ -5,8 +5,8 @@ import { useCart, cartActions, shippingFor } from "@/lib/commerce/cart";
 import { getProductSync } from "@/lib/commerce";
 import { accountStore, type Order } from "@/lib/stores";
 import { useStore, useHydrated } from "@/lib/store";
-import { codes, commerce, copy } from "@/lib/site-config";
-import { formatPrice, formatShortDate } from "@/lib/format";
+import { codes, commerce, copy, ui } from "@/lib/site-config";
+import { formatPrice, formatShortDate, fill } from "@/lib/format";
 import { checkPincode, lookupPincode, isPincode } from "@/lib/delivery";
 import { normalisePhone } from "@/components/ui/ContactField";
 import { ProductImage } from "@/components/ui/ProductImage";
@@ -173,7 +173,7 @@ export function CheckoutView() {
     }, 1100);
   };
 
-  if (!hydrated) return <div className="co-loading t-meta">LOADING YOUR BAG…</div>;
+  if (!hydrated) return <div className="co-loading t-meta">{ui.common.loadingBag}</div>;
   if (!cart.lines.length)
     return (
       <div className="co-empty">
@@ -199,13 +199,13 @@ export function CheckoutView() {
       <div className="co-main">
         <section className="co-sec" aria-labelledby="co-contact">
           <h2 id="co-contact" className="t-h3">
-            01 CONTACT
+            {ui.checkout.contact}
           </h2>
           <div className="co-grid">
-            <Field id="co-email" label="Email" error={err("email")}>
+            <Field id="co-email" label={ui.checkout.fields.email} error={err("email")}>
               <input id="co-email" className="input" type="email" autoComplete="email" value={f.email} onChange={set("email")} {...aria("email")} />
             </Field>
-            <Field id="co-phone" label="Mobile (for WhatsApp updates)" error={err("phone")}>
+            <Field id="co-phone" label={ui.checkout.fields.mobile} error={err("phone")}>
               <div className="input-wrap">
                 <span className="input-prefix t-mono">+91</span>
                 <input id="co-phone" className="input" type="tel" inputMode="numeric" autoComplete="tel-national" value={f.phone} onChange={set("phone")} {...aria("phone")} />
@@ -216,38 +216,38 @@ export function CheckoutView() {
 
         <section className="co-sec" aria-labelledby="co-ship">
           <h2 id="co-ship" className="t-h3">
-            02 DELIVERY
+            {ui.checkout.delivery}
           </h2>
           <div className="co-grid">
-            <Field id="co-name" label="Full name" error={err("name")}>
+            <Field id="co-name" label={ui.checkout.fields.name} error={err("name")}>
               <input id="co-name" className="input" autoComplete="name" value={f.name} onChange={set("name")} {...aria("name")} />
             </Field>
-            <Field id="co-pincode" label="Pincode" error={err("pincode")}>
+            <Field id="co-pincode" label={ui.checkout.fields.pincode} error={err("pincode")}>
               <input id="co-pincode" className="input" inputMode="numeric" autoComplete="postal-code" value={f.pincode} onChange={set("pincode")} {...aria("pincode")} />
             </Field>
-            <Field id="co-line1" label="House / flat, street" error={err("line1")}>
+            <Field id="co-line1" label={ui.checkout.fields.line1} error={err("line1")}>
               <input id="co-line1" className="input" autoComplete="address-line1" value={f.line1} onChange={set("line1")} {...aria("line1")} />
             </Field>
-            <Field id="co-line2" label="Area, landmark (optional)">
+            <Field id="co-line2" label={ui.checkout.fields.line2}>
               <input id="co-line2" className="input" autoComplete="address-line2" value={f.line2} onChange={set("line2")} />
             </Field>
-            <Field id="co-city" label="City" error={err("city")}>
+            <Field id="co-city" label={ui.checkout.fields.city} error={err("city")}>
               <input id="co-city" className="input" autoComplete="address-level2" value={f.city} onChange={set("city")} {...aria("city")} />
             </Field>
-            <Field id="co-state" label="State" error={err("state")}>
+            <Field id="co-state" label={ui.checkout.fields.state} error={err("state")}>
               <input id="co-state" className="input" autoComplete="address-level1" value={f.state} onChange={set("state")} {...aria("state")} />
             </Field>
           </div>
           {pin && pin.ok && (
             <p className="t-meta co-eta" aria-live="polite">
-              ARRIVES BY {formatShortDate(pin.deliveryBy).toUpperCase()} · {pin.cod ? "COD AVAILABLE" : "PREPAID ONLY"}
+              {ui.common.arrivesBy} {formatShortDate(pin.deliveryBy).toUpperCase()} · {pin.cod ? ui.common.codAvailable : ui.common.prepaidOnly}
             </p>
           )}
         </section>
 
         <section className="co-sec" aria-labelledby="co-pay">
           <h2 id="co-pay" className="t-h3">
-            03 PAYMENT
+            {ui.checkout.payment}
           </h2>
           <div className="co-pay" role="radiogroup" aria-label="Payment method">
             {(["UPI", "CARD", "COD"] as const).map((m) => {
@@ -255,8 +255,8 @@ export function CheckoutView() {
               return (
                 <label key={m} className="co-pay-opt" data-checked={pay === m || undefined} data-disabled={disabled || undefined}>
                   <input type="radio" name="pay" value={m} checked={pay === m} disabled={disabled} onChange={() => setPay(m)} />
-                  <span className="co-pay-title">{m === "UPI" ? "UPI" : m === "CARD" ? "CARD" : "CASH ON DELIVERY"}</span>
-                  <span className="t-meta text-muted">{m === "UPI" ? "GPay, PhonePe, Paytm, any UPI app" : m === "CARD" ? "Visa, Mastercard, RuPay" : disabled ? "Not available for this order" : commerce.codFee ? `+${formatPrice(commerce.codFee)}` : "No extra fee"}</span>
+                  <span className="co-pay-title">{m === "UPI" ? ui.checkout.methods.upi : m === "CARD" ? ui.checkout.methods.card : ui.checkout.methods.cod}</span>
+                  <span className="t-meta text-muted">{m === "UPI" ? ui.checkout.methods.upiNote : m === "CARD" ? ui.checkout.methods.cardNote : disabled ? ui.checkout.methods.codUnavailable : commerce.codFee ? fill(ui.checkout.methods.codFee, { fee: formatPrice(commerce.codFee) }) : ui.checkout.methods.noFee}</span>
                 </label>
               );
             })}
@@ -267,32 +267,32 @@ export function CheckoutView() {
             </p>
           )}
           {pay === "UPI" && (
-            <Field id="co-upi" label="UPI ID" error={err("upi")}>
-              <input id="co-upi" className="input" autoComplete="off" placeholder="yourname@okbank" value={f.upi} onChange={set("upi")} {...aria("upi")} />
+            <Field id="co-upi" label={ui.checkout.fields.upiId} error={err("upi")}>
+              <input id="co-upi" className="input" autoComplete="off" placeholder={ui.checkout.fields.upiPlaceholder} value={f.upi} onChange={set("upi")} {...aria("upi")} />
             </Field>
           )}
           {pay === "CARD" && (
             <div className="co-grid">
-              <Field id="co-card" label="Card number" error={err("card")}>
+              <Field id="co-card" label={ui.checkout.fields.card} error={err("card")}>
                 <input id="co-card" className="input t-mono" inputMode="numeric" autoComplete="cc-number" value={f.card} onChange={set("card")} {...aria("card")} />
               </Field>
               <div className="co-grid co-grid-2">
-                <Field id="co-exp" label="Expiry (MM/YY)" error={err("exp")}>
+                <Field id="co-exp" label={ui.checkout.fields.expiry} error={err("exp")}>
                   <input id="co-exp" className="input t-mono" inputMode="numeric" autoComplete="cc-exp" value={f.exp} onChange={set("exp")} {...aria("exp")} />
                 </Field>
-                <Field id="co-cvv" label="CVV" error={err("cvv")}>
+                <Field id="co-cvv" label={ui.checkout.fields.cvv} error={err("cvv")}>
                   <input id="co-cvv" className="input t-mono" inputMode="numeric" autoComplete="cc-csc" value={f.cvv} onChange={set("cvv")} {...aria("cvv")} />
                 </Field>
               </div>
             </div>
           )}
-          {pay === "COD" && codOk && <p className="text-muted">Pay in cash or UPI when it arrives. Keep {formatPrice(total)} handy.</p>}
+          {pay === "COD" && codOk && <p className="text-muted">{fill(ui.checkout.codNote, { amount: formatPrice(total) })}</p>}
         </section>
       </div>
 
       <aside className="co-summary" aria-labelledby="co-sum">
         <h2 id="co-sum" className="t-h3">
-          YOUR ORDER
+          {ui.checkout.yourOrder}
         </h2>
         <ul className="co-lines">
           {cart.lines.map((l) => {
@@ -314,11 +314,11 @@ export function CheckoutView() {
         </ul>
         <div className="co-code">
           <div className="field">
-            <label htmlFor="co-code">Discount code</label>
+            <label htmlFor="co-code">{ui.checkout.discountCode}</label>
             <div className="pincode-row">
               <input id="co-code" className="input t-mono" value={f.code} onChange={set("code")} autoComplete="off" aria-describedby="co-code-msg" />
               <button type="button" className="btn btn-sm" onClick={applyCode} disabled={!f.code.trim()}>
-                APPLY
+                {ui.checkout.apply}
               </button>
             </div>
             <p id="co-code-msg" className={applied ? "t-meta" : codeMsg ? "field-error" : "sr-only"} aria-live="polite">
@@ -327,24 +327,24 @@ export function CheckoutView() {
           </div>
         </div>
         <dl className="co-totals tabular">
-          <dt>Subtotal</dt>
+          <dt>{ui.checkout.subtotal}</dt>
           <dd>{formatPrice(subtotal)}</dd>
           {discount > 0 && (
             <>
-              <dt>Discount ({applied?.code})</dt>
+              <dt>{fill(ui.checkout.discount, { code: applied?.code ?? "" })}</dt>
               <dd>−{formatPrice(discount)}</dd>
             </>
           )}
-          <dt>Shipping</dt>
-          <dd>{shipping === 0 ? "FREE" : formatPrice(shipping)}</dd>
-          <dt className="co-total">Total</dt>
+          <dt>{ui.checkout.shipping}</dt>
+          <dd>{shipping === 0 ? ui.common.free : formatPrice(shipping)}</dd>
+          <dt className="co-total">{ui.checkout.total}</dt>
           <dd className="co-total">{formatPrice(total)}</dd>
         </dl>
-        <p className="t-meta text-muted">All prices include GST.</p>
+        <p className="t-meta text-muted">{ui.checkout.gstNote}</p>
         <button type="submit" className="btn btn-signal btn-block" data-loading={busy || undefined}>
-          {pay === "COD" ? "PLACE ORDER" : `PAY ${formatPrice(total)}`}
+          {pay === "COD" ? ui.checkout.placeOrder : fill(ui.checkout.pay, { amount: formatPrice(total) })}
         </button>
-        <p className="t-meta text-muted">This is a demo checkout: nothing is charged. It hands off to Shopify checkout when connected.</p>
+        <p className="t-meta text-muted">{ui.checkout.demoNote}</p>
       </aside>
     </form>
   );

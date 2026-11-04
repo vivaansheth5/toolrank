@@ -5,8 +5,8 @@ import { ui, uiStore } from "@/lib/stores";
 import { useStore } from "@/lib/store";
 import { useDebounced, useFocusTrap, useScrollLock } from "@/lib/hooks";
 import { searchProductsSync, categoryLabel } from "@/lib/commerce";
-import { trendingSearches, copy } from "@/lib/site-config";
-import { formatPrice } from "@/lib/format";
+import { trendingSearches, copy, ui as uiCopy } from "@/lib/site-config";
+import { formatPrice, fill } from "@/lib/format";
 import { CloseIcon, ArrowIcon } from "@/components/ui/Icons";
 import { ProductImage } from "@/components/ui/ProductImage";
 import { useNavigate } from "@/components/shell/PageTransition";
@@ -53,7 +53,7 @@ export function SearchOverlay() {
     <div ref={root} className="search theme-night" data-open={open} role="dialog" aria-modal="true" aria-label="Search" inert={!open} data-lenis-prevent>
       <div className="wrap search-inner">
         <div className="search-top">
-          <p className="t-meta text-muted">SEARCH THE WIRE · PRESS ESC TO CLOSE</p>
+          <p className="t-meta text-muted">{uiCopy.search.overlayKicker}</p>
           <button type="button" className="icon-btn" onClick={ui.closeSearch} aria-label="Close search">
             <CloseIcon />
           </button>
@@ -66,7 +66,7 @@ export function SearchOverlay() {
           }}
         >
           <label htmlFor="search-q" className="sr-only">
-            Search products
+            {uiCopy.search.label}
           </label>
           <input
             ref={input}
@@ -75,7 +75,7 @@ export function SearchOverlay() {
             type="search"
             autoComplete="off"
             spellCheck={false}
-            placeholder="HOODIE, CARGOS, LIVE WIRE…"
+            placeholder={uiCopy.search.overlayPlaceholder}
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
@@ -89,7 +89,7 @@ export function SearchOverlay() {
 
         {!debounced.trim() ? (
           <div className="search-trending">
-            <p className="t-meta text-muted">TRENDING</p>
+            <p className="t-meta text-muted">{uiCopy.search.trending}</p>
             <ul>
               {trendingSearches.map((t) => (
                 <li key={t}>
@@ -105,9 +105,9 @@ export function SearchOverlay() {
         ) : (
           <>
             <p className="t-meta text-muted" aria-live="polite">
-              {results.length} ON THE WIRE
+              {fill(uiCopy.search.onTheWire, { n: results.length })}
             </p>
-            <ul id={listId} role="listbox" className="search-results" aria-label="Results">
+            <ul id={listId} role="listbox" className="search-results" aria-label={uiCopy.search.resultsLabel}>
               {results.map((p, i) => (
                 <li key={p.handle} id={`${listId}-${i}`} role="option" aria-selected={i === active}>
                   <a
@@ -128,7 +128,7 @@ export function SearchOverlay() {
                       <span className="t-h3">{p.title}</span>
                       <span className="t-meta text-muted">
                         {p.wrng.type} · {categoryLabel(p.wrng.category)}
-                        {!p.availableForSale && " · SOLD OUT"}
+                        {!p.availableForSale && uiCopy.common.soldOutSuffix}
                       </span>
                     </span>
                     <span className="t-mono-lg tabular">{formatPrice(p.wrng.price)}</span>
@@ -138,7 +138,7 @@ export function SearchOverlay() {
               ))}
             </ul>
             <button type="button" className="btn search-all" onClick={() => go(`/search?q=${encodeURIComponent(q.trim())}`)}>
-              SEE ALL RESULTS FOR “{q.trim().toUpperCase()}”
+              {fill(uiCopy.search.seeAll, { q: q.trim().toUpperCase() })}
             </button>
           </>
         )}

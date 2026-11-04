@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { nav, contact, site } from "@/lib/site-config";
+import { nav, contact, site, ui as uiCopy } from "@/lib/site-config";
 import { ui, uiStore } from "@/lib/stores";
 import { useStore } from "@/lib/store";
 import { useFocusTrap, useScrollLock } from "@/lib/hooks";
@@ -29,21 +29,21 @@ export function MobileMenu() {
           ))}
         </ul>
         <button type="button" className="menu-search t-meta" onClick={ui.openSearch}>
-          SEARCH THE WIRE →
+          {uiCopy.shell.searchTheWire}
         </button>
       </nav>
       <div className="menu-foot wrap t-meta">
         <a href={contact.instagram} target="_blank" rel="noreferrer" className="menu-social">
-          <InstagramIcon size={16} /> INSTAGRAM
+          <InstagramIcon size={16} /> {uiCopy.common.channels.instagram}
         </a>
         <a href={`https://wa.me/${contact.whatsappNumber}`} target="_blank" rel="noreferrer" className="menu-social">
-          <WhatsAppIcon size={16} /> WHATSAPP
+          <WhatsAppIcon size={16} /> {uiCopy.common.channels.whatsapp}
         </a>
         <a href={`mailto:${contact.email}`} className="menu-social">
-          <MailIcon size={16} /> EMAIL
+          <MailIcon size={16} /> {uiCopy.common.channels.email}
         </a>
         <span className="menu-sound">
-          <SoundToggle /> SOUND
+          <SoundToggle /> {uiCopy.shell.sound}
         </span>
         <span className="menu-clock">
           <Clock prefix={`${site.city} `} />

@@ -3,6 +3,7 @@ import { renderTime } from "@/lib/time";
 import { categories, categoryLabel, getAllProductsSync } from "@/lib/commerce";
 import { TLink } from "@/components/ui/TLink";
 import { Lines } from "@/components/ui/Lines";
+import { ui } from "@/lib/site-config";
 
 /** Four tall tiles. Hover: image to 1.06 over 900ms, label slides up, a cable underline draws in. */
 export function Categories() {
@@ -12,10 +13,10 @@ export function Categories() {
     <section className="cats wrap" aria-labelledby="cats-title">
       <div className="sec-head">
         <h2 id="cats-title" className="t-h2">
-          <Lines lines={["SHOP BY CATEGORY"]} />
+          <Lines lines={[ui.home.byCategory]} />
         </h2>
         <TLink href="/shop" className="t-meta link-u">
-          SEE EVERYTHING →
+          {ui.home.seeEverything}
         </TLink>
       </div>
       <ul className="cats-grid">

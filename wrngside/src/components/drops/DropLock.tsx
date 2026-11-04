@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 import type { Product } from "@/lib/commerce/types";
 import { accessStore, useDropUnlocked } from "@/lib/stores";
-import { codes, copy } from "@/lib/site-config";
-import { countdownParts, formatDropSlot } from "@/lib/format";
+import { codes, copy, ui } from "@/lib/site-config";
+import { countdownParts, formatDropSlot, fill } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/device";
@@ -90,7 +90,7 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
         .to(".padlock", { rotation: 28, y: 30, duration: 0.25, ease: "power2.in" }, "-=0.2")
         .to(".padlock", { y: 900, rotation: 120, duration: 0.9, ease: "power3.in" })
         .to(".chain", { y: 400, opacity: 0, duration: 0.8, ease: "power3.in" }, "<0.1");
-      announce(`DROP ${number} is unlocked.`);
+      announce(fill(ui.drops.unlocked, { number }));
     },
     { scope: stage, dependencies: [open, phase, number, dropId, releaseAt] },
   );
@@ -129,7 +129,7 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
         </div>
         <div className="wrap dl-copy">
           <p className="t-meta">
-            DROP {number} · {formatDropSlot(releaseAt)}
+            {fill(ui.drops.slot, { number, slot: formatDropSlot(releaseAt) })}
           </p>
           <h1 id="dl-title" className="t-display">
             <Lines lines={[name]} mode="mount" />
@@ -138,26 +138,26 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
           {phase === "open" ? (
             <div className="dl-open">
               <p className="t-meta">
-                <span className="live-dot" aria-hidden="true" /> LIVE NOW ON THE LINE
+                <span className="live-dot" aria-hidden="true" /> {ui.drops.liveNow}
               </p>
-              <MiniLine items={items} dark label={`DROP ${number} pieces`} linkAs={(it, body) => <TLink href={it.href!}>{body}</TLink>} />
+              <MiniLine items={items} dark label={fill(ui.drops.piecesLabel, { number })} linkAs={(it, body) => <TLink href={it.href!}>{body}</TLink>} />
             </div>
           ) : (
             <>
-              <div className="countdown" role="timer" aria-label={`${cd.days} days ${cd.hours} hours ${cd.minutes} minutes left`}>
-                <Flap value={cd.days} label="DD" />
+              <div className="countdown" role="timer" aria-label={fill(ui.drops.timerLabel, { days: cd.days, hours: cd.hours, minutes: cd.minutes })}>
+                <Flap value={cd.days} label={ui.common.countdown.days} />
                 <span className="flap-sep" aria-hidden="true">
                   :
                 </span>
-                <Flap value={cd.hours} label="HH" />
+                <Flap value={cd.hours} label={ui.common.countdown.hours} />
                 <span className="flap-sep" aria-hidden="true">
                   :
                 </span>
-                <Flap value={cd.minutes} label="MM" />
+                <Flap value={cd.minutes} label={ui.common.countdown.minutes} />
                 <span className="flap-sep" aria-hidden="true">
                   :
                 </span>
-                <Flap value={cd.seconds} label="SS" />
+                <Flap value={cd.seconds} label={ui.common.countdown.seconds} />
               </div>
               <div className="dl-forms">
                 <form
@@ -175,11 +175,11 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
                   }}
                 >
                   <div className="field">
-                    <label htmlFor="dl-code-input">ENTER ACCESS CODE</label>
+                    <label htmlFor="dl-code-input">{ui.drops.enterCode}</label>
                     <div className="pincode-row">
                       <input id="dl-code-input" className="input t-mono" autoComplete="off" value={code} onChange={(e) => setCode(e.target.value)} aria-invalid={Boolean(codeErr) || undefined} aria-describedby={codeErr ? "dl-code-err" : undefined} />
                       <button type="submit" className="btn btn-sm">
-                        UNLOCK
+                        {ui.drops.unlock}
                       </button>
                     </div>
                     {codeErr && (
@@ -190,7 +190,7 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
                   </div>
                 </form>
                 {joined ? (
-                  <p className="t-h3">YOU&apos;RE ON THE WAITLIST. PHONE ON LOUD.</p>
+                  <p className="t-h3">{ui.drops.waitlisted}</p>
                 ) : (
                   <form
                     className="dl-wait"
@@ -202,10 +202,10 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
                       if (!err) setJoined(true);
                     }}
                   >
-                    <p className="t-meta">JOIN THE WAITLIST</p>
+                    <p className="t-meta">{ui.drops.waitlist}</p>
                     <ContactField mode={mode} onMode={setMode} value={value} onValue={setValue} error={wErr} idPrefix="dl" compact />
                     <button type="submit" className="btn btn-signal">
-                      JOIN THE WAITLIST
+                      {ui.drops.waitlist}
                     </button>
                   </form>
                 )}

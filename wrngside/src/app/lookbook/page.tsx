@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { lookbook, site } from "@/lib/site-config";
+import { lookbook, site, ui, pageSeo } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
 import { getProductsByHandles, toListing } from "@/lib/commerce";
 import { LookbookView } from "@/components/lookbook/LookbookView";
@@ -7,8 +7,8 @@ import { Lines } from "@/components/ui/Lines";
 import "@/components/lookbook/lookbook.css";
 
 export const metadata: Metadata = pageMeta({
-  title: "Lookbook",
-  description: "DROP 04 — LIVE WIRE, shot after midnight across Delhi. Five chapters.",
+  title: pageSeo.lookbook.title,
+  description: pageSeo.lookbook.description,
   path: "/lookbook",
 });
 export const viewport: Viewport = { themeColor: site.themeColor.night };
@@ -22,9 +22,9 @@ export default async function LookbookPage() {
       <header className="wrap pt-header lb-head">
         <p className="t-meta text-muted">{lookbook.season}</p>
         <h1 className="t-display">
-          <Lines lines={["AFTER", "MIDNIGHT."]} mode="mount" />
+          <Lines lines={[...ui.pages.lookbook.title]} mode="mount" />
         </h1>
-        <p className="t-meta">SCROLL TO WALK THE CHAPTERS ↓</p>
+        <p className="t-meta">{ui.pages.lookbook.hint}</p>
       </header>
       <LookbookView products={products} />
     </main>

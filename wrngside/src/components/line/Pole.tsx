@@ -1,5 +1,5 @@
 import type { PoleSpec } from "./layout";
-import { hindi } from "@/lib/site-config";
+import { hindi, ui, copy } from "@/lib/site-config";
 import { categoryLabel } from "@/lib/commerce";
 
 /** Lamp head position relative to the pole centre, in H units. */
@@ -112,13 +112,13 @@ export function Pole({ pole }: { pole: PoleSpec }) {
           {hindi.danger}
         </text>
         <text x="0" y="17" textAnchor="middle" className="svg-display" fontSize="6.6" fill="#c4170c">
-          DANGER
+          {ui.scene.plate.danger}
         </text>
         <text x="0" y="25" textAnchor="middle" className="svg-display" fontSize="7.4" fill="#111">
-          440V
+          {ui.scene.plate.volts}
         </text>
         <text x="0" y="31" textAnchor="middle" className="svg-mono" fontSize="3.6" fill="#111" letterSpacing="0.4">
-          WRNGSIDE
+          {ui.scene.plate.brand}
         </text>
       </g>
 
@@ -163,7 +163,7 @@ export function Pole({ pole }: { pole: PoleSpec }) {
           <rect x="-74" y="-31" width="148" height="62" fill="#14593b" />
           <rect x="-70" y="-27" width="140" height="54" fill="none" stroke="#f3efe6" strokeWidth="2" />
           <text x="0" y="-3" textAnchor="middle" className="svg-display" fontSize={Math.min(15, 132 / ((categoryLabel(board).length + 5) * 0.86))} fill="#f3efe6">
-            {categoryLabel(board)} MARG
+            {categoryLabel(board)} {ui.scene.board.marg}
           </text>
           <text x="0" y="19" textAnchor="middle" className="svg-deva" fontSize="18" fill="#f3efe6">
             {hindi.marg[board]}
@@ -178,10 +178,10 @@ export function Pole({ pole }: { pole: PoleSpec }) {
           <rect x="-112" y="-58" width="224" height="116" fill="#eeeae3" />
           <rect x="-106" y="-52" width="212" height="104" fill="none" stroke="#0b0b0b" strokeWidth="2.5" />
           <text x="0" y="-8" textAnchor="middle" className="svg-display" fontSize="25" fill="#0b0b0b">
-            SEE
+            {copy.hero.endBoard.split(" ")[0]}
           </text>
           <text x="0" y="22" textAnchor="middle" className="svg-display" fontSize="25" fill="#0b0b0b">
-            EVERYTHING
+            {copy.hero.endBoard.split(" ").slice(1).join(" ")}
           </text>
           <path d="M-22 38 L18 38 M8 30 L18 38 L8 46" stroke="#ff3b1f" strokeWidth="4" fill="none" />
         </g>

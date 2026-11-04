@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { TLink } from "@/components/ui/TLink";
 import { getLineProducts, accessibleName, liveDrop } from "@/lib/commerce";
-import { copy, codes, hindi } from "@/lib/site-config";
+import { copy, codes, hindi, ui } from "@/lib/site-config";
 import { fill } from "@/lib/format";
 import { buildLineLayout, spanPathD, type LineGarmentInput, LINE } from "./layout";
 import { Pole, LAMP } from "./Pole";
@@ -147,7 +147,9 @@ export async function TheLine() {
                     {p.transformer && <button type="button" className="transformer-hit" data-action="transformer" aria-label="Transformer" tabIndex={-1} />}
                     {p.last && (
                       <TLink href="/shop" className="end-board" data-action="shop">
-                        <span className="sr-only">{copy.hero.endBoard}: shop everything</span>
+                        <span className="sr-only">
+                          {copy.hero.endBoard}: {ui.scene.board.srShop}
+                        </span>
                       </TLink>
                     )}
                   </div>
@@ -157,13 +159,13 @@ export async function TheLine() {
               {/* Painted on the lower wall, just left of the transformer pole and below the hems. */}
               <div className="egg-code" style={{ "--x": (poles.find((p) => p.transformer)?.x ?? 6) - 0.06 } as React.CSSProperties}>
                 <button type="button" data-action="copy-egg" className="egg-code-btn" tabIndex={-1} aria-hidden="true">
-                  <span className="t-meta">FOUND IN THE DARK</span>
+                  <span className="t-meta">{ui.scene.egg.found}</span>
                   <span className="egg-code-text">{codes.powerCut.code}</span>
-                  <span className="t-meta">{codes.powerCut.percentOff}% OFF</span>
+                  <span className="t-meta">{fill(ui.scene.egg.off, { n: codes.powerCut.percentOff })}</span>
                 </button>
               </div>
 
-              <ul className="garments" aria-label={`DROP ${drop.number} — THE LINE, ${garments.length} pieces. Use left and right arrow keys to move along the line.`}>
+              <ul className="garments" aria-label={fill(ui.scene.lineLabel, { drop: drop.number, n: garments.length })}>
                 {garments.map((g) => (
                   <li
                     key={g.index}

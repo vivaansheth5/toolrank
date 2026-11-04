@@ -17,7 +17,7 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { CableDivider } from "@/components/ui/CableDivider";
 import { TLink } from "@/components/ui/TLink";
 import { getBestSellers, toListing } from "@/lib/commerce";
-import { site } from "@/lib/site-config";
+import { site, ui } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
 import "@/components/home/home.css";
 import { Lines } from "@/components/ui/Lines";
@@ -54,10 +54,10 @@ export default async function Home() {
           <section className="wanted wrap cv-auto" aria-labelledby="wanted-title">
             <div className="sec-head">
               <h2 id="wanted-title" className="t-h2">
-                <Lines lines={["MOST WANTED"]} />
+                <Lines lines={[ui.pages.home.mostWanted]} />
               </h2>
               <TLink href="/shop" className="t-meta link-u">
-                SHOP ALL →
+                {ui.pages.home.shopAll}
               </TLink>
             </div>
             <div className="wanted-grid">

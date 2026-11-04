@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { commerce } from "@/lib/site-config";
-import { formatPrice } from "@/lib/format";
+import { commerce, ui } from "@/lib/site-config";
+import { formatPrice, fill } from "@/lib/format";
 
 /** Free-shipping meter drawn as a charging cable with a spark at its head. */
 export function ChargeMeter({ subtotal }: { subtotal: number }) {
@@ -28,7 +28,7 @@ export function ChargeMeter({ subtotal }: { subtotal: number }) {
   return (
     <div className="charge" data-done={done || undefined} data-pulse={pulse || undefined}>
       <p className="t-meta charge-label" aria-live="polite">
-        {done ? "FREE SHIPPING: POWERED ON" : `${formatPrice(away)} AWAY FROM FREE SHIPPING`}
+        {done ? ui.cart.poweredOn : fill(ui.cart.away, { amount: formatPrice(away) })}
       </p>
       <svg viewBox={`0 0 ${W} 26`} className="charge-svg" role="progressbar" aria-label="Progress to free shipping" aria-valuemin={0} aria-valuemax={t} aria-valuenow={Math.min(subtotal, t)} preserveAspectRatio="none">
         <path className="charge-track" d={`M0 6 Q${W / 2} ${6 + sag * 2} ${W} 6`} />

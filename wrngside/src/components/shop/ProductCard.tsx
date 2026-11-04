@@ -10,8 +10,9 @@ import { Price } from "@/components/ui/Price";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { openNotify } from "@/components/ui/NotifyDialog";
 import { useDropUnlocked } from "@/lib/stores";
-import { formatDropSlot } from "@/lib/format";
+import { formatDropSlot, fill } from "@/lib/format";
 import "./shop.css";
+import { ui, copy } from "@/lib/site-config";
 
 const BADGE_CLASS: Record<Badge, string> = {
   NEW: "badge",
@@ -47,7 +48,7 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
           </span>
           {soldOut && (
             <span className="stamp" aria-hidden="true">
-              SOLD OUT
+              {ui.common.soldOut}
             </span>
           )}
         </TLink>
@@ -59,17 +60,17 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
                 {b}
               </span>
             ))}
-          {locked && p.wrng.releaseAt && <span className="badge">DROPS {formatDropSlot(p.wrng.releaseAt)}</span>}
+          {locked && p.wrng.releaseAt && <span className="badge">{fill(ui.common.dropsAt, { slot: formatDropSlot(p.wrng.releaseAt) })}</span>}
         </div>
         <SaveButton product={p} className="pcard-save" />
-        <div className="pcard-quick" role="group" aria-label={`Quick add ${p.title}`}>
+        <div className="pcard-quick" role="group" aria-label={fill(ui.common.quickAddLabel, { title: p.title })}>
           {soldOut || locked ? (
             <button type="button" className="pcard-notify t-meta" onClick={() => openNotify(p)}>
-              {locked ? "NOTIFY ME WHEN IT DROPS" : p.wrng.restocking ? "RESTOCKING — NOTIFY ME" : "NOTIFY ME"}
+              {locked ? ui.common.notifyWhenDrops : p.wrng.restocking ? ui.common.notifyRestocking : copy.ctas.notifyMe}
             </button>
           ) : (
             <>
-              <span className="t-meta pcard-quick-label">QUICK ADD</span>
+              <span className="t-meta pcard-quick-label">{ui.common.quickAdd}</span>
               <span className="pcard-sizes">
                 {p.wrng.sizes.map((s) => (
                   <button
@@ -78,7 +79,7 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
                     className="pcard-size"
                     disabled={!s.available}
                     data-loading={adding === s.label || undefined}
-                    aria-label={s.available ? `Add ${p.title} size ${s.label} to bag` : `${p.title} size ${s.label} sold out`}
+                    aria-label={s.available ? fill(ui.common.addSizeLabel, { title: p.title, size: s.label }) : fill(ui.common.soldOutSizeLabel, { title: p.title, size: s.label })}
                     onClick={() => {
                       setAdding(s.label);
                       window.setTimeout(() => {
@@ -87,7 +88,7 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
                       }, 260);
                     }}
                   >
-                    {s.label.replace("ONE SIZE", "OS").replace("UK ", "")}
+                    {s.label.replace(ui.common.oneSize, "OS").replace("UK ", "")}
                   </button>
                 ))}
               </span>
@@ -102,7 +103,7 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
         <Price amount={p.wrng.price} compareAt={p.wrng.compareAtPrice} className="pcard-price" />
         <p className="t-meta text-muted pcard-meta">
           {p.wrng.type}
-          {p.wrng.colours.length > 1 ? ` · ${p.wrng.colours.length} COLOURS` : ""}
+          {p.wrng.colours.length > 1 ? ` · ${fill(ui.common.colourCount, { n: p.wrng.colours.length })}` : ""}
         </p>
       </div>
     </article>

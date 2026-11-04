@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { drops, copy } from "@/lib/site-config";
-import { countdownParts, pad2, formatDropSlot } from "@/lib/format";
+import { drops, copy, ui, site } from "@/lib/site-config";
+import { countdownParts, pad2, formatDropSlot, fill } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { REDUCED_MOTION } from "@/lib/device";
@@ -56,13 +56,13 @@ export function NextDrop() {
       <div ref={media} className="nd-media" data-reveal="img">
         <div className="reveal-inner nd-inner">
           <div className="nd-img">
-            <Image src="/campaign/drop-05.svg" alt="The WRONG WAY varsity jacket hanging under a single streetlamp on a flyover at night" fill sizes="100vw" loading="lazy" />
+            <Image src={`/campaign/${drop.id}.svg`} alt={fill(ui.home.nextDropAlt, { name: drop.name })} fill sizes="100vw" loading="lazy" />
           </div>
         </div>
       </div>
       <div className="wrap nd-body">
         <p className="t-meta">
-          {live ? <span className="live-dot" aria-hidden="true" /> : null} NEXT DROP · {drop.number} · {formatDropSlot(drop.releaseAt!)}
+          {live ? <span className="live-dot" aria-hidden="true" /> : null} {fill(ui.home.nextDrop, { number: drop.number, slot: formatDropSlot(drop.releaseAt!) })}
         </p>
         <h2 id="nd-title" className="t-display nd-title axis-hover">
           <Lines lines={drop.name.split(" ")} />
@@ -74,24 +74,24 @@ export function NextDrop() {
           </TLink>
         ) : (
           <>
-            <div className="countdown" role="timer" aria-label={now === null ? "Countdown" : `${cd.days} days, ${cd.hours} hours, ${cd.minutes} minutes until DROP ${drop.number}`}>
-              <Flap value={cd.days} label="DD" />
+            <div className="countdown" role="timer" aria-label={now === null ? ui.home.countdownIdle : fill(ui.home.countdownLabel, { days: cd.days, hours: cd.hours, minutes: cd.minutes, number: drop.number })}>
+              <Flap value={cd.days} label={ui.common.countdown.days} />
               <span className="flap-sep" aria-hidden="true">
                 :
               </span>
-              <Flap value={cd.hours} label="HH" />
+              <Flap value={cd.hours} label={ui.common.countdown.hours} />
               <span className="flap-sep" aria-hidden="true">
                 :
               </span>
-              <Flap value={cd.minutes} label="MM" />
+              <Flap value={cd.minutes} label={ui.common.countdown.minutes} />
               <span className="flap-sep" aria-hidden="true">
                 :
               </span>
-              <Flap value={cd.seconds} label="SS" />
-              <span className="t-meta flap-tz">IST</span>
+              <Flap value={cd.seconds} label={ui.common.countdown.seconds} />
+              <span className="t-meta flap-tz">{site.timeZoneLabel}</span>
             </div>
             {done ? (
-              <p className="t-h3 nd-done">YOU&apos;LL HEAR FIRST. PHONE ON LOUD.</p>
+              <p className="t-h3 nd-done">{ui.home.notifyDone}</p>
             ) : (
               <form
                 className="nd-form"

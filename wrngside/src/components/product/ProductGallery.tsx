@@ -7,6 +7,8 @@ import { landFlight, hasPendingFlight } from "@/lib/flight";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { FINE_POINTER, REDUCED_MOTION } from "@/lib/device";
 import { ZoomOverlay } from "./ZoomOverlay";
+import { ui } from "@/lib/site-config";
+import { fill } from "@/lib/format";
 
 export interface GalleryImage {
   src: string;
@@ -63,7 +65,7 @@ export function ProductGallery({ product, images, wrongSide, insideOut, tint }: 
       <div ref={strip} className="gal-strip no-scrollbar" aria-roledescription="carousel" aria-label={`${product.title} images`}>
         {images.map((img, i) => (
           <figure key={img.src} className="gal-item" aria-roledescription="slide" aria-label={`${i + 1} of ${n}`}>
-            <button type="button" className="gal-btn" onClick={() => setZoom(i)} aria-label={`Zoom: ${img.alt}`} data-cursor="view">
+            <button type="button" className="gal-btn" onClick={() => setZoom(i)} aria-label={fill(ui.product.zoomLabel, { alt: img.alt })} data-cursor="view">
               {i === 0 ? (
                 <div ref={first} className="flip" data-wrong={wrongSide || undefined} data-landing={landing || undefined}>
                   <div className="flip-face flip-front gal-parallax">

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { accountStore, type Order } from "@/lib/stores";
-import { copy } from "@/lib/site-config";
+import { copy, ui } from "@/lib/site-config";
 import { normalisePhone } from "@/components/ui/ContactField";
-import { formatPrice, formatShortDate } from "@/lib/format";
+import { formatPrice, formatShortDate, fill } from "@/lib/format";
 
 const STEPS = ["PLACED", "PACKED", "SHIPPED", "OUT FOR DELIVERY", "DELIVERED"] as const;
 
@@ -27,18 +27,18 @@ export function TrackOrder() {
         }}
       >
         <div className="field">
-          <label htmlFor="tr-id">Order ID</label>
-          <input id="tr-id" className="input t-mono" placeholder="WS123456" value={id} onChange={(e) => setId(e.target.value)} autoComplete="off" />
+          <label htmlFor="tr-id">{ui.help.track.orderId}</label>
+          <input id="tr-id" className="input t-mono" placeholder={ui.help.track.orderIdPlaceholder} value={id} onChange={(e) => setId(e.target.value)} autoComplete="off" />
         </div>
         <div className="field">
-          <label htmlFor="tr-ph">Phone number</label>
+          <label htmlFor="tr-ph">{ui.help.track.phone}</label>
           <div className="input-wrap">
             <span className="input-prefix t-mono">+91</span>
             <input id="tr-ph" className="input" type="tel" inputMode="numeric" value={phone} onChange={(e) => setPhone(e.target.value)} aria-invalid={Boolean(err) || undefined} aria-describedby={err ? "tr-err" : undefined} />
           </div>
         </div>
         <button type="submit" className="btn btn-solid">
-          TRACK
+          {ui.help.track.submit}
         </button>
         {err && (
           <p id="tr-err" className="field-error" role="alert">
@@ -49,7 +49,7 @@ export function TrackOrder() {
       {order && (
         <div className="track-result" aria-live="polite">
           <p className="t-meta">
-            ORDER {order.id} · {formatPrice(order.total)} · ARRIVES BY {formatShortDate(new Date(order.deliveryBy)).toUpperCase()}
+            {fill(ui.help.track.order, { id: order.id })} · {formatPrice(order.total)} · {ui.common.arrivesBy} {formatShortDate(new Date(order.deliveryBy)).toUpperCase()}
           </p>
           <ol className="track-steps">
             {STEPS.map((s, i) => (

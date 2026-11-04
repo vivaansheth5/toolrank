@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { checkPincode, type PincodeResult } from "@/lib/delivery";
 import { formatShortDate, fill } from "@/lib/format";
-import { copy } from "@/lib/site-config";
+import { copy, ui } from "@/lib/site-config";
 
 /** 6-digit pincode check → "Delivery by Fri, 8 Nov · COD available" (mocked courier). */
 export function Pincode() {
@@ -40,7 +40,7 @@ export function Pincode() {
       }}
     >
       <label htmlFor="pincode" className="t-meta">
-        DELIVERY
+        {ui.product.pincode.label}
       </label>
       <div className="pincode-row">
         <input
@@ -50,7 +50,7 @@ export function Pincode() {
           autoComplete="postal-code"
           pattern="[0-9]*"
           maxLength={6}
-          placeholder="Pincode"
+          placeholder={ui.product.pincode.placeholder}
           value={pin}
           onChange={(e) => {
             setPin(e.target.value.replace(/\D/g, "").slice(0, 6));
@@ -60,14 +60,14 @@ export function Pincode() {
           aria-describedby="pincode-msg"
         />
         <button type="submit" className="btn btn-sm" disabled={pin.length !== 6} data-loading={busy || undefined}>
-          CHECK
+          {ui.product.pincode.check}
         </button>
       </div>
       <p id="pincode-msg" className={res && !res.ok ? "field-error" : "t-meta pincode-ok"} aria-live="polite">
         {error ??
           (res && res.ok ? (
             <>
-              Delivery by {formatShortDate(res.deliveryBy)} · {res.cod ? "COD available" : "Prepaid only"}
+              {fill(ui.product.pincode.deliveryBy, { date: formatShortDate(res.deliveryBy) })} · {res.cod ? ui.product.pincode.cod : ui.product.pincode.prepaid}
             </>
           ) : (
             ""

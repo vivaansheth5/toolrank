@@ -7,8 +7,8 @@ import { useCart, useCartCount, cartActions } from "@/lib/commerce/cart";
 import { getProductSync, variantFor } from "@/lib/commerce";
 import { addToBag } from "@/lib/commerce/actions";
 import { useFocusTrap, useScrollLock } from "@/lib/hooks";
-import { commerce, copy } from "@/lib/site-config";
-import { formatPrice } from "@/lib/format";
+import { commerce, copy, ui as uiCopy } from "@/lib/site-config";
+import { formatPrice, fill } from "@/lib/format";
 import { CloseIcon, MinusIcon, PlusIcon } from "@/components/ui/Icons";
 import { TLink } from "@/components/ui/TLink";
 import { ProductImage } from "@/components/ui/ProductImage";
@@ -29,7 +29,7 @@ export function CartDrawer() {
       <aside ref={panel} className="drawer theme-day" role="dialog" aria-modal="true" aria-labelledby="cart-title" inert={!open} data-lenis-prevent>
         <header className="drawer-head">
           <h2 id="cart-title" className="t-h3">
-            YOUR BAG <span className="t-mono tabular">({count})</span>
+            {uiCopy.cart.title} <span className="t-mono tabular">({count})</span>
           </h2>
           <button type="button" className="icon-btn" onClick={ui.closeCart} aria-label="Close bag">
             <CloseIcon />
@@ -89,17 +89,17 @@ export function CartBody({ page = false }: { page?: boolean }) {
                       <span className="t-mono-lg tabular">{formatPrice(Number(l.cost.totalAmount.amount))}</span>
                     </div>
                     <p className="t-meta text-muted">
-                      {colour} · SIZE {size} {l.quantity > 1 && `· ${formatPrice(unit)} EACH`}
+                      {colour} · {uiCopy.cart.size} {size} {l.quantity > 1 && `· ${fill(uiCopy.cart.each, { price: formatPrice(unit) })}`}
                     </p>
                     <div className="line-item-actions">
-                      <div className="stepper" role="group" aria-label={`Quantity for ${l.merchandise.product.title}`}>
+                      <div className="stepper" role="group" aria-label={fill(uiCopy.cart.qtyLabel, { title: l.merchandise.product.title })}>
                         <button
                           type="button"
                           aria-label="Decrease quantity"
                           disabled={l.quantity <= 1}
                           onClick={() => {
                             cartActions.update(l.id, l.quantity - 1);
-                            announce(`Quantity ${l.quantity - 1}`);
+                            announce(fill(uiCopy.cart.qtyAnnounce, { n: l.quantity - 1 }));
                           }}
                         >
                           <MinusIcon />
@@ -113,7 +113,7 @@ export function CartBody({ page = false }: { page?: boolean }) {
                           disabled={l.quantity >= max}
                           onClick={() => {
                             cartActions.update(l.id, l.quantity + 1);
-                            announce(`Quantity ${l.quantity + 1}`);
+                            announce(fill(uiCopy.cart.qtyAnnounce, { n: l.quantity + 1 }));
                           }}
                         >
                           <PlusIcon />
@@ -124,14 +124,14 @@ export function CartBody({ page = false }: { page?: boolean }) {
                         className="t-meta link-u"
                         onClick={() => {
                           const snap = cartActions.remove(l.id);
-                          announce(`${l.merchandise.product.title} removed from bag.`);
+                          announce(fill(uiCopy.cart.removedAnnounce, { title: l.merchandise.product.title }));
                           if (snap) toast(`${copy.removed}: ${l.merchandise.product.title}`, { action: { label: copy.undo, onClick: () => cartActions.restore(snap) }, duration: 5000 });
                         }}
                       >
-                        REMOVE
+                        {uiCopy.common.remove}
                       </button>
                     </div>
-                    {l.quantity >= max && max < commerce.maxQtyPerLine && <p className="t-meta text-muted">THAT&apos;S ALL WE HAVE IN {size}.</p>}
+                    {l.quantity >= max && max < commerce.maxQtyPerLine && <p className="t-meta text-muted">{fill(uiCopy.cart.allWeHave, { size: size ?? "" })}</p>}
                   </div>
                 </li>
               );
@@ -143,25 +143,26 @@ export function CartBody({ page = false }: { page?: boolean }) {
               <div className="upsell-img">
                 <ProductImage src={upsell.featuredImage.url} alt="" sizes="64px" tint={upsell.wrng.colours[0].hex} />
               </div>
-              <p className="t-meta">FINISH THE FIT</p>
+              <p className="t-meta">{uiCopy.cart.finishTheFit}</p>
               <button type="button" className="btn btn-sm" onClick={() => addToBag(upsell, upsell.wrng.colours[0].name, upsellSize, { quiet: true })}>
-                ADD {upsell.title} {upsell.wrng.type.split(" ")[0].toUpperCase()} — {formatPrice(upsell.wrng.price)}
+                {fill(uiCopy.cart.upsell, { title: upsell.title, type: upsell.wrng.type.split(" ")[0].toUpperCase(), price: formatPrice(upsell.wrng.price) })}
               </button>
             </div>
           )}
 
           <div className="note">
             <button type="button" className="t-meta note-toggle" aria-expanded={noteOpen} onClick={() => setNoteOpen((v) => !v)}>
-              {noteOpen ? "— " : "+ "}ADD A NOTE TO YOUR ORDER
+              {noteOpen ? "— " : "+ "}
+              {uiCopy.cart.note}
             </button>
             {noteOpen && (
-              <textarea className="input" rows={3} maxLength={500} placeholder="Gift? Delivery instructions? Tell us." defaultValue={cart.note} onBlur={(e) => cartActions.setNote(e.target.value)} aria-label="Order note" />
+              <textarea className="input" rows={3} maxLength={500} placeholder={uiCopy.cart.notePlaceholder} defaultValue={cart.note} onBlur={(e) => cartActions.setNote(e.target.value)} aria-label={uiCopy.cart.noteLabel} />
             )}
           </div>
 
           <footer className="drawer-foot">
             <div className="drawer-total">
-              <span className="t-meta">SUBTOTAL</span>
+              <span className="t-meta">{uiCopy.cart.subtotal}</span>
               <span className="t-mono-lg tabular">{formatPrice(subtotal)}</span>
             </div>
             <button
@@ -181,7 +182,7 @@ export function CartBody({ page = false }: { page?: boolean }) {
                 </li>
               ))}
             </ul>
-            <p className="t-meta text-muted">Taxes included. Shipping calculated at checkout.</p>
+            <p className="t-meta text-muted">{uiCopy.cart.taxNote}</p>
           </footer>
         </>
       )}

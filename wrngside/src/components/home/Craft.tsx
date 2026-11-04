@@ -1,5 +1,6 @@
-import { copy } from "@/lib/site-config";
+import { copy, ui, site, drops } from "@/lib/site-config";
 import { Lines } from "@/components/ui/Lines";
+import { fill } from "@/lib/format";
 
 /** Care symbols, drawn (wash 30, no bleach, dry flat, iron low, no tumble). */
 function CareIcons() {
@@ -27,6 +28,7 @@ function CareIcons() {
 
 /** THE WRONG SIDE: the inside of a garment. Stitches draw themselves as the labels slide in. */
 export function Craft() {
+  const live = drops.list.find((d) => d.id === drops.live)!;
   return (
     <section className="craft theme-night cv-auto" aria-labelledby="craft-title">
       <div className="craft-fabric" aria-hidden="true">
@@ -40,7 +42,7 @@ export function Craft() {
       </div>
       <div className="wrap craft-inner">
         <div className="craft-copy">
-          <p className="t-meta text-muted">06 — CRAFT</p>
+          <p className="t-meta text-muted">{ui.home.craftKicker}</p>
           <h2 id="craft-title" className="t-h1">
             <Lines lines={[copy.craft.title]} />
           </h2>
@@ -51,16 +53,16 @@ export function Craft() {
             <span className="woven-mark">
               WR<span className="mirror">N</span>GSIDE
             </span>
-            <span className="woven-sub">NEW DELHI · DROP 04</span>
+            <span className="woven-sub">{fill(ui.home.craftLabel, { city: site.city, drop: live.number })}</span>
           </div>
           <div className="label-care" data-reveal="fade" style={{ "--d": "160ms" } as React.CSSProperties}>
-            <ul aria-label="What goes into every piece">
+            <ul aria-label={ui.home.craftCareLabel}>
               {copy.craft.lines.map((l) => (
                 <li key={l}>{l}</li>
               ))}
             </ul>
             <CareIcons />
-            <p className="care-small">WASH COLD · INSIDE OUT · DRY IN SHADE · RN 04-2026</p>
+            <p className="care-small">{fill(ui.home.craftCare, { drop: live.number, year: live.releasedAt ? new Date(live.releasedAt).getFullYear() : site.established })}</p>
           </div>
           <div className="label-size" data-reveal="fade" style={{ "--d": "300ms" } as React.CSSProperties} aria-hidden="true">
             L

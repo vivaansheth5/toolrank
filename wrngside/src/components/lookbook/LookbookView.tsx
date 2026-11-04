@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { lookbook } from "@/lib/site-config";
+import { lookbook, ui } from "@/lib/site-config";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { FINE_POINTER, REDUCED_MOTION } from "@/lib/device";
 import { scrollToY } from "@/lib/scroll";
 import { TLink } from "@/components/ui/TLink";
 import type { Product } from "@/lib/commerce/types";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, fill } from "@/lib/format";
 import { Lines } from "@/components/ui/Lines";
 
 /** Full-screen chapters: a pinned horizontal walk on desktop, vertical on phones. */
@@ -65,13 +65,13 @@ export function LookbookView({ products }: { products: Record<string, Product> }
               <div className="lb-img" data-reveal="img">
                 <div className="reveal-inner">
                   <div className="lb-img-inner">
-                    <Image src={c.image} alt={`${c.title}: ${c.place} at ${c.time}`} fill sizes="(min-width: 1024px) 55vw, 100vw" preload={i === 0} loading={i === 0 ? "eager" : "lazy"} />
+                    <Image src={c.image} alt={fill(ui.home.chapterAlt, { title: c.title, place: c.place, time: c.time })} fill sizes="(min-width: 1024px) 55vw, 100vw" preload={i === 0} loading={i === 0 ? "eager" : "lazy"} />
                   </div>
                 </div>
               </div>
               <div className="lb-copy">
                 <p className="t-meta">
-                  CHAPTER {c.id} / {String(n).padStart(2, "0")}
+                  {fill(ui.home.chapterCount, { id: c.id, total: String(n).padStart(2, "0") })}
                 </p>
                 <h2 id={`lb-t-${c.id}`} className="t-display lb-title">
                   <Lines lines={[c.title]} />

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { copy } from "@/lib/site-config";
+import { copy, ui, pageSeo } from "@/lib/site-config";
 import { TLink } from "@/components/ui/TLink";
 import { Lines } from "@/components/ui/Lines";
 import { Peg } from "@/components/line/Garment";
 import "@/components/help/pages.css";
 
-export const metadata: Metadata = { title: "Wrong side", robots: { index: false } };
+export const metadata: Metadata = { title: pageSeo.notFound.title, robots: { index: false } };
 
 /** An empty pole at night, one sock pegged to the line under a buzzing lamp. */
 export default function NotFound() {
@@ -23,9 +23,9 @@ export default function NotFound() {
         </span>
       </div>
       <div className="wrap nf-copy">
-        <p className="t-meta">404 · NOTHING ON THIS WIRE</p>
+        <p className="t-meta">{ui.pages.notFound.kicker}</p>
         <h1 className="t-h1 nf-title">
-          <Lines lines={["WRONG SIDE.", "EVEN FOR US."]} mode="mount" />
+          <Lines lines={[...ui.pages.notFound.title]} mode="mount" />
         </h1>
         <p className="t-lead">{copy.notFound.body}</p>
         <TLink href="/" className="btn btn-signal">

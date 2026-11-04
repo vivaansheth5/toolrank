@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { searchProductsSync } from "@/lib/commerce";
-import { copy, trendingSearches } from "@/lib/site-config";
+import { copy, trendingSearches, ui } from "@/lib/site-config";
 import { useNow } from "@/lib/hooks";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Lines } from "@/components/ui/Lines";
@@ -24,25 +24,25 @@ export function SearchResults() {
   };
   return (
     <div className="wrap pt-header search-page">
-      <p className="t-meta text-muted">SEARCH</p>
+      <p className="t-meta text-muted">{ui.search.kicker}</p>
       <h1 className="t-h1">
-        <Lines lines={[q ? `“${q.toUpperCase()}”` : "SEARCH THE WIRE"]} mode="mount" key={q} />
+        <Lines lines={[q ? `“${q.toUpperCase()}”` : ui.search.title]} mode="mount" key={q} />
       </h1>
       <form role="search" onSubmit={(e) => e.preventDefault()} className="search-page-form">
         <label htmlFor="sp-q" className="sr-only">
-          Search products
+          {ui.search.label}
         </label>
-        <input id="sp-q" type="search" className="input" value={q} onChange={(e) => update(e.target.value)} placeholder="Hoodie, cargos, live wire…" autoComplete="off" />
+        <input id="sp-q" type="search" className="input" value={q} onChange={(e) => update(e.target.value)} placeholder={ui.search.placeholder} autoComplete="off" />
       </form>
       {ready && q.trim() && (
         <p className="t-meta" aria-live="polite">
-          {results.length} {results.length === 1 ? "RESULT" : "RESULTS"}
+          {results.length} {results.length === 1 ? ui.search.result : ui.search.results}
         </p>
       )}
       {ready && q.trim() && results.length === 0 && <p className="t-h2">{copy.emptySearch}</p>}
       {(!q.trim() || results.length === 0) && (
         <div className="search-trending">
-          <p className="t-meta text-muted">TRENDING</p>
+          <p className="t-meta text-muted">{ui.search.trending}</p>
           <ul>
             {trendingSearches.map((t) => (
               <li key={t}>

@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { ConfirmedView } from "@/components/checkout/ConfirmedView";
-import { site } from "@/lib/site-config";
+import { site, pageSeo } from "@/lib/site-config";
 import "@/components/checkout/checkout.css";
 
-export const metadata: Metadata = { title: "Order confirmed", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: pageSeo.confirmed.title, robots: { index: false, follow: false } };
 export const viewport: Viewport = { themeColor: site.themeColor.day };
 
 export default function ConfirmedPage() {

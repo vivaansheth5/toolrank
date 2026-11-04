@@ -4,8 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { accountStore, type Address } from "@/lib/stores";
 import { useStore, useHydrated } from "@/lib/store";
-import { copy } from "@/lib/site-config";
-import { formatPrice, formatShortDate } from "@/lib/format";
+import { copy, ui } from "@/lib/site-config";
+import { formatPrice, formatShortDate, fill } from "@/lib/format";
 import { lookupPincode, isPincode } from "@/lib/delivery";
 import { ContactField, normalisePhone, validateContact, type ContactMode } from "@/components/ui/ContactField";
 import { Lines } from "@/components/ui/Lines";
@@ -21,11 +21,11 @@ function Login() {
   const [busy, setBusy] = useState(false);
   return (
     <div className="acct-login">
-      <p className="t-meta text-muted">ACCOUNT</p>
+      <p className="t-meta text-muted">{ui.account.kicker}</p>
       <h1 className="t-h1">
-        <Lines lines={["SIGN IN."]} mode="mount" />
+        <Lines lines={[...ui.account.signIn]} mode="mount" />
       </h1>
-      <p className="t-lead text-muted">No passwords. We send a 6-digit code to your phone or email.</p>
+      <p className="t-lead text-muted">{ui.account.otpNote}</p>
       {step === "id" ? (
         <form
           className="acct-form"
@@ -39,13 +39,13 @@ function Login() {
             window.setTimeout(() => {
               setBusy(false);
               setStep("otp");
-              announce("Code sent.");
+              announce(ui.account.codeSent);
             }, 600);
           }}
         >
           <ContactField mode={mode} onMode={setMode} value={value} onValue={setValue} error={err} idPrefix="acct" />
           <button type="submit" className="btn btn-signal" data-loading={busy || undefined}>
-            SEND CODE
+            {ui.account.sendCode}
           </button>
         </form>
       ) : (
@@ -63,10 +63,10 @@ function Login() {
           }}
         >
           <div className="field">
-            <label htmlFor="acct-otp">Code sent to {mode === "whatsapp" ? `+91 ${normalisePhone(value)}` : value}</label>
+            <label htmlFor="acct-otp">{ui.account.codeSentTo} {mode === "whatsapp" ? `+91 ${normalisePhone(value)}` : value}</label>
             <input id="acct-otp" className="input t-mono otp" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))} aria-invalid={Boolean(err) || undefined} aria-describedby={err ? "otp-err" : "otp-hint"} />
             <p id="otp-hint" className="t-meta text-muted">
-              Demo: any 6 digits work.
+              {ui.account.demoOtp}
             </p>
             {err && (
               <p id="otp-err" className="field-error" role="alert">
@@ -76,10 +76,10 @@ function Login() {
           </div>
           <div className="acct-row">
             <button type="submit" className="btn btn-signal">
-              VERIFY
+              {ui.account.verify}
             </button>
             <button type="button" className="btn" onClick={() => setStep("id")}>
-              CHANGE {mode === "whatsapp" ? "NUMBER" : "EMAIL"}
+              {fill(ui.account.change, { what: mode === "whatsapp" ? ui.account.number : ui.account.email })}
             </button>
           </div>
         </form>
@@ -113,18 +113,18 @@ function Addresses() {
     <section className="acct-sec" aria-labelledby="acct-addr">
       <div className="sec-head">
         <h2 id="acct-addr" className="t-h2">
-          <Lines lines={["ADDRESSES"]} />
+          <Lines lines={[ui.account.addresses]} />
         </h2>
         <button type="button" className="btn btn-sm" onClick={() => setEditing({ ...EMPTY_ADDR })}>
-          ADD ADDRESS
+          {ui.account.addAddress}
         </button>
       </div>
-      {addresses.length === 0 && !editing && <p className="text-muted">No addresses yet. Add one for faster checkout.</p>}
+      {addresses.length === 0 && !editing && <p className="text-muted">{ui.account.noAddresses}</p>}
       <ul className="addr-list">
         {addresses.map((a) => (
           <li key={a.id} className="addr">
             <p>
-              <strong>{a.name}</strong> {a.isDefault && <span className="badge">DEFAULT</span>}
+              <strong>{a.name}</strong> {a.isDefault && <span className="badge">{ui.account.default}</span>}
             </p>
             <p className="text-muted">
               {a.line1}
@@ -133,15 +133,15 @@ function Addresses() {
             <p className="t-meta">+91 {a.phone}</p>
             <div className="acct-row">
               <button type="button" className="link-u t-meta" onClick={() => setEditing(a)}>
-                EDIT
+                {ui.account.edit}
               </button>
               {!a.isDefault && (
                 <button type="button" className="link-u t-meta" onClick={() => accountStore.set((s) => ({ ...s, addresses: s.addresses.map((x) => ({ ...x, isDefault: x.id === a.id })) }))}>
-                  MAKE DEFAULT
+                  {ui.account.makeDefault}
                 </button>
               )}
               <button type="button" className="link-u t-meta" onClick={() => accountStore.set((s) => ({ ...s, addresses: s.addresses.filter((x) => x.id !== a.id) }))}>
-                DELETE
+                {ui.account.delete}
               </button>
             </div>
           </li>
@@ -158,13 +158,13 @@ function Addresses() {
         >
           {(
             [
-              ["name", "Full name", "name"],
-              ["phone", "Mobile", "tel-national"],
-              ["pincode", "Pincode", "postal-code"],
-              ["line1", "House / flat, street", "address-line1"],
-              ["line2", "Area, landmark", "address-line2"],
-              ["city", "City", "address-level2"],
-              ["state", "State", "address-level1"],
+              ["name", ui.account.addressFields.name, "name"],
+              ["phone", ui.account.addressFields.phone, "tel-national"],
+              ["pincode", ui.account.addressFields.pincode, "postal-code"],
+              ["line1", ui.account.addressFields.line1, "address-line1"],
+              ["line2", ui.account.addressFields.line2, "address-line2"],
+              ["city", ui.account.addressFields.city, "address-level2"],
+              ["state", ui.account.addressFields.state, "address-level1"],
             ] as const
           ).map(([k, label, ac]) => (
             <div key={k} className="field">
@@ -197,10 +197,10 @@ function Addresses() {
           )}
           <div className="acct-row">
             <button type="submit" className="btn btn-solid">
-              SAVE ADDRESS
+              {ui.account.saveAddress}
             </button>
             <button type="button" className="btn" onClick={() => setEditing(null)}>
-              CANCEL
+              {ui.account.cancel}
             </button>
           </div>
         </form>
@@ -212,7 +212,7 @@ function Addresses() {
 export function AccountView() {
   const hydrated = useHydrated();
   const { user, orders } = useStore(accountStore);
-  if (!hydrated) return <div className="wrap pt-header t-meta">LOADING…</div>;
+  if (!hydrated) return <div className="wrap pt-header t-meta">{ui.common.loading}</div>;
   if (!user)
     return (
       <div className="wrap pt-header acct">
@@ -221,27 +221,29 @@ export function AccountView() {
     );
   return (
     <div className="wrap pt-header acct">
-      <p className="t-meta text-muted">SIGNED IN AS {user.phone ? `+91 ${user.phone}` : user.email}</p>
+      <p className="t-meta text-muted">
+        {ui.account.signedInAs} {user.phone ? `+91 ${user.phone}` : user.email}
+      </p>
       <h1 className="t-h1">
-        <Lines lines={["YOUR ACCOUNT."]} mode="mount" />
+        <Lines lines={[...ui.account.title]} mode="mount" />
       </h1>
       <div className="acct-row">
         <TLink href="/saved" className="btn btn-sm">
-          YOUR LINE
+          {ui.account.yourLine}
         </TLink>
         <button type="button" className="btn btn-sm" onClick={() => accountStore.set((a) => ({ ...a, user: null }))}>
-          SIGN OUT
+          {ui.account.signOut}
         </button>
       </div>
       <section className="acct-sec" aria-labelledby="acct-orders">
         <h2 id="acct-orders" className="t-h2">
-          <Lines lines={["ORDERS"]} />
+          <Lines lines={[ui.account.orders]} />
         </h2>
         {orders.length === 0 ? (
           <p className="text-muted">
-            Nothing yet.{" "}
+            {ui.account.noOrders}{" "}
             <TLink href="/" className="link-u">
-              The line is waiting.
+              {ui.account.noOrdersCta}
             </TLink>
           </p>
         ) : (
@@ -253,7 +255,7 @@ export function AccountView() {
                   <span className="badge">{o.status}</span>
                 </div>
                 <p className="t-meta text-muted">
-                  {formatShortDate(new Date(o.createdAt)).toUpperCase()} · {o.lines.reduce((a, l) => a + l.quantity, 0)} ITEMS · {formatPrice(o.total)} · ARRIVES BY {formatShortDate(new Date(o.deliveryBy)).toUpperCase()}
+                  {formatShortDate(new Date(o.createdAt)).toUpperCase()} · {o.lines.reduce((a, l) => a + l.quantity, 0)} {ui.account.items} · {formatPrice(o.total)} · {ui.common.arrivesBy} {formatShortDate(new Date(o.deliveryBy)).toUpperCase()}
                 </p>
                 <div className="order-thumbs">
                   {o.lines.map((l) => (

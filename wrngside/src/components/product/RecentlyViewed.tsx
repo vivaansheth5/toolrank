@@ -7,6 +7,7 @@ import { getProductsByHandlesSync } from "@/lib/commerce";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { useNow } from "@/lib/hooks";
 import { Lines } from "@/components/ui/Lines";
+import { ui } from "@/lib/site-config";
 
 export function RecentlyViewed({ exclude }: { exclude: string }) {
   const recent = useStore(recentStore);
@@ -16,7 +17,7 @@ export function RecentlyViewed({ exclude }: { exclude: string }) {
   return (
     <section className="wrap rail" aria-labelledby="recent-title">
       <h2 id="recent-title" className="t-h2">
-        <Lines lines={["RECENTLY VIEWED"]} />
+        <Lines lines={[ui.product.recentlyViewed]} />
       </h2>
       <div className="rail-grid">
         {list.map((p) => (

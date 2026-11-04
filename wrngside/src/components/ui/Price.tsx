@@ -1,4 +1,5 @@
-import { formatPrice } from "@/lib/format";
+import { formatPrice, fill } from "@/lib/format";
+import { ui } from "@/lib/site-config";
 
 export function Price({ amount, compareAt, className = "" }: { amount: number; compareAt?: number | null; className?: string }) {
   return (
@@ -8,7 +9,7 @@ export function Price({ amount, compareAt, className = "" }: { amount: number; c
           <s className="price-was" aria-hidden="true">
             {formatPrice(compareAt)}
           </s>
-          <span className="sr-only">Was {formatPrice(compareAt)}, now </span>
+          <span className="sr-only">{fill(ui.common.was, { price: formatPrice(compareAt) })}</span>
         </>
       )}
       <span>{formatPrice(amount)}</span>

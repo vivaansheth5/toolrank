@@ -1,16 +1,17 @@
-import { footer, contact, site, commerce } from "@/lib/site-config";
+import { footer, contact, site, commerce, ui } from "@/lib/site-config";
 import { TLink } from "@/components/ui/TLink";
 import { FooterWordmark } from "./FooterWordmark";
 import { Clock } from "./Clock";
 import { InstagramIcon, MailIcon, WhatsAppIcon } from "@/components/ui/Icons";
 import { CableDivider } from "@/components/ui/CableDivider";
+import { fill } from "@/lib/format";
 
 export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="footer theme-night cv-auto" aria-labelledby="footer-title">
       <h2 id="footer-title" className="sr-only">
-        WRNGSIDE
+        {site.name}
       </h2>
       <CableDivider />
       <div className="wrap footer-top">
@@ -32,7 +33,7 @@ export function Footer() {
         </div>
         <div className="footer-side">
           <div>
-            <p className="t-meta text-muted">WE TAKE</p>
+            <p className="t-meta text-muted">{ui.shell.weTake}</p>
             <ul className="pay-row" aria-label="Payment methods">
               {commerce.paymentMethods.map((m) => (
                 <li key={m} className="pay-chip">
@@ -42,14 +43,14 @@ export function Footer() {
             </ul>
           </div>
           <div className="footer-social t-meta">
-            <a href={contact.instagram} target="_blank" rel="noreferrer" aria-label="WRNGSIDE on Instagram">
-              <InstagramIcon size={16} /> <span>INSTAGRAM</span>
+            <a href={contact.instagram} target="_blank" rel="noreferrer" aria-label={ui.shell.social.instagram}>
+              <InstagramIcon size={16} /> <span>{ui.common.channels.instagram}</span>
             </a>
-            <a href={`https://wa.me/${contact.whatsappNumber}`} target="_blank" rel="noreferrer" aria-label="Message WRNGSIDE on WhatsApp">
-              <WhatsAppIcon size={16} /> <span>WHATSAPP</span>
+            <a href={`https://wa.me/${contact.whatsappNumber}`} target="_blank" rel="noreferrer" aria-label={ui.shell.social.whatsapp}>
+              <WhatsAppIcon size={16} /> <span>{ui.common.channels.whatsapp}</span>
             </a>
-            <a href={`mailto:${contact.email}`} aria-label="Email WRNGSIDE">
-              <MailIcon size={16} /> <span>EMAIL</span>
+            <a href={`mailto:${contact.email}`} aria-label={ui.shell.social.email}>
+              <MailIcon size={16} /> <span>{ui.common.channels.email}</span>
             </a>
           </div>
           <p className="t-meta footer-clock">
@@ -60,7 +61,7 @@ export function Footer() {
       <FooterWordmark />
       <div className="wrap footer-base t-meta">
         <span>{footer.copyright.replace("{year}", String(year))}</span>
-        <span className="text-muted">MADE IN {site.country}. SAID WRONG SIDE.</span>
+        <span className="text-muted">{fill(ui.shell.madeIn, { country: site.country })}</span>
       </div>
     </footer>
   );

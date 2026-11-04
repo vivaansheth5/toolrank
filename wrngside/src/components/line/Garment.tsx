@@ -1,7 +1,8 @@
 import Image from "next/image";
 import type { GarmentSpec } from "./layout";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, fill } from "@/lib/format";
 import { hashString } from "./hash";
+import { ui } from "@/lib/site-config";
 
 export function Peg({ open = false }: { open?: boolean }) {
   return (
@@ -64,19 +65,19 @@ export function SwingTag({ g, dropNumber }: { g: GarmentSpec; dropNumber: string
           <span className="tag-name">{g.title}</span>
           <span className="tag-type">{g.type}</span>
           <span className="tag-price">{formatPrice(g.price)}</span>
-          <span className="tag-drop">DROP {dropNumber}</span>
+          <span className="tag-drop">{fill(ui.scene.tag.drop, { drop: dropNumber })}</span>
           <Barcode seed={g.handle} />
           <span className="tag-sizes">
             {g.sizes.map((s) => (
               <span key={s.label} className={s.available ? "" : "gone"}>
-                {s.label.replace("ONE SIZE", "OS")}
+                {s.label.replace(ui.common.oneSize, "OS")}
               </span>
             ))}
           </span>
         </div>
-        <div className="tag-face tag-back" role="group" aria-label={`Quick add ${g.title}`}>
+        <div className="tag-face tag-back" role="group" aria-label={fill(ui.common.quickAddLabel, { title: g.title })}>
           <span className="tag-hole" aria-hidden="true" />
-          <span className="tag-qa">{soldOut ? "GONE" : "QUICK ADD"}</span>
+          <span className="tag-qa">{soldOut ? ui.scene.tag.gone : ui.scene.tag.quickAdd}</span>
           <span className="tag-qa-sizes">
             {g.sizes.map((s) => (
               <button
@@ -88,9 +89,9 @@ export function SwingTag({ g, dropNumber }: { g: GarmentSpec; dropNumber: string
                 data-colour={g.colourName}
                 data-size={s.label}
                 disabled={!s.available}
-                aria-label={s.available ? `Add ${g.title} size ${s.label} to bag` : `${g.title} size ${s.label} sold out`}
+                aria-label={s.available ? fill(ui.common.addSizeLabel, { title: g.title, size: s.label }) : fill(ui.common.soldOutSizeLabel, { title: g.title, size: s.label })}
               >
-                {s.label.replace("ONE SIZE", "OS").replace("UK ", "")}
+                {s.label.replace(ui.common.oneSize, "OS").replace("UK ", "")}
               </button>
             ))}
           </span>

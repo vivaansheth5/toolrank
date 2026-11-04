@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { renderTime } from "@/lib/time";
 import { notFound } from "next/navigation";
 import { getAllProductsSync, getProduct, getPairings, getReviews, categoryLabel, dropById, toListing } from "@/lib/commerce";
-import { site, seo } from "@/lib/site-config";
+import { site, seo, ui } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
 import { ProductView } from "@/components/product/ProductView";
 import { Reviews } from "@/components/product/Reviews";
@@ -12,6 +12,7 @@ import { JsonLd } from "@/components/ui/JsonLd";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { CableDivider } from "@/components/ui/CableDivider";
 import { Lines } from "@/components/ui/Lines";
+import { fill } from "@/lib/format";
 
 export function generateStaticParams() {
   return getAllProductsSync().map((p) => ({ handle: p.handle }));
@@ -68,19 +69,19 @@ export default async function ProductPage({ params }: PageProps<"/products/[hand
       <div className="wrap pt-header pdp-crumbs">
         <Breadcrumbs
           items={[
-            { label: "HOME", href: "/" },
-            { label: "SHOP", href: "/shop" },
+            { label: ui.common.home, href: "/" },
+            { label: ui.common.shop, href: "/shop" },
             { label: categoryLabel(p.wrng.category), href: `/shop/${p.wrng.category}` },
             { label: p.title, href: `/products/${p.handle}` },
           ]}
         />
       </div>
-      <ProductView product={p} renderedAt={renderedAt} dropLabel={drop ? `DROP ${drop.number} · ${drop.name}` : "CORE"} />
+      <ProductView product={p} renderedAt={renderedAt} dropLabel={drop ? fill(ui.pages.product.dropLabel, { number: drop.number, name: drop.name }) : ui.pages.product.core} />
       <CableDivider className="pdp-cable" />
       {pairs.length > 0 && (
         <section className="wrap rail" aria-labelledby="fit-title">
           <h2 id="fit-title" className="t-h2">
-            <Lines lines={["COMPLETE THE FIT"]} />
+            <Lines lines={[ui.pages.product.completeTheFit]} />
           </h2>
           <div className="rail-grid">
             {pairs.map((x) => (

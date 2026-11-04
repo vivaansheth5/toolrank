@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { community, contact } from "@/lib/site-config";
+import { community, contact, ui } from "@/lib/site-config";
 import { Lines } from "@/components/ui/Lines";
+import { fill } from "@/lib/format";
 
 /** #WRNGSIDE photos as taped polaroids at ±3° tilts. Hover straightens, lifts and shows the @handle. */
 export function Community() {
@@ -12,16 +13,16 @@ export function Community() {
           <Lines lines={[community.hashtag]} />
         </h2>
         <a href={contact.instagram} target="_blank" rel="noreferrer" className="t-meta link-u">
-          TAG US ON INSTAGRAM →
+          {ui.home.tagUs}
         </a>
       </div>
       <ul className="polaroids">
         {community.posts.map((p, i) => (
           <li key={p.handle} className="polaroid" style={{ "--r": `${tilts[i % tilts.length]}deg` } as React.CSSProperties} data-reveal="fade">
-            <a href={contact.instagram} target="_blank" rel="noreferrer" aria-label={`${p.handle} in ${p.city}, on Instagram`}>
+            <a href={contact.instagram} target="_blank" rel="noreferrer" aria-label={fill(ui.home.communityLabel, { handle: p.handle, city: p.city })}>
               <span className="tape tape-top" aria-hidden="true" />
               <span className="polaroid-img">
-                <Image src={p.image} alt={`${p.handle} wearing WRNGSIDE in ${p.city}`} fill sizes="(min-width: 1024px) 20vw, 45vw" loading="lazy" />
+                <Image src={p.image} alt={fill(ui.home.communityAlt, { handle: p.handle, city: p.city })} fill sizes="(min-width: 1024px) 20vw, 45vw" loading="lazy" />
               </span>
               <span className="polaroid-cap">
                 <span className="polaroid-handle">{p.handle}</span>

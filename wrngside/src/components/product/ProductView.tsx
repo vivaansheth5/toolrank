@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Product } from "@/lib/commerce/types";
 import { addToBag } from "@/lib/commerce/actions";
 import { isLocked, variantFor, totalStock } from "@/lib/commerce/helpers";
-import { commerce, copy, legal, policies, sizeCharts, type SizeChartKey } from "@/lib/site-config";
+import { commerce, copy, legal, policies, sizeCharts, type SizeChartKey, ui } from "@/lib/site-config";
 import { fill, formatDropSlot, formatPrice, countdownParts, pad2 } from "@/lib/format";
 import { pushRecent, toast, useDropUnlocked } from "@/lib/stores";
 import { useNow } from "@/lib/hooks";
@@ -96,7 +96,7 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
 
   const accordions = [
     {
-      title: "DETAILS",
+      title: ui.product.accordions.details,
       content: (
         <>
           <p>{p.description}</p>
@@ -109,17 +109,17 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
       ),
     },
     {
-      title: "FABRIC & GSM",
+      title: ui.product.accordions.fabric,
       content: (
         <p>
           {p.wrng.fabric}
-          {p.wrng.gsm ? ` Weight: ${p.wrng.gsm} GSM.` : ""}
+          {p.wrng.gsm ? ` ${fill(ui.product.weight, { gsm: p.wrng.gsm })}` : ""}
         </p>
       ),
     },
-    { title: "FIT", content: <p>{p.wrng.fit}</p> },
+    { title: ui.product.accordions.fit, content: <p>{p.wrng.fit}</p> },
     {
-      title: "CARE",
+      title: ui.product.accordions.care,
       content: (
         <ul className="dash-list">
           {p.wrng.care.map((c) => (
@@ -129,30 +129,30 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
       ),
     },
     {
-      title: "SHIPPING & RETURNS",
+      title: ui.product.accordions.shipping,
       content: (
         <>
           <p>{fill(policies.shipping.intro, { threshold: commerce.freeShippingThreshold.toLocaleString("en-IN"), fee: commerce.standardShipping })}</p>
           <p>
-            Exchanges within {commerce.exchangeWindowDays} days, returns within {commerce.returnWindowDays}.{" "}
+            {fill(ui.product.exchangesReturns, { exchange: commerce.exchangeWindowDays, returns: commerce.returnWindowDays })}{" "}
             <TLink href="/help/returns" className="link-u">
-              Full policy
+              {ui.product.fullPolicy}
             </TLink>
           </p>
         </>
       ),
     },
     {
-      title: "ORIGIN & MAKER",
+      title: ui.product.accordions.origin,
       content: (
         <dl className="kv">
-          <dt>Country of origin</dt>
+          <dt>{ui.product.origin}</dt>
           <dd>{legal.countryOfOrigin}</dd>
-          <dt>Manufacturer</dt>
+          <dt>{ui.product.manufacturer}</dt>
           <dd>{legal.manufacturer}</dd>
-          <dt>Marketed by</dt>
+          <dt>{ui.product.marketer}</dt>
           <dd>{legal.marketer}</dd>
-          <dt>SKU</dt>
+          <dt>{ui.product.sku}</dt>
           <dd className="t-mono">{(selectedVariant ?? p.variants[0]).sku}</dd>
         </dl>
       ),
@@ -174,20 +174,20 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
           </h1>
           <div className="pdp-price">
             <span className="t-mono-lg">
-              MRP {p.wrng.compareAtPrice && <s className="text-muted">{formatPrice(p.wrng.compareAtPrice)}</s>} {formatPrice(p.wrng.price)}
+              {ui.product.mrp} {p.wrng.compareAtPrice && <s className="text-muted">{formatPrice(p.wrng.compareAtPrice)}</s>} {formatPrice(p.wrng.price)}
             </span>
-            <span className="t-meta text-muted">(incl. of all taxes)</span>
+            <span className="t-meta text-muted">{ui.product.taxNote}</span>
           </div>
           <div className="pdp-badges">
-            {p.wrng.isNew && <span className="badge">NEW</span>}
-            {p.wrng.isLimited && <span className="badge badge-outline">LIMITED RUN</span>}
-            {!soldOut && !locked && stockTotal <= commerce.lowStockProductThreshold && <span className="badge badge-signal">LOW STOCK</span>}
+            {p.wrng.isNew && <span className="badge">{ui.common.new}</span>}
+            {p.wrng.isLimited && <span className="badge badge-outline">{ui.common.limitedRun}</span>}
+            {!soldOut && !locked && stockTotal <= commerce.lowStockProductThreshold && <span className="badge badge-signal">{ui.common.lowStock}</span>}
           </div>
 
           {/* Colour */}
           <fieldset className="pdp-field">
             <legend className="t-meta">
-              COLOUR <span className="text-muted">{colour.name}</span>
+              {ui.product.colour} <span className="text-muted">{colour.name}</span>
             </legend>
             <div className="swatches" role="radiogroup" aria-label="Colour">
               {p.wrng.colours.map((c, i) => (
@@ -201,10 +201,10 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
             <fieldset className="pdp-field" ref={sizesRef}>
               <legend className="t-meta pdp-size-legend">
                 <span>
-                  SIZE {size && <span className="text-muted">{size}</span>}
+                  {ui.product.size} {size && <span className="text-muted">{size}</span>}
                 </span>
                 <button type="button" className="link-u t-meta" onClick={() => setGuide(true)}>
-                  SIZE GUIDE
+                  {ui.product.sizeGuide}
                 </button>
               </legend>
               <div className="sizes" role="radiogroup" aria-label="Size" aria-describedby={sizeError ? "size-err" : undefined}>
@@ -220,7 +220,7 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
                       aria-disabled={!s.available || undefined}
                       className="chip size-chip"
                       data-soldout={!s.available || undefined}
-                      aria-label={s.available ? `${s.label}${stock <= commerce.lowStockThreshold ? `, only ${stock} left` : ""}` : `${s.label}, sold out. Notify me`}
+                      aria-label={s.available ? `${s.label}${stock <= commerce.lowStockThreshold ? fill(ui.product.onlyLeftLabel, { n: stock }) : ""}` : `${s.label}, sold out. Notify me`}
                       onClick={() => {
                         if (!s.available) {
                           openNotify(p, s.label);
@@ -231,7 +231,7 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
                       }}
                     >
                       {s.label}
-                      {s.available && stock <= commerce.lowStockThreshold && <span className="only-left">ONLY {stock} LEFT</span>}
+                      {s.available && stock <= commerce.lowStockThreshold && <span className="only-left">{fill(ui.common.onlyLeft, { n: stock })}</span>}
                     </button>
                   );
                 })}
@@ -241,14 +241,14 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
                   {copy.errors.size}
                 </p>
               )}
-              {!soldOut && p.wrng.sizes.some((s) => !s.available) && <p className="t-meta text-muted">Struck-through sizes are gone. Tap one to get notified.</p>}
+              {!soldOut && p.wrng.sizes.some((s) => !s.available) && <p className="t-meta text-muted">{ui.product.sizeNote}</p>}
             </fieldset>
           )}
 
           {/* Actions */}
           {locked && cd ? (
             <div className="pdp-locked">
-              <p className="t-meta">DROPS {p.wrng.releaseAt ? formatDropSlot(p.wrng.releaseAt) : ""}</p>
+              <p className="t-meta">{fill(ui.common.dropsAt, { slot: p.wrng.releaseAt ? formatDropSlot(p.wrng.releaseAt) : "" })}</p>
               <p className="t-h2 tabular" aria-live="off">
                 {pad2(cd.days)}:{pad2(cd.hours)}:{pad2(cd.minutes)}:{pad2(cd.seconds)}
               </p>
@@ -256,20 +256,20 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
                 {copy.ctas.notifyMe}
               </button>
               <TLink href="/drops" className="btn btn-block">
-                ENTER ACCESS CODE
+                {ui.product.enterAccessCode}
               </TLink>
             </div>
           ) : soldOut ? (
             <div className="pdp-actions">
               <p className="pdp-gone">{copy.soldOut}</p>
               <button ref={addBtn} type="button" className="btn btn-signal btn-block" onClick={() => openNotify(p)}>
-                {p.wrng.restocking ? "RESTOCKING — NOTIFY ME" : copy.ctas.notifyMe}
+                {p.wrng.restocking ? ui.common.notifyRestocking : copy.ctas.notifyMe}
               </button>
             </div>
           ) : (
             <div className="pdp-actions">
               <button ref={addBtn} type="button" className="btn btn-signal btn-block add-btn" data-state={add} onClick={() => doAdd(false)} aria-live="polite" disabled={add === "loading"}>
-                <span className="add-label">{add === "added" ? "ADDED" : copy.ctas.addToBag}</span>
+                <span className="add-label">{add === "added" ? ui.common.added : copy.ctas.addToBag}</span>
                 <span className="add-progress" aria-hidden="true" />
               </button>
               <div className="pdp-row">
@@ -305,7 +305,7 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
           </button>
         ) : (
           <button type="button" className="btn btn-signal btn-sm" tabIndex={sticky ? 0 : -1} onClick={() => doAdd(false)}>
-            {add === "added" ? "ADDED" : copy.ctas.addToBag}
+            {add === "added" ? ui.common.added : copy.ctas.addToBag}
           </button>
         )}
       </div>

@@ -79,5 +79,13 @@ export function countdownParts(ms: number) {
 
 export const pad2 = (n: number) => String(n).padStart(2, "0");
 
+/** "16.10.26 · 8 PM IST" for wheat-paste posters. */
+export function formatPosterDate(iso: string) {
+  const p = istParts(new Date(iso));
+  const hour = p.hour % 12 || 12;
+  const min = p.minute ? `:${pad2(p.minute)}` : "";
+  return `${pad2(p.day)}.${pad2(p.month)}.${String(p.year).slice(2)} · ${hour}${min} ${p.hour < 12 ? "AM" : "PM"} ${site.timeZoneLabel}`;
+}
+
 export const fill = (template: string, vars: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? `{${k}}`));

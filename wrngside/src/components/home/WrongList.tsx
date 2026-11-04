@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { codes, copy, hindi } from "@/lib/site-config";
+import { codes, copy, hindi, ui } from "@/lib/site-config";
 import { setPref, toast } from "@/lib/stores";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/device";
@@ -9,6 +9,7 @@ import { ContactField, validateContact, type ContactMode } from "@/components/ui
 import { sound } from "@/components/sound/sound";
 import { announce } from "@/components/shell/Announcer";
 import { Lines } from "@/components/ui/Lines";
+import { fill } from "@/lib/format";
 
 const STRIPS = 7;
 const rand = () => Math.random();
@@ -108,7 +109,7 @@ export function WrongList() {
         <span className="tape wl-tape-l" aria-hidden="true" />
         <span className="tape wl-tape-r" aria-hidden="true" />
         <div className="wl-body">
-          <p className="t-meta">NOTICE · NOTICE · NOTICE</p>
+          <p className="t-meta">{ui.home.newsletter.notice}</p>
           <h2 id="wl-title" className="t-h1">
             <Lines lines={[copy.newsletter.title]} />
           </h2>
@@ -136,13 +137,13 @@ export function WrongList() {
             >
               <ContactField mode={mode} onMode={setMode} value={value} onValue={setValue} error={error} idPrefix="wl" />
               <button type="submit" className="btn btn-solid" data-loading={state === "busy" || undefined}>
-                GET ON IT
+                {ui.home.newsletter.submit}
               </button>
               <p className="t-meta text-muted">{copy.newsletter.consent}</p>
             </form>
           )}
         </div>
-        <div className="wl-strips" aria-label={`${copy.newsletter.tearHint}: ${STRIPS - torn.length} strips left`} role="group">
+        <div className="wl-strips" aria-label={fill(ui.home.stripsLabel, { hint: copy.newsletter.tearHint, n: STRIPS - torn.length })} role="group">
           {Array.from({ length: STRIPS }, (_, i) =>
             torn.includes(i) ? (
               <span key={i} className="wl-strip-gap" aria-hidden="true" />
@@ -161,15 +162,15 @@ export function WrongList() {
                   if (pulled.current.delete(i)) return;
                   tear(i);
                 }}
-                aria-label={`Tear off strip ${i + 1}`}
+                aria-label={fill(ui.home.newsletter.stripLabel, { n: i + 1 })}
               >
-                <span>WRNGSIDE.COM/LIST</span>
+                <span>{ui.home.newsletter.strip}</span>
               </button>
             ),
           )}
           {revealed && (
             <div className="wl-code" role="status">
-              <span className="t-meta">YOU TORE IT ALL. HERE.</span>
+              <span className="t-meta">{ui.home.newsletter.revealed}</span>
               <span className="wl-code-text">{codes.newsletter.code}</span>
               <button
                 ref={copyBtn}
@@ -180,7 +181,7 @@ export function WrongList() {
                   toast(copy.newsletter.copied);
                 }}
               >
-                COPY CODE
+                {ui.home.newsletter.copyCode}
               </button>
             </div>
           )}
