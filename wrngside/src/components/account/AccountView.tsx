@@ -113,7 +113,7 @@ function Addresses() {
     <section className="acct-sec" aria-labelledby="acct-addr">
       <div className="sec-head">
         <h2 id="acct-addr" className="t-h2">
-          ADDRESSES
+          <Lines lines={["ADDRESSES"]} />
         </h2>
         <button type="button" className="btn btn-sm" onClick={() => setEditing({ ...EMPTY_ADDR })}>
           ADD ADDRESS
@@ -235,7 +235,7 @@ export function AccountView() {
       </div>
       <section className="acct-sec" aria-labelledby="acct-orders">
         <h2 id="acct-orders" className="t-h2">
-          ORDERS
+          <Lines lines={["ORDERS"]} />
         </h2>
         {orders.length === 0 ? (
           <p className="text-muted">

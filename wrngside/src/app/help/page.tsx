@@ -6,6 +6,7 @@ import { TLink } from "@/components/ui/TLink";
 import { FaqSearch } from "@/components/help/FaqSearch";
 import { helpTopics } from "@/components/help/help-topics";
 import "@/components/help/pages.css";
+import { Lines } from "@/components/ui/Lines";
 
 export const metadata: Metadata = pageMeta({
   title: "Help",
@@ -32,7 +33,7 @@ export default function HelpPage() {
         </ul>
         <section aria-labelledby="faq-title" className="help-faq">
           <h2 id="faq-title" className="t-h2">
-            FAQ
+            <Lines lines={["FAQ"]} />
           </h2>
           <FaqSearch />
         </section>

@@ -1202,11 +1202,19 @@ html.scroll-locked {
   gap: var(--gutter);
   align-items: start;
 }
+/* The cable path is y = 10 + 30·sag px from the top of .mini-line; items start
+   18px down, so a piece's top lands at the cable plus its hang offset. */
 .mini-item {
   display: grid;
   justify-items: center;
   gap: 10px;
-  margin-top: calc(var(--sag) * 60px - 8px);
+  margin-top: calc(var(--sag) * 30px + var(--off, -2px) - 8px);
+}
+/* A link around the piece fills the cell, so the piece's width has something to resolve against. */
+.mini-item > a {
+  justify-self: stretch;
+  display: grid;
+  justify-items: center;
 }
 .mini-g {
   position: relative;
@@ -1246,6 +1254,16 @@ html.scroll-locked {
   height: 40px;
   transform: translateX(-50%);
 }
+.mini-hook {
+  position: absolute;
+  left: 50%;
+  top: -24px;
+  width: 16px;
+  height: 28px;
+  transform: translateX(-50%);
+  color: #8d8a85;
+  overflow: visible;
+}
 .mini-cap {
   display: grid;
   justify-items: center;
@@ -1258,12 +1276,37 @@ html.scroll-locked {
   text-transform: uppercase;
 }
 @media (max-width: 767px) {
+  /* Two per row, each row on its own straight cable. */
+  .mini-line {
+    padding-top: 0;
+  }
+  .mini-cable {
+    display: none;
+  }
   .mini-items {
     grid-template-columns: repeat(min(var(--n), 2), minmax(0, 1fr));
-    row-gap: 48px;
+    row-gap: 40px;
   }
   .mini-item {
+    position: relative;
     margin-top: 0;
+    padding-top: calc(16px + var(--off, -2px));
+  }
+  .mini-item::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: calc(var(--gutter) / -2);
+    right: calc(var(--gutter) / -2);
+    height: 2px;
+    background: var(--ink);
+  }
+  .mini-line.is-dark .mini-item::before {
+    background: #000;
+  }
+  /* A piece alone on the last row still hangs from a full-width cable. */
+  .mini-item:nth-child(odd):last-child::before {
+    right: calc(-100% - var(--gutter) * 1.5);
   }
 }
 

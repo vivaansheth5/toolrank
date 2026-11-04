@@ -11,6 +11,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { CableDivider } from "@/components/ui/CableDivider";
+import { Lines } from "@/components/ui/Lines";
 
 export function generateStaticParams() {
   return getAllProductsSync().map((p) => ({ handle: p.handle }));
@@ -79,7 +80,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[hand
       {pairs.length > 0 && (
         <section className="wrap rail" aria-labelledby="fit-title">
           <h2 id="fit-title" className="t-h2">
-            COMPLETE THE FIT
+            <Lines lines={["COMPLETE THE FIT"]} />
           </h2>
           <div className="rail-grid">
             {pairs.map((x) => (

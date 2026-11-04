@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Review } from "@/lib/commerce/types";
 import { formatLongDate } from "@/lib/format";
+import { Lines } from "@/components/ui/Lines";
 
 function Stars({ n }: { n: number }) {
   return (
@@ -20,7 +21,7 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
     <section className="wrap reviews" aria-labelledby="reviews-title">
       <div className="reviews-head">
         <h2 id="reviews-title" className="t-h2">
-          WORN, THEN REVIEWED
+          <Lines lines={["WORN, THEN REVIEWED"]} />
         </h2>
         {reviews.length > 0 ? (
           <p className="t-meta">

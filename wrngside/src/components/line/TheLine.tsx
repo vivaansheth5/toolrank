@@ -154,7 +154,8 @@ export async function TheLine() {
                 ))}
               </div>
 
-              <div className="egg-code" style={{ "--x": (poles.find((p) => p.transformer)?.x ?? 6) - 0.36 } as React.CSSProperties}>
+              {/* Painted on the lower wall, just left of the transformer pole and below the hems. */}
+              <div className="egg-code" style={{ "--x": (poles.find((p) => p.transformer)?.x ?? 6) - 0.06 } as React.CSSProperties}>
                 <button type="button" data-action="copy-egg" className="egg-code-btn" tabIndex={-1} aria-hidden="true">
                   <span className="t-meta">FOUND IN THE DARK</span>
                   <span className="egg-code-text">{codes.powerCut.code}</span>

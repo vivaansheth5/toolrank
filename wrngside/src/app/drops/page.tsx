@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { CableDivider } from "@/components/ui/CableDivider";
 import { TLink } from "@/components/ui/TLink";
 import "@/components/drops/drops.css";
+import { Lines } from "@/components/ui/Lines";
 
 export const metadata: Metadata = pageMeta({
   title: "Drops",
@@ -29,7 +30,7 @@ export default async function DropsPage() {
       <CableDivider />
       <section id="archive" className="wrap archive" aria-labelledby="archive-title">
         <h2 id="archive-title" className="t-h1">
-          THE ARCHIVE
+          <Lines lines={["THE ARCHIVE"]} />
         </h2>
         {others.map((d, i) => (
           <article key={d.id} className="arch-drop" data-status={d.status}>

@@ -613,6 +613,23 @@ html.js .lines[data-mode="inview"] .ln > span {
 html.js .lines[data-mode="inview"].is-in .ln > span {
   transform: none;
 }
+/* After SplitText: the authored line stays put and each visual line rises in its own mask. */
+.lines .sl-mask {
+  padding-block: 0.08em;
+  margin-block: -0.08em;
+}
+html.js .lines[data-mode="inview"][data-split] .ln > span {
+  transform: none;
+  transition: none;
+}
+html.js .lines[data-mode="inview"][data-split] .sl {
+  transform: translateY(110%);
+  transition: transform 900ms var(--ease-entrance);
+  transition-delay: calc(var(--i, 0) * 60ms + var(--d, 0ms));
+}
+html.js .lines[data-mode="inview"][data-split].is-in .sl {
+  transform: none;
+}
 @keyframes ln-up {
   to {
     transform: none;
@@ -649,6 +666,7 @@ html.js [data-reveal="fade"].is-in {
 
 @media (prefers-reduced-motion: reduce) {
   html.js .lines .ln > span,
+  html.js .lines .sl,
   html.js [data-reveal] > .reveal-inner,
   html.js [data-reveal] > .reveal-inner > * {
     transform: none !important;

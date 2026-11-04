@@ -636,6 +636,8 @@
   position: absolute;
   inset: 0;
   z-index: 3;
+  /* Full-height layer: only the transformer and the end board take the pointer. */
+  pointer-events: none;
 }
 .pole {
   position: absolute;
@@ -667,6 +669,7 @@
   width: calc(var(--H) * 0.075);
   height: calc(var(--H) * 0.12);
   cursor: pointer;
+  pointer-events: auto;
 }
 .end-board {
   position: absolute;
@@ -691,6 +694,13 @@
   position: absolute;
   inset: 0;
   z-index: 4;
+  /* The list spans the whole track; only the garments and their tags take
+     the pointer, so the poles behind (transformer, end board) stay clickable. */
+  pointer-events: none;
+}
+.g-link,
+.tag {
+  pointer-events: auto;
 }
 .g {
   position: absolute;
@@ -1391,11 +1401,12 @@
 .egg-code {
   position: absolute;
   left: calc(var(--x) * var(--P));
-  top: 64%;
+  top: 76%;
   z-index: 2;
   opacity: 0.03;
   pointer-events: none;
-  transform: rotate(-4deg);
+  transform: translateX(-100%) rotate(-3deg);
+  transform-origin: 100% 50%;
 }
 .egg-code-btn {
   display: grid;

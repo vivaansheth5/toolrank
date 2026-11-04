@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { Product } from "@/lib/commerce/types";
 import { accessStore, useDropUnlocked } from "@/lib/stores";
 import { codes, copy } from "@/lib/site-config";
 import { countdownParts, formatDropSlot } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
-import { gsap } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/device";
 import { Flap } from "@/components/home/NextDrop";
 import { ContactField, validateContact, type ContactMode } from "@/components/ui/ContactField";
 import { MiniLine } from "@/components/ui/MiniLine";
 import { TLink } from "@/components/ui/TLink";
+import { Lines } from "@/components/ui/Lines";
 import { formatPrice } from "@/lib/format";
 import { sound } from "@/components/sound/sound";
 import { announce } from "@/components/shell/Announcer";
@@ -61,30 +62,41 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
   const stage = useRef<HTMLDivElement>(null);
   const cd = countdownParts(Date.parse(releaseAt) - (now ?? 0));
 
+  // Already open when the page loaded (code entered on an earlier visit, or
+  // the release has passed): show it open. The animation is for the live moment.
+  // Decided on the first run (mount), before any open state can arrive.
+  const openAtLoad = useRef<boolean | null>(null);
+
   // At zero (or with the code): the lamp flickers, the lock falls, pieces hang live.
-  useEffect(() => {
-    if (!open || phase !== "locked") return;
-    const el = stage.current;
-    if (!el || prefersReducedMotion()) {
-      setPhase("open");
-      return;
-    }
-    setPhase("opening");
-    sound.play("flicker");
-    const lamp = el.querySelector(".dl-lamp");
-    const lock = el.querySelector(".padlock");
-    const chain = el.querySelector(".chain");
-    const tl = gsap.timeline({ onComplete: () => setPhase("open") });
-    tl.to(lamp, { opacity: 1, duration: 0.06 })
-      .to(lamp, { opacity: 0.1, duration: 0.09 })
-      .to(lamp, { opacity: 1, duration: 0.04 })
-      .to(lamp, { opacity: 0.15, duration: 0.22 })
-      .to(lamp, { opacity: 1, duration: 0.4 })
-      .to(lock, { rotation: 28, y: 30, duration: 0.25, ease: "power2.in" }, "-=0.2")
-      .to(lock, { y: 900, rotation: 120, duration: 0.9, ease: "power3.in" })
-      .to(chain, { y: 400, opacity: 0, duration: 0.8, ease: "power3.in" }, "<0.1");
-    announce(`DROP ${number} is unlocked.`);
-  }, [open, phase, number]);
+  // No revertOnUpdate: the timeline must survive its own phase change.
+  const { contextSafe } = useGSAP(
+    () => {
+      openAtLoad.current ??= accessStore.get().unlocked.includes(dropId) || Date.now() >= Date.parse(releaseAt);
+      if (!open || phase !== "locked") return;
+      const el = stage.current;
+      if (!el || prefersReducedMotion() || openAtLoad.current) {
+        setPhase("open");
+        return;
+      }
+      setPhase("opening");
+      sound.play("flicker");
+      gsap
+        .timeline({ onComplete: () => setPhase("open") })
+        .to(".dl-lamp", { opacity: 1, duration: 0.06 })
+        .to(".dl-lamp", { opacity: 0.1, duration: 0.09 })
+        .to(".dl-lamp", { opacity: 1, duration: 0.04 })
+        .to(".dl-lamp", { opacity: 0.15, duration: 0.22 })
+        .to(".dl-lamp", { opacity: 1, duration: 0.4 })
+        .to(".padlock", { rotation: 28, y: 30, duration: 0.25, ease: "power2.in" }, "-=0.2")
+        .to(".padlock", { y: 900, rotation: 120, duration: 0.9, ease: "power3.in" })
+        .to(".chain", { y: 400, opacity: 0, duration: 0.8, ease: "power3.in" }, "<0.1");
+      announce(`DROP ${number} is unlocked.`);
+    },
+    { scope: stage, dependencies: [open, phase, number, dropId, releaseAt] },
+  );
+  const shake = contextSafe(() => {
+    gsap.fromTo(".dl-code .input", { x: -8 }, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+  });
 
   const items = pieces.map((p) => ({
     key: p.handle,
@@ -120,7 +132,7 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
             DROP {number} · {formatDropSlot(releaseAt)}
           </p>
           <h1 id="dl-title" className="t-display">
-            {name}
+            <Lines lines={[name]} mode="mount" />
           </h1>
           <p className="t-lead dl-story">{story}</p>
           {phase === "open" ? (
@@ -158,7 +170,7 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
                       setCodeErr(null);
                     } else {
                       setCodeErr(copy.errors.code);
-                      gsap.fromTo(".dl-code .input", { x: -8 }, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+                      if (!prefersReducedMotion()) shake();
                     }
                   }}
                 >

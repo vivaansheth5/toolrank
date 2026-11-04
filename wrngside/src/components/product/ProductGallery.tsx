@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type { Product } from "@/lib/commerce/types";
 import { landFlight, hasPendingFlight } from "@/lib/flight";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { FINE_POINTER, REDUCED_MOTION } from "@/lib/device";
 import { ZoomOverlay } from "./ZoomOverlay";
 
@@ -34,19 +34,19 @@ export function ProductGallery({ product, images, wrongSide, insideOut, tint }: 
   }, [product.handle]);
 
   // Inner parallax (desktop, not reduced motion).
-  useEffect(() => {
-    const el = root.current;
-    if (!el || !window.matchMedia(FINE_POINTER).matches || window.matchMedia(REDUCED_MOTION).matches) return;
-    const ctx = gsap.context(() => {
+  useGSAP(
+    () => {
+      const el = root.current;
+      if (!el || !window.matchMedia(FINE_POINTER).matches || window.matchMedia(REDUCED_MOTION).matches) return;
       el.querySelectorAll<HTMLElement>(".gal-item").forEach((item) => {
         const inner = item.querySelector(".gal-parallax");
         if (!inner) return;
         gsap.fromTo(inner, { yPercent: -5 }, { yPercent: 5, ease: "none", scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true } });
       });
-    }, el);
-    ScrollTrigger.refresh();
-    return () => ctx.revert();
-  }, [images]);
+      ScrollTrigger.refresh();
+    },
+    { scope: root, dependencies: [images], revertOnUpdate: true },
+  );
 
   // Mobile swipe progress.
   useEffect(() => {

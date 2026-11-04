@@ -560,6 +560,8 @@ html.js .craft:has(.is-in) .st {
 }
 .wl-strips {
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   border-top: 2px dashed rgb(0 0 0 / 0.35);
@@ -580,6 +582,9 @@ html.js .craft:has(.is-in) .st {
 }
 .wl-strip:active {
   cursor: grabbing;
+}
+.wl-strip[data-falling] {
+  pointer-events: none;
 }
 .wl-strip span {
   writing-mode: vertical-rl;

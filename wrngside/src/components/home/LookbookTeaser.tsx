@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { lookbook } from "@/lib/site-config";
-import { gsap } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { REDUCED_MOTION } from "@/lib/device";
 import { TLink } from "@/components/ui/TLink";
+import { Lines } from "@/components/ui/Lines";
 
 const LAYOUT = [
   { x: 1, y: 2, w: 28, speed: 0.85, rot: -2.5 },
@@ -19,23 +20,23 @@ const LAYOUT = [
 /** Parallax collage: images at different depths and tilts; hover straightens and lifts. */
 export function LookbookTeaser() {
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || window.matchMedia(REDUCED_MOTION).matches) return;
-    const ctx = gsap.context(() => {
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el || window.matchMedia(REDUCED_MOTION).matches) return;
       el.querySelectorAll<HTMLElement>("[data-speed]").forEach((card) => {
         const s = Number(card.dataset.speed);
         gsap.fromTo(card, { y: (s - 1) * 260 }, { y: (1 - s) * 260, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
       });
-    }, el);
-    return () => ctx.revert();
-  }, []);
+    },
+    { scope: ref },
+  );
   const items = [...lookbook.chapters, lookbook.chapters[0]].slice(0, 6);
   return (
     <section className="lbt theme-night" aria-labelledby="lbt-title">
       <div className="wrap sec-head">
         <h2 id="lbt-title" className="t-h2">
-          LOOKBOOK
+          <Lines lines={["LOOKBOOK"]} />
           <span className="t-meta lbt-sub">{lookbook.season}</span>
         </h2>
         <TLink href="/lookbook" className="t-meta link-u">

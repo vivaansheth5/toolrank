@@ -6,6 +6,7 @@ import { useStore } from "@/lib/store";
 import { getProductsByHandlesSync } from "@/lib/commerce";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { useNow } from "@/lib/hooks";
+import { Lines } from "@/components/ui/Lines";
 
 export function RecentlyViewed({ exclude }: { exclude: string }) {
   const recent = useStore(recentStore);
@@ -15,7 +16,7 @@ export function RecentlyViewed({ exclude }: { exclude: string }) {
   return (
     <section className="wrap rail" aria-labelledby="recent-title">
       <h2 id="recent-title" className="t-h2">
-        RECENTLY VIEWED
+        <Lines lines={["RECENTLY VIEWED"]} />
       </h2>
       <div className="rail-grid">
         {list.map((p) => (

@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { useRef } from "react";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { copy } from "@/lib/site-config";
 import { InlineScript } from "@/components/ui/InlineScript";
 
 // Decide before first paint: skip if already seen this session or reduced motion.
-const gate = `(function(){var d=document.documentElement;try{if(sessionStorage.getItem('wrng:loaded')||matchMedia('(prefers-reduced-motion: reduce)').matches){d.setAttribute('data-preloaded','');}else{d.setAttribute('data-loading','');}}catch(e){d.setAttribute('data-preloaded','');}})();`;
+// If the app's JavaScript never takes over (failed or very slow network), the
+// fallback timer lifts the loader so the server-rendered page is never hidden.
+const gate = `(function(){var d=document.documentElement;try{if(sessionStorage.getItem('wrng:loaded')||matchMedia('(prefers-reduced-motion: reduce)').matches){d.setAttribute('data-preloaded','');}else{d.setAttribute('data-loading','');window.__wrngGate=setTimeout(function(){d.removeAttribute('data-loading');d.setAttribute('data-preloaded','');dispatchEvent(new Event('wrng:loaded'));},4500);}}catch(e){d.setAttribute('data-preloaded','');}})();`;
+
+// The intro plays once per page load, even if the component remounts.
+let introPlayed = false;
 
 /**
  * First visit per session (1.8s max): black screen, counter 000→100 tied to
@@ -16,14 +21,16 @@ const gate = `(function(){var d=document.documentElement;try{if(sessionStorage.g
 export function Preloader() {
   const root = useRef<HTMLDivElement>(null);
   const num = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
+  useGSAP((_ctx, contextSafe) => {
     const html = document.documentElement;
     const el = root.current;
+    if (introPlayed) return;
     if (!el || html.hasAttribute("data-preloaded") || !html.hasAttribute("data-loading")) {
       html.removeAttribute("data-loading");
       return;
     }
-    const started = performance.now();
+    // JavaScript is here: the component takes over from the fallback timer.
+    window.clearTimeout((window as Window & { __wrngGate?: number }).__wrngGate);
     const shown = { v: 0 };
     let target = 0;
     let finished = false;
@@ -56,7 +63,9 @@ export function Preloader() {
     };
     const tick = () => {
       if (finished) return;
-      const elapsed = (performance.now() - started) / 1000;
+      // Seconds since navigation start, so the 1.8s cap counts from the first
+      // black frame, not from hydration.
+      const elapsed = performance.now() / 1000;
       // Never more than 1.8s: time pushes the counter if loading is slow.
       const floor = Math.min(1, elapsed / 1.8);
       const goal = Math.max(target * 0.96, floor);
@@ -65,8 +74,9 @@ export function Preloader() {
       if ((target >= 1 && shown.v > 0.985) || elapsed >= 1.8) finish();
       else requestAnimationFrame(tick);
     };
-    const finish = () => {
+    const finish = contextSafe!(() => {
       finished = true;
+      introPlayed = true;
       shown.v = 1;
       render();
       try {
@@ -87,12 +97,12 @@ export function Preloader() {
         html.removeAttribute("data-loading");
         window.dispatchEvent(new Event("wrng:loaded"));
       }, 1500);
-    };
+    });
     requestAnimationFrame(tick);
     return () => {
       finished = true;
     };
-  }, []);
+  });
   return (
     <>
       <div ref={root} id="preloader" className="preloader" aria-hidden="true">

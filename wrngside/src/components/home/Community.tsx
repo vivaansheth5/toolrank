@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { community, contact } from "@/lib/site-config";
+import { Lines } from "@/components/ui/Lines";
 
 /** #WRNGSIDE photos as taped polaroids at ±3° tilts. Hover straightens, lifts and shows the @handle. */
 export function Community() {
@@ -8,7 +9,7 @@ export function Community() {
     <section className="community wrap" aria-labelledby="comm-title">
       <div className="sec-head">
         <h2 id="comm-title" className="t-h2">
-          {community.hashtag}
+          <Lines lines={[community.hashtag]} />
         </h2>
         <a href={contact.instagram} target="_blank" rel="noreferrer" className="t-meta link-u">
           TAG US ON INSTAGRAM →

@@ -18,6 +18,7 @@ import { getBestSellers } from "@/lib/commerce";
 import { site } from "@/lib/site-config";
 import { pageMeta } from "@/lib/seo";
 import "@/components/home/home.css";
+import { Lines } from "@/components/ui/Lines";
 
 export const metadata: Metadata = pageMeta({ title: site.title, description: site.description, path: "/", absolute: true });
 
@@ -39,7 +40,7 @@ export default async function Home() {
         <section className="wanted wrap cv-auto" aria-labelledby="wanted-title">
           <div className="sec-head">
             <h2 id="wanted-title" className="t-h2">
-              MOST WANTED
+              <Lines lines={["MOST WANTED"]} />
             </h2>
             <TLink href="/shop" className="t-meta link-u">
               SHOP ALL →

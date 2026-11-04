@@ -1,14 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { lookbook } from "@/lib/site-config";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { FINE_POINTER, REDUCED_MOTION } from "@/lib/device";
 import { scrollToY } from "@/lib/scroll";
 import { TLink } from "@/components/ui/TLink";
 import type { Product } from "@/lib/commerce/types";
 import { formatPrice } from "@/lib/format";
+import { Lines } from "@/components/ui/Lines";
 
 /** Full-screen chapters: a pinned horizontal walk on desktop, vertical on phones. */
 export function LookbookView({ products }: { products: Record<string, Product> }) {
@@ -16,14 +17,14 @@ export function LookbookView({ products }: { products: Record<string, Product> }
   const track = useRef<HTMLDivElement>(null);
   const n = lookbook.chapters.length;
 
-  useEffect(() => {
-    const w = wrap.current;
-    const t = track.current;
-    if (!w || !t) return;
-    const horizontal = window.matchMedia(FINE_POINTER).matches && !window.matchMedia(REDUCED_MOTION).matches;
-    w.dataset.mode = horizontal ? "h" : "v";
-    if (!horizontal) return;
-    const ctx = gsap.context(() => {
+  useGSAP(
+    () => {
+      const w = wrap.current;
+      const t = track.current;
+      if (!w || !t) return;
+      const horizontal = window.matchMedia(FINE_POINTER).matches && !window.matchMedia(REDUCED_MOTION).matches;
+      w.dataset.mode = horizontal ? "h" : "v";
+      if (!horizontal) return;
       const tween = gsap.to(t, {
         x: () => -(t.scrollWidth - window.innerWidth),
         ease: "none",
@@ -33,26 +34,27 @@ export function LookbookView({ products }: { products: Record<string, Product> }
       t.querySelectorAll<HTMLElement>(".lb-img-inner").forEach((img) => {
         gsap.fromTo(img, { xPercent: -8 }, { xPercent: 8, ease: "none", scrollTrigger: { trigger: img.closest(".lb-ch"), containerAnimation: tween, start: "left right", end: "right left", scrub: true } });
       });
-    }, w);
-    // Deep links: #chapter-03.
-    const go = () => {
-      const id = window.location.hash.replace("#chapter-", "");
-      const i = lookbook.chapters.findIndex((c) => c.id === id);
-      if (i < 0) return;
-      const top = w.getBoundingClientRect().top + window.scrollY;
-      const dist = w.offsetHeight - window.innerHeight;
-      scrollToY(top + (dist * i) / Math.max(1, n - 1), { immediate: true });
-    };
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
-      go();
-    });
-    window.addEventListener("hashchange", go);
-    return () => {
-      window.removeEventListener("hashchange", go);
-      ctx.revert();
-    };
-  }, [n]);
+      // Deep links: #chapter-03.
+      const go = () => {
+        const id = window.location.hash.replace("#chapter-", "");
+        const i = lookbook.chapters.findIndex((c) => c.id === id);
+        if (i < 0) return;
+        const top = w.getBoundingClientRect().top + window.scrollY;
+        const dist = w.offsetHeight - window.innerHeight;
+        scrollToY(top + (dist * i) / Math.max(1, n - 1), { immediate: true });
+      };
+      const raf = requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+        go();
+      });
+      window.addEventListener("hashchange", go);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.removeEventListener("hashchange", go);
+      };
+    },
+    { scope: wrap, dependencies: [n], revertOnUpdate: true },
+  );
 
   return (
     <div ref={wrap} className="lb-wrap" style={{ "--n": n } as React.CSSProperties}>
@@ -72,7 +74,7 @@ export function LookbookView({ products }: { products: Record<string, Product> }
                   CHAPTER {c.id} / {String(n).padStart(2, "0")}
                 </p>
                 <h2 id={`lb-t-${c.id}`} className="t-display lb-title">
-                  {c.title}
+                  <Lines lines={[c.title]} />
                 </h2>
                 <p className="t-meta lb-cap">
                   {c.time} — {c.place}

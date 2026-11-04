@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { drops, copy } from "@/lib/site-config";
 import { countdownParts, pad2, formatDropSlot } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
-import { gsap } from "@/lib/gsap";
-import { FINE_POINTER, REDUCED_MOTION } from "@/lib/device";
+import { gsap, useGSAP } from "@/lib/gsap";
+import { REDUCED_MOTION } from "@/lib/device";
 import { ContactField, validateContact, type ContactMode } from "@/components/ui/ContactField";
 import { TLink } from "@/components/ui/TLink";
 import { Lines } from "@/components/ui/Lines";
@@ -42,16 +42,14 @@ export function NextDrop() {
   const [done, setDone] = useState(false);
 
   // Inner parallax: the image moves at 0.85 inside its frame.
-  useEffect(() => {
-    const el = media.current;
-    if (!el || window.matchMedia(REDUCED_MOTION).matches) return;
-    const inner = el.querySelector(".nd-img");
-    const tw = gsap.fromTo(inner, { yPercent: -7.5 }, { yPercent: 7.5, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: !window.matchMedia(FINE_POINTER).matches ? true : true } });
-    return () => {
-      tw.scrollTrigger?.kill();
-      tw.kill();
-    };
-  }, []);
+  useGSAP(
+    () => {
+      const el = media.current;
+      if (!el || window.matchMedia(REDUCED_MOTION).matches) return;
+      gsap.fromTo(".nd-img", { yPercent: -7.5 }, { yPercent: 7.5, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
+    },
+    { scope: media },
+  );
 
   return (
     <section className="nextdrop theme-night" aria-labelledby="nd-title">
