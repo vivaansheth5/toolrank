@@ -58,6 +58,16 @@
     --H: 100vh;
     --s: min(calc(var(--P) * 0.0072), calc(var(--H) * 0.0042));
   }
+}
+/* A narrow desktop window: one garment in view, spaced like a phone, so the
+   opening poster and the garments keep their size. */
+@media (hover: hover) and (pointer: fine) and (max-width: 767px) {
+  .line {
+    --P: min(72vw, 64vh);
+    --s: min(calc(var(--P) * 0.0105), calc(var(--H) * 0.0042));
+  }
+}
+@media (hover: hover) and (pointer: fine) {
   .line-pin {
     height: calc(100vh + var(--travel) + var(--line-tear));
   }
