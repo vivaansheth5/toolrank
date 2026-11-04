@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { TLink } from "@/components/ui/TLink";
 import { notFound } from "next/navigation";
-import { site, legal, legalDocs, policies, commerce } from "@/lib/site-config";
+import { site, legal, legalDocs, policies, commerce, seo } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import { fill, formatLongDate } from "@/lib/format";
 import { PageHeader } from "@/components/ui/PageHeader";
 import "@/components/help/pages.css";
@@ -19,7 +21,14 @@ export const viewport: Viewport = { themeColor: site.themeColor.day };
 export async function generateMetadata({ params }: PageProps<"/legal/[doc]">): Promise<Metadata> {
   const { doc } = await params;
   if (!DOCS.includes(doc as Doc)) return {};
-  return { title: TITLES[doc as Doc].charAt(0) + TITLES[doc as Doc].slice(1).toLowerCase(), alternates: { canonical: `/legal/${doc}` } };
+  const d = doc as Doc;
+  const description = fill(seo.legalDescriptions[d], {
+    returnDays: commerce.returnWindowDays,
+    exchangeDays: commerce.exchangeWindowDays,
+    ackHours: legal.grievanceOfficer.acknowledgeWithinHours,
+    resolveDays: legal.grievanceOfficer.resolveWithinDays,
+  });
+  return pageMeta({ title: TITLES[d].charAt(0) + TITLES[d].slice(1).toLowerCase(), description, path: `/legal/${d}` });
 }
 
 const vars = { entity: legal.entityName, grievanceEmail: legal.grievanceOfficer.email };
@@ -48,7 +57,7 @@ export default async function LegalPage({ params }: PageProps<"/legal/[doc]">) {
                 ))}
               </ul>
               <p>
-                Returns are accepted within {commerce.returnWindowDays} days of delivery; exchanges within {commerce.exchangeWindowDays}. See <a className="link-u" href="/help/returns">Returns & Exchanges</a>.
+                Returns are accepted within {commerce.returnWindowDays} days of delivery; exchanges within {commerce.exchangeWindowDays}. See <TLink className="link-u" href="/help/returns">Returns & Exchanges</TLink>.
               </p>
             </>
           )}

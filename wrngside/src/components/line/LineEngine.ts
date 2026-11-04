@@ -52,7 +52,6 @@ type Mode = "desktop" | "touch" | "static";
 const NM = 5; // cable modes per span
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const smooth = (t: number) => t * t * (3 - 2 * t);
 
 interface G {
   i: number;
@@ -581,8 +580,9 @@ export class LineEngine {
     if (action) {
       const a = action.dataset.action;
       if (a === "quick-add") {
+        // No stopPropagation: Draggable must see the native click, or it
+        // replays a synthetic one 50ms later (double add).
         e.preventDefault();
-        e.stopPropagation();
         const li = action.closest<HTMLLIElement>(".g");
         void this.deps.quickAdd(action.dataset.handle!, action.dataset.colour!, action.dataset.size!).then((ok) => {
           if (ok && li) {

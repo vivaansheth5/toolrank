@@ -8,7 +8,7 @@ import { RollLabel } from "@/components/ui/Roll";
 import { nav } from "@/lib/site-config";
 import { ui, uiStore } from "@/lib/stores";
 import { useStore } from "@/lib/store";
-import { useCartCount } from "@/lib/commerce/cart";
+import { useCartCount } from "@/lib/commerce/cart-store";
 import { SoundToggle } from "@/components/sound/SoundToggle";
 import { SearchIcon } from "@/components/ui/Icons";
 
@@ -20,7 +20,6 @@ function CountRoll({ value }: { value: number }) {
     mounted.current = performance.now();
   }, []);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing an animation snapshot to a changed prop
     setState((s) => (s.cur === value ? s : { cur: value, prev: performance.now() - mounted.current < 400 ? null : s.cur, key: s.key + 1 }));
   }, [value]);
   return (

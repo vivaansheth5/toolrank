@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import { renderTime } from "@/lib/time";
 import { notFound } from "next/navigation";
 import { getAllProductsSync, getProduct, getPairings, getReviews, categoryLabel, dropById } from "@/lib/commerce";
-import { site } from "@/lib/site-config";
+import { site, seo } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import { ProductView } from "@/components/product/ProductView";
 import { Reviews } from "@/components/product/Reviews";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
@@ -20,14 +22,12 @@ export async function generateMetadata({ params }: PageProps<"/products/[handle]
   const { handle } = await params;
   const p = await getProduct(handle);
   if (!p) return {};
-  const og = `/og/products/${p.handle}.png`;
-  return {
+  return pageMeta({
     title: p.seo.title,
     description: p.seo.description,
-    alternates: { canonical: `/products/${p.handle}` },
-    openGraph: { type: "website", title: `${p.title} ${p.wrng.type.toUpperCase()} — WRNGSIDE`, description: p.seo.description, url: `/products/${p.handle}`, images: [{ url: og, width: 1200, height: 630, alt: p.featuredImage.altText }] },
-    twitter: { card: "summary_large_image", images: [og] },
-  };
+    path: `/products/${p.handle}`,
+    image: { url: `${seo.productOgDir}/${p.handle}.jpg`, alt: p.featuredImage.altText },
+  });
 }
 
 export default async function ProductPage({ params }: PageProps<"/products/[handle]">) {
@@ -35,7 +35,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[hand
   const p = await getProduct(handle);
   if (!p) notFound();
   const [pairs, reviews] = await Promise.all([getPairings(handle), getReviews(handle)]);
-  const renderedAt = Date.now();
+  const renderedAt = renderTime();
   const drop = dropById(p.wrng.drop);
   const avg = reviews.length ? reviews.reduce((a, r) => a + r.rating, 0) / reviews.length : 0;
   const jsonLd = {

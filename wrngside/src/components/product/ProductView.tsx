@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Product } from "@/lib/commerce/types";
 import { addToBag } from "@/lib/commerce/actions";
-import { isLocked, variantFor, totalStock } from "@/lib/commerce";
+import { isLocked, variantFor, totalStock } from "@/lib/commerce/helpers";
 import { commerce, copy, legal, policies, sizeCharts, type SizeChartKey } from "@/lib/site-config";
 import { fill, formatDropSlot, formatPrice, countdownParts, pad2 } from "@/lib/format";
 import { pushRecent, toast, useDropUnlocked } from "@/lib/stores";

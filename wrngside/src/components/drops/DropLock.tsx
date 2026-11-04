@@ -66,7 +66,6 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
     if (!open || phase !== "locked") return;
     const el = stage.current;
     if (!el || prefersReducedMotion()) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- skip straight to the open state
       setPhase("open");
       return;
     }

@@ -1,11 +1,12 @@
 import Image from "next/image";
+import { renderTime } from "@/lib/time";
 import { categories, categoryLabel, getAllProductsSync } from "@/lib/commerce";
 import { TLink } from "@/components/ui/TLink";
 
 /** Four tall tiles. Hover: image to 1.06 over 900ms, label slides up, a cable underline draws in. */
 export function Categories() {
   const all = getAllProductsSync();
-  const now = Date.now();
+  const now = renderTime();
   return (
     <section className="cats wrap" aria-labelledby="cats-title">
       <div className="sec-head">

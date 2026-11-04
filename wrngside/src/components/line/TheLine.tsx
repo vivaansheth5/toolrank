@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { TLink } from "@/components/ui/TLink";
 import { getLineProducts, accessibleName, liveDrop } from "@/lib/commerce";
 import { copy, codes, hindi } from "@/lib/site-config";
 import { fill } from "@/lib/format";
@@ -145,9 +146,9 @@ export async function TheLine() {
                     <Pole pole={p} />
                     {p.transformer && <button type="button" className="transformer-hit" data-action="transformer" aria-label="Transformer" tabIndex={-1} />}
                     {p.last && (
-                      <a href="/shop" className="end-board" data-action="shop">
+                      <TLink href="/shop" className="end-board" data-action="shop">
                         <span className="sr-only">{copy.hero.endBoard}: shop everything</span>
-                      </a>
+                      </TLink>
                     )}
                   </div>
                 ))}

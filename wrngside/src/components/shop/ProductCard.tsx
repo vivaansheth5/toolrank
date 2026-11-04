@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Product } from "@/lib/commerce/types";
-import { badgesFor, type Badge } from "@/lib/commerce";
+import { badgesFor, type Badge } from "@/lib/commerce/helpers";
 import { addToBag } from "@/lib/commerce/actions";
 import { TLink } from "@/components/ui/TLink";
 import { ProductImage } from "@/components/ui/ProductImage";

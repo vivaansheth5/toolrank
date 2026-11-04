@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { lookbook, site } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import { getProductsByHandles } from "@/lib/commerce";
 import { LookbookView } from "@/components/lookbook/LookbookView";
 import { Lines } from "@/components/ui/Lines";
 import "@/components/lookbook/lookbook.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Lookbook",
   description: "DROP 04 — LIVE WIRE, shot after midnight across Delhi. Five chapters.",
-  alternates: { canonical: "/lookbook" },
-};
+  path: "/lookbook",
+});
 export const viewport: Viewport = { themeColor: site.themeColor.night };
 
 export default async function LookbookPage() {

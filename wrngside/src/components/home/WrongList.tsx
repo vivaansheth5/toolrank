@@ -10,6 +10,7 @@ import { sound } from "@/components/sound/sound";
 import { announce } from "@/components/shell/Announcer";
 
 const STRIPS = 7;
+const rand = () => Math.random();
 
 /**
  * GET ON THE WRONG LIST: a flyer pasted on a pole. Tear-off strips can be
@@ -35,11 +36,11 @@ export function WrongList() {
       return;
     }
     // Fall with gravity, spin away.
-    const dir = vx || (Math.random() - 0.5) * 2;
+    const dir = vx || (rand() - 0.5) * 2;
     gsap
       .timeline({ onComplete: done })
       .to(el, { y: "+=40", rotation: dir * 12, duration: 0.12, ease: "power1.out" })
-      .to(el, { y: "+=640", x: `+=${dir * 120 + (Math.random() - 0.5) * 80}`, rotation: `+=${dir * 220 + 180}`, opacity: 0, duration: 1.1, ease: "power2.in" });
+      .to(el, { y: "+=640", x: `+=${dir * 120 + (rand() - 0.5) * 80}`, rotation: `+=${dir * 220 + 180}`, opacity: 0, duration: 1.1, ease: "power2.in" });
   };
 
   const onDown = (i: number) => (e: React.PointerEvent<HTMLButtonElement>) => {

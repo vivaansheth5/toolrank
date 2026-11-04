@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import { renderTime } from "@/lib/time";
 import { drops, site } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import { getDropProducts } from "@/lib/commerce";
 import { formatLongDate } from "@/lib/format";
 import { DropLock } from "@/components/drops/DropLock";
@@ -8,11 +10,11 @@ import { CableDivider } from "@/components/ui/CableDivider";
 import { TLink } from "@/components/ui/TLink";
 import "@/components/drops/drops.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Drops",
   description: "DROP 05 is locked. Countdown, access code and waitlist, plus the WRNGSIDE drop archive.",
-  alternates: { canonical: "/drops" },
-};
+  path: "/drops",
+});
 export const viewport: Viewport = { themeColor: site.themeColor.night };
 
 export default async function DropsPage() {
@@ -20,7 +22,7 @@ export default async function DropsPage() {
   const nextPieces = await getDropProducts(next.id);
   const others = drops.list.filter((d) => d.id !== next.id);
   const lists = await Promise.all(others.map((d) => getDropProducts(d.id)));
-  const now = Date.now();
+  const now = renderTime();
   return (
     <main id="main" data-theme="night" className="theme-night drops-page">
       <DropLock dropId={next.id} number={next.number} name={next.name} releaseAt={next.releaseAt!} story={next.story} pieces={nextPieces} />

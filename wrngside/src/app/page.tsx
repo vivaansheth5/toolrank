@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { renderTime } from "@/lib/time";
 import { TheLine } from "@/components/line/TheLine";
 import { TornEdge } from "@/components/home/TornEdge";
 import { Manifesto } from "@/components/home/Manifesto";
@@ -15,17 +16,14 @@ import { CableDivider } from "@/components/ui/CableDivider";
 import { TLink } from "@/components/ui/TLink";
 import { getBestSellers } from "@/lib/commerce";
 import { site } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import "@/components/home/home.css";
 
-export const metadata: Metadata = {
-  title: { absolute: site.title },
-  description: site.description,
-  alternates: { canonical: "/" },
-};
+export const metadata: Metadata = pageMeta({ title: site.title, description: site.description, path: "/", absolute: true });
 
 export default async function Home() {
   const best = await getBestSellers();
-  const now = Date.now();
+  const now = renderTime();
   return (
     <main id="main" data-theme="night">
       <Preloader />

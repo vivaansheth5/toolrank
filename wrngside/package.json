@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "placeholders": "node scripts/generate-placeholders.mjs"
+    "placeholders": "node scripts/generate-placeholders.mjs",
+    "scene": "node scripts/generate-scene.mjs",
+    "campaign": "node scripts/generate-campaign.mjs",
+    "og": "node scripts/generate-og.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

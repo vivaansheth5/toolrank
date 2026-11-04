@@ -1,16 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import { about, site } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ScrubText } from "@/components/ui/ScrubText";
 import { TLink } from "@/components/ui/TLink";
 import "@/components/help/pages.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "About",
   description: "WRNGSIDE: raised on the wrong side of the wire. The name, the city, the process, the team.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 export const viewport: Viewport = { themeColor: site.themeColor.day };
 
 const IMAGES = ["/campaign/lookbook-01.svg", "/campaign/lookbook-04.svg", "/campaign/cat-outerwear.svg", "/campaign/lookbook-02.svg"];

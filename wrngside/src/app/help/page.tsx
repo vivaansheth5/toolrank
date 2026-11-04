@@ -1,16 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { site, contact } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { TLink } from "@/components/ui/TLink";
 import { FaqSearch } from "@/components/help/FaqSearch";
 import { helpTopics } from "@/components/help/help-topics";
 import "@/components/help/pages.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Help",
   description: "Shipping, returns and exchanges, size guide, order tracking, FAQ and contact for WRNGSIDE.",
-  alternates: { canonical: "/help" },
-};
+  path: "/help",
+});
 export const viewport: Viewport = { themeColor: site.themeColor.day };
 
 export default function HelpPage() {

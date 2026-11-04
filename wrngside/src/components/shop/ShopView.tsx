@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Product, SortKey, Category } from "@/lib/commerce/types";
-import { filterProducts, sortProducts, isLocked, fitTag, colourFamily, COLOUR_FAMILIES, PRICE_BANDS, categories, categoryLabel } from "@/lib/commerce";
+import { filterProducts, sortProducts, isLocked, fitTag, colourFamily, COLOUR_FAMILIES, PRICE_BANDS, categories, categoryLabel } from "@/lib/commerce/helpers";
 import { commerce, copy } from "@/lib/site-config";
 import { useNow, useFocusTrap, useScrollLock } from "@/lib/hooks";
 import { getNavType, getScrollY, scrollToY } from "@/lib/scroll";
@@ -92,6 +92,11 @@ export function ShopView({ products, renderedAt, category }: { products: Product
     return { sizes, colours, fits };
   }, [pool]);
 
+  const visibleRef = useRef(visible);
+  useEffect(() => {
+    visibleRef.current = visible;
+  }, [visible]);
+
   // Restore LOAD MORE count + scroll on back navigation.
   useEffect(() => {
     if (restored.current) return;
@@ -121,10 +126,6 @@ export function ShopView({ products, renderedAt, category }: { products: Product
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
-  const visibleRef = useRef(visible);
-  useEffect(() => {
-    visibleRef.current = visible;
-  }, [visible]);
 
   // Animate grid changes with Flip (lazy-loaded plugin).
   const flipRef = useRef<null | { getState: (t: Element[] | NodeListOf<Element>, o?: object) => unknown; from: (s: unknown, o: object) => unknown }>(null);

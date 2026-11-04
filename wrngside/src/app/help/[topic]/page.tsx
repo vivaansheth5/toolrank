@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { TLink } from "@/components/ui/TLink";
 import { notFound } from "next/navigation";
 import { site, policies, commerce, contact, sizeCharts, type SizeChartKey } from "@/lib/site-config";
+import { pageMeta } from "@/lib/seo";
 import { fill, formatPrice } from "@/lib/format";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FaqSearch } from "@/components/help/FaqSearch";
@@ -22,7 +24,7 @@ export async function generateMetadata({ params }: PageProps<"/help/[topic]">): 
   const { topic } = await params;
   const t = helpTopics.find((x) => x.slug === topic);
   if (!t) return {};
-  return { title: t.title.charAt(0) + t.title.slice(1).toLowerCase(), description: t.blurb, alternates: { canonical: `/help/${t.slug}` } };
+  return pageMeta({ title: t.title.charAt(0) + t.title.slice(1).toLowerCase(), description: t.blurb, path: `/help/${t.slug}` });
 }
 
 const vars = {
@@ -57,7 +59,7 @@ function Body({ slug }: { slug: HelpSlug }) {
             ))}
           </ul>
           <p>
-            Start one from <a className="link-u" href="/help/track-order">Track Order</a> or message us on WhatsApp with your order ID.
+            Start one from <TLink className="link-u" href="/help/track-order">Track Order</TLink> or message us on WhatsApp with your order ID.
           </p>
         </div>
       );

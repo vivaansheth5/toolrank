@@ -3,18 +3,16 @@
   position: fixed;
   inset: 0;
   z-index: 180;
-  display: grid;
+  display: none;
   place-content: center;
   justify-items: center;
   gap: 14px;
   background: #050505;
   color: var(--bone);
 }
-html[data-preloaded] .preloader {
-  display: none;
-}
-html:not(.js) .preloader {
-  display: none;
+/* Only on a first visit, flagged before first paint by the gate script. */
+html.js[data-loading] .preloader {
+  display: grid;
 }
 .preloader-num {
   font-family: var(--font-mono);

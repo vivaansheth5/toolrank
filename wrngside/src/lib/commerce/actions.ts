@@ -1,7 +1,7 @@
 "use client";
 
-import { cartActions, cartStore } from "./cart";
-import { variantFor } from "./index";
+import { cartActions, cartStore } from "./cart-store";
+import { variantFor } from "./helpers";
 import type { Product } from "./types";
 import { toast, ui, toggleSaved } from "../stores";
 import { copy } from "../site-config";

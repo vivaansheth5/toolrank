@@ -14,7 +14,6 @@ export function ChargeMeter({ subtotal }: { subtotal: number }) {
   const [pulse, setPulse] = useState(false);
   useEffect(() => {
     if (done && !prev.current) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot celebration
       setPulse(true);
       const id = window.setTimeout(() => setPulse(false), 1400);
       prev.current = done;

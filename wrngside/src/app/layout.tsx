@@ -15,15 +15,13 @@ export const metadata: Metadata = {
   title: { default: site.title, template: `%s — ${site.name}` },
   description: site.description,
   applicationName: site.name,
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: site.name,
     locale: "en_IN",
-    url: "/",
     title: site.title,
     description: site.description,
-    images: [{ url: seo.defaultOgImage, width: 1200, height: 630, alt: "THE LINE: the WRNGSIDE drop hanging on power cables at night" }],
+    images: [{ url: seo.defaultOgImage, width: 1200, height: 630, alt: seo.defaultOgAlt }],
   },
   twitter: {
     card: "summary_large_image",

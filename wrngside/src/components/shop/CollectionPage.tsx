@@ -1,4 +1,5 @@
 import { getCollection, getCollectionProducts } from "@/lib/commerce";
+import { renderTime } from "@/lib/time";
 import type { Category } from "@/lib/commerce/types";
 import { ShopView } from "./ShopView";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -10,7 +11,7 @@ export async function CollectionPage({ handle }: { handle: string }) {
   const collection = await getCollection(handle);
   if (!collection) notFound();
   const products = await getCollectionProducts(handle);
-  const renderedAt = Date.now();
+  const renderedAt = renderTime();
   const visibleCount = products.filter((p) => !(p.wrng.releaseAt && Date.parse(p.wrng.releaseAt) > renderedAt)).length;
   const crumbs = [
     { label: "HOME", href: "/" },
