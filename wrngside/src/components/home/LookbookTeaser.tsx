@@ -24,7 +24,8 @@ export function LookbookTeaser() {
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || window.matchMedia(REDUCED_MOTION).matches) return;
+      // Phones get a plain staggered grid (see home.css): no parallax to overlap it.
+      if (!el || window.matchMedia(REDUCED_MOTION).matches || window.matchMedia("(max-width: 767px)").matches) return;
       el.querySelectorAll<HTMLElement>("[data-speed]").forEach((card) => {
         const s = Number(card.dataset.speed);
         gsap.fromTo(card, { y: (s - 1) * 260 }, { y: (1 - s) * 260, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
@@ -51,7 +52,7 @@ export function LookbookTeaser() {
             <figure key={i} className="lbt-card" data-speed={L.speed} style={{ "--x": `${L.x}%`, "--y": `${L.y}%`, "--w": `${L.w}%`, "--r": `${L.rot}deg` } as React.CSSProperties}>
               <TLink href={`/lookbook#chapter-${c.id}`} className="lbt-link" aria-label={fill(ui.home.chapterLabel, { id: c.id, title: c.title, time: c.time, place: c.place })}>
                 <span className="lbt-img">
-                  <Image src={i === 5 ? "/campaign/community-03.svg" : c.image} alt="" fill sizes="(min-width: 1024px) 30vw, 60vw" loading="lazy" />
+                  <Image src={i === 5 ? "/campaign/community-03.webp" : c.image} alt="" fill sizes="(min-width: 1024px) 30vw, 60vw" loading="lazy" />
                 </span>
               </TLink>
               <figcaption className="t-meta">

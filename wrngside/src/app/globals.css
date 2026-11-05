@@ -493,6 +493,7 @@ html.lenis body {
 }
 
 .link-u {
+  position: relative;
   background-image: linear-gradient(currentColor, currentColor);
   background-size: 100% 1px;
   background-position: 0 100%;

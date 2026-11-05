@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { Product } from "@/lib/commerce/types";
+import { hangSrc } from "@/lib/commerce/helpers";
 import { accessStore, useDropUnlocked } from "@/lib/stores";
 import { codes, copy, ui } from "@/lib/site-config";
 import { countdownParts, formatDropSlot, fill } from "@/lib/format";
@@ -100,7 +101,7 @@ export function DropLock({ dropId, number, name, releaseAt, story, pieces }: { d
 
   const items = pieces.map((p) => ({
     key: p.handle,
-    src: p.wrng.colours[0].media.cutout,
+    src: hangSrc(p),
     alt: `${p.title} ${p.wrng.type}`,
     w: p.wrng.dims.w,
     h: p.wrng.dims.h,

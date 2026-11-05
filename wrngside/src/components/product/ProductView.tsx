@@ -59,9 +59,9 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
 
   const images = useMemo(
     () => [
-      { src: colour.media.front, alt: `${p.title} ${p.wrng.type} in ${colour.name}, front` },
-      { src: colour.media.back, alt: `${p.title} ${p.wrng.type} in ${colour.name}, back` },
-      { src: colour.media.insideOut, alt: `${p.title} ${p.wrng.type} in ${colour.name}, inside out` },
+      // The side the print is on comes first: it's where the flight from THE LINE lands.
+      ...(p.wrng.lead === "back" ? (["back", "front"] as const) : (["front", "back"] as const)).map((side) => ({ src: colour.media[side], alt: `${p.title} ${p.wrng.type} in ${colour.name}, ${side}` })),
+      ...colour.media.views.map((v) => ({ src: v.src, alt: `${p.title} ${p.wrng.type} in ${colour.name}, ${v.label}` })),
       ...colour.media.model.map((m) => ({ src: m, alt: `${p.title} ${p.wrng.type} in ${colour.name}, hanging on the line at night` })),
     ],
     [colour, p],
@@ -83,7 +83,7 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
       toast(copy.errors.generic);
       return;
     }
-    if (!buyNow) void flyToBag(img, colour.media.front);
+    if (!buyNow) void flyToBag(img, images[0].src);
     setAdd("added");
     window.setTimeout(() => setAdd("idle"), 1800);
     if (buyNow) void navigate("/checkout");
@@ -162,7 +162,7 @@ export function ProductView({ product: p, renderedAt, dropLabel }: { product: Pr
   return (
     <div className="pdp">
       <div className="pdp-media">
-        <ProductGallery product={p} images={images} wrongSide={wrong} insideOut={colour.media.insideOut} tint={colour.hex} />
+        <ProductGallery product={p} images={images} wrongSide={wrong} flipSrc={images[1].src} tint={colour.hex} />
       </div>
       <div className="pdp-info">
         <div className="pdp-sticky">

@@ -103,9 +103,9 @@ scripts/                  placeholder art, scene plates, campaign art and Open G
 | --- | --- |
 | `npm run dev` / `build` / `start` | Next.js |
 | `npm run lint` · `npm run typecheck` | ESLint (React Compiler rules) · `tsc` |
-| `npm run placeholders` | redraws placeholder garment art in `public/products/` |
+| `scripts/photos/` (Python) | cuts garments out of product photos, upscales them and writes every product image; see `scripts/photos/README.md` |
 | `npm run scene` | redraws scene plates in `public/scene/` and `components/line/scene-anchors.ts` |
-| `npm run campaign` | redraws campaign placeholders in `public/campaign/` |
+| `npm run campaign` | stages the product cut-outs in night and daylight scenes and writes `public/campaign/*.webp` |
 | `npm run og -- http://localhost:3000` | regenerates Open Graph cards (home = THE LINE at night, one per product) and the apple touch icon from a running server |
 
 ---
@@ -121,7 +121,7 @@ Every price, policy, threshold, date and piece of copy lives here:
 - **`copy`, `ui`, `pageSeo`:** the copy kit, every heading, label, button and empty state, and page titles and descriptions. `{braces}` are filled in at render time.
 - **Content:** `nav`, `footer`, `faq`, `policies`, `legalDocs`, `sizeCharts`, `lookbook`, `community`, `about`, `hindi`, `lineConfig`, `seo`, `sound`.
 
-Product data (prices, sizes and stock, colours, GSM, hang style, weight, real-world size) lives in `src/lib/commerce/mock/catalog.ts`.
+Product data (prices, sizes and stock, colours, GSM, fabric, hang style, weight, real-world size and where THE LINE grips each piece) lives in `src/lib/commerce/mock/catalog.ts`.
 
 ### Replace before launch
 
@@ -130,6 +130,8 @@ Product data (prices, sizes and stock, colours, GSM, hang style, weight, real-wo
 - `site.url` (`https://wrngside.com`) is used for canonical URLs, Open Graph and the sitemap.
 - **Discount and access codes:** they're checked in the browser for this mock, so they ship in the client bundle. Move them to Shopify (discounts) or a server check.
 - **Stock and countdowns:** these come from the mock catalog and `drops`. With Shopify they should come from inventory and the release schedule.
+- **Product facts:** names come from the prints, but prices, stock, GSM, fabric composition, fit notes and size charts are placeholders written from the photos. Check every product in `mock/catalog.ts` and `sizeCharts` against the line sheet.
+- **Product photos** were cut from the screenshots supplied, then upscaled 4× with Real-ESRGAN, so fine print can look painted at full size. Send the original files and rerun `scripts/photos/` (same file names).
 
 ### Devanagari: needs a native speaker
 
@@ -137,7 +139,7 @@ Every Devanagari string is in `hindi` in `site-config.ts`, marked `HI:`:
 
 - **Wall stencil:** रॉन्ग साइड
 - **Danger plate:** खतरा
-- **Street boards:** टीज़ मार्ग · आउटरवियर मार्ग · बॉटम्स मार्ग · एक्स्ट्राज़ मार्ग
+- **Street boards:** टीज़ मार्ग · जर्सीज़ मार्ग · आउटरवियर मार्ग · बॉटम्स मार्ग
 - **Shop signs:** चाय · जनरल स्टोर · मोबाइल रिपेयर · बिजली घर
 - **No-entry sticker:** प्रवेश निषेध
 
@@ -147,7 +149,7 @@ They render as live text in Teko, so the browser shapes the conjuncts. Teko load
 
 ## 4. Dropping in real assets
 
-- **Garment cut-outs and product photos** go in `public/products/{handle}/{colour}/`: `cutout`, `front`, `back`, `inside-out`, `model-1…`. Paths come from `imgs()` in `mock/catalog.ts`; change the extension there (for example `.webp`). Set each product's `dims` (real width × height in cm of the cut-out) so pieces hang at true relative scale. Hang geometry per style (peg positions, hook drop, tag offset) is in `components/line/layout.ts`.
+- **Product images** live in `public/products/{handle}/{colour}/`: `cutout.webp` (front on transparent, for THE LINE), `cutout-back.webp`, `front.webp`, `back.webp`, extra views (`side-left`, `side-right`, `detail-*`) and `model-1.webp` (on the wire at night). Product shots are 1000×1250 on dust with the garment inside a 12% margin, which is where the flight from THE LINE lands. Paths come from `media()` in `mock/catalog.ts`. Each product's `dims` (width × height of the cut-out in cm) sets its true scale on THE LINE, and `hold` sets where the pegs or hanger grip it; `scripts/photos/assets.py` measures both from the cut-out.
 - **Scene plates** are `public/scene/{sky,skyline,buildings,wall,asphalt,moon,fg-cables,fg-neem}`. Keep the names; swap the extension in `components/line/line.css` and `TheLine.tsx`. Lit windows, the neon sign and the aviation light sit on anchors in `components/line/scene-anchors.ts`, so move those to match new buildings.
 - **Logo:** `components/ui/Logo.tsx` sets WRNGSIDE in Archivo with the mirrored N. Replace it with the supplied SVG, keeping the per-letter flip.
 - **Favicon:** `src/app/icon.svg` and `public/icon.svg`; the apple touch icon is generated.

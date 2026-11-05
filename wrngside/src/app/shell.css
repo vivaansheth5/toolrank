@@ -1347,8 +1347,17 @@ html.scroll-locked {
   align-items: center;
 }
 .crumbs a {
+  position: relative;
   color: var(--muted);
   transition: color var(--t-micro);
+}
+/* Text links grow an invisible hit area to at least 24px tall. */
+.crumbs a::after,
+.pcard-title a::after,
+.link-u::after {
+  content: "";
+  position: absolute;
+  inset: -6px -3px;
 }
 .crumbs a:hover {
   color: var(--fg);

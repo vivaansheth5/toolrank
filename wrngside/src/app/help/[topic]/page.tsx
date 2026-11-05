@@ -70,9 +70,7 @@ function Body({ slug }: { slug: HelpSlug }) {
     case "size-guide":
       return (
         <div className="sg-all">
-          {(Object.keys(sizeCharts) as SizeChartKey[])
-            .filter((k) => k !== "onesize")
-            .map((k) => (
+          {(Object.keys(sizeCharts) as SizeChartKey[]).map((k) => (
               <section key={k} className="sg-block" aria-labelledby={`sg-${k}`}>
                 <h2 id={`sg-${k}`} className="t-h3">
                   {ui.help.sizeChartTitles[k]}

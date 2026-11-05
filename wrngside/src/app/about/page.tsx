@@ -15,7 +15,7 @@ export const metadata: Metadata = pageMeta({
 });
 export const viewport: Viewport = { themeColor: site.themeColor.day };
 
-const IMAGES = ["/campaign/lookbook-01.svg", "/campaign/lookbook-04.svg", "/campaign/cat-outerwear.svg", "/campaign/lookbook-02.svg"];
+const IMAGES = ["/campaign/lookbook-01.webp", "/campaign/lookbook-04.webp", "/campaign/cat-outerwear.webp", "/campaign/lookbook-02.webp"];
 
 export default function AboutPage() {
   return (

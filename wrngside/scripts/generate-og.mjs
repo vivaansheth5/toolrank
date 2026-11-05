@@ -32,14 +32,17 @@ const browser = await chromium.launch();
   await ctx.close();
 }
 
-// Products.
+// Products (stale cards for retired handles go first).
+const ogDir = path.join(root, "public", "og", "products");
+const live = new Set(catalog.map((p) => `${p.handle}.jpg`));
+for (const f of fs.readdirSync(ogDir)) if (!live.has(f)) fs.rmSync(path.join(ogDir, f));
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 for (const p of catalog) {
   const html = `<!doctype html><html><head><style>
 @font-face{font-family:A;src:url(data:font/ttf;base64,${font("archivo-125-900.ttf")})}
 @font-face{font-family:M;src:url(data:font/ttf;base64,${font("geistmono-500.ttf")})}
 *{margin:0;box-sizing:border-box}body{width:1200px;height:630px;display:grid;grid-template-columns:504px minmax(0,1fr);background:#0b0b0b;color:#eeeae3;font-family:M}
-.img{background:#dcd7ce url(${base}${p.images.front}) center/cover}
+.img{background:#dcd7ce url(${base}${p.colours[0].media[p.lead ?? "front"]}) center/cover}
 .r{padding:56px 56px 48px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;overflow:hidden}
 .k{font-size:18px;letter-spacing:.12em}.t{font-family:A;font-size:104px;line-height:.86;letter-spacing:-.02em;text-transform:uppercase;overflow:hidden}
 .ty{font-size:22px;letter-spacing:.1em;color:#8c8984;text-transform:uppercase;margin-top:18px}

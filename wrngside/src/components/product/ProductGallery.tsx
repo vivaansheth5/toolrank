@@ -19,9 +19,9 @@ export interface GalleryImage {
  * Desktop: large images stacked, each with subtle inner parallax. Mobile: a
  * full-width swipe gallery with a progress cable and counter. The first image
  * is the landing pad for the garment flying in from THE LINE, and flips in 3D
- * to show the garment inside out (SEE THE WRONG SIDE).
+ * to turn the garment around (SEE THE WRONG SIDE).
  */
-export function ProductGallery({ product, images, wrongSide, insideOut, tint }: { product: Product; images: GalleryImage[]; wrongSide: boolean; insideOut: string; tint: string }) {
+export function ProductGallery({ product, images, wrongSide, flipSrc, tint }: { product: Product; images: GalleryImage[]; wrongSide: boolean; flipSrc: string; tint: string }) {
   const root = useRef<HTMLDivElement>(null);
   const first = useRef<HTMLDivElement>(null);
   const strip = useRef<HTMLDivElement>(null);
@@ -72,7 +72,7 @@ export function ProductGallery({ product, images, wrongSide, insideOut, tint }: 
                     <Image src={img.src} alt={img.alt} fill sizes="(min-width: 1024px) 58vw, 100vw" preload className="gal-img" style={{ backgroundColor: "var(--dust)" }} />
                   </div>
                   <div className="flip-face flip-back">
-                    <Image src={insideOut} alt={`${product.title} turned inside out: seams, labels and the reverse of the fabric`} fill sizes="(min-width: 1024px) 58vw, 100vw" className="gal-img" />
+                    <Image src={flipSrc} alt={`${product.title}, turned around`} fill sizes="(min-width: 1024px) 58vw, 100vw" className="gal-img" />
                   </div>
                 </div>
               ) : (

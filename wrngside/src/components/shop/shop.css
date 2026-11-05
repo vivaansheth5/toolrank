@@ -396,6 +396,9 @@ html[data-header="shown"] .filterbar {
   gap: 2px 12px;
   align-items: baseline;
 }
+.pcard-title a {
+  position: relative;
+}
 .pcard-title {
   font-family: var(--font-display);
   font-variation-settings: "wdth" 115, "wght" 820;

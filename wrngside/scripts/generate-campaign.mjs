@@ -1,37 +1,88 @@
 #!/usr/bin/env node
-// Campaign placeholder "photographs" → public/campaign/*.svg
+// Campaign "photographs" → public/campaign/*.webp
 // Night shots (sodium against ink) and daylight shots (hard sun on plaster),
-// built from the same garment drawings so products stay consistent.
+// staged in SVG around the real product cutouts, then rasterised with sharp
+// so phones get small, pre-rendered images instead of live SVG filters.
+//   node scripts/generate-campaign.mjs   (after the product images exist)
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 import { catalog } from "../src/lib/commerce/mock/catalog.ts";
-import { fabricDefs, rng, r } from "./art/lib.mjs";
-import { drawGarment } from "./art/garments.mjs";
+import { rng, r } from "./art/lib.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const out = path.join(root, "public", "campaign");
 fs.mkdirSync(out, { recursive: true });
-const P = (h) => catalog.find((p) => p.handle === h);
+const P = (h) => {
+  const p = catalog.find((x) => x.handle === h);
+  if (!p) throw new Error(`no product ${h}`);
+  return p;
+};
 
+const jobs = [];
 const write = (name, w, h, body) =>
-  fs.writeFileSync(
-    path.join(out, name),
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice">${body}</svg>\n`.replace(/\n\s*/g, "\n"),
-  );
+  jobs.push({
+    name: name.replace(/\.svg$/, ".webp"),
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice">${body}</svg>`,
+  });
 
-/** Place a garment so its top-centre sits at (x, y) with height `hh`. */
-function garment(handle, colourIdx, x, y, hh, { pose = "hang", view = "front", rot = 0, id = "g" } = {}) {
+// Every cutout a scene uses, loaded up front (scenes are built synchronously).
+const cutouts = new Map();
+async function loadCutout(handle, colourIdx, view) {
   const p = P(handle);
   const col = p.colours[colourIdx] ?? p.colours[0];
-  const g = drawGarment(p, col, view, pose);
-  const [x0, y0, x1, y1] = g.bbox;
-  const k = hh / (y1 - y0);
-  return `<g transform="translate(${r(x)} ${r(y)}) rotate(${rot}) scale(${r(k, 4)}) translate(${r(-(x0 + x1) / 2)} ${r(-y0)})">${g.svg}</g>`;
+  const file = path.join(root, "public", "products", handle, col.slug, view === "back" ? "cutout-back.webp" : "cutout.webp");
+  const png = await sharp(file).resize({ height: 900, withoutEnlargement: true }).png().toBuffer();
+  const { width, height } = await sharp(png).metadata();
+  cutouts.set(`${handle}|${colourIdx}|${view}`, { href: `data:image/png;base64,${png.toString("base64")}`, w: width, h: height });
+}
+
+/** Place a garment so its top-centre sits at (x, y) with height `hh`. */
+function garment(handle, colourIdx, x, y, hh, { view = "front", rot = 0 } = {}) {
+  const c = cutouts.get(`${handle}|${colourIdx}|${view}`);
+  if (!c) throw new Error(`cutout not loaded: ${handle} ${colourIdx} ${view}`);
+  const ww = (hh * c.w) / c.h;
+  return `<g transform="translate(${r(x)} ${r(y)}) rotate(${rot})"><image href="${c.href}" x="${r(-ww / 2)}" y="0" width="${r(ww)}" height="${r(hh)}" preserveAspectRatio="none"/></g>`;
+}
+
+/* Scenes and the pieces in them. */
+const SCENES = {
+  drop05: ["black-hole-tee", 0, "back"],
+  lookbook1: ["starlit-nights-jacket", 0, "front"],
+  lookbook3: ["away-days-23-jersey", 0, "back"],
+  lookbook4: ["batfang-hoodie", 0, "back"],
+  lookbook5: ["flash-studded-tank", 0, "front"],
+  tiles: [
+    ["tees", "obscura-layered-tee", 0, "back", 600, "#e6dfd1"],
+    ["jerseys", "portugal-07-jersey", 0, "back", 600, "#e3dccd"],
+    ["outerwear", "angel-wings-denim-jacket", 0, "back", 560, "#ded8cc"],
+    ["bottoms", "blessed-sweatpants", 0, "front", 780, "#e8e1d4"],
+  ],
+  community: [
+    ["starlit-nights-jacket", 0, "back", "#1b1a24", "#ff9a3c"],
+    ["amour-amor-hoodie", 0, "back", "#2b2420", "#ffb36a"],
+    ["portugal-07-jersey", 0, "front", "#cfc4b0", "#fff4dc"],
+    ["flash-studded-tank", 0, "front", "#16171f", "#ff6a4a"],
+    ["blessed-sweatpants", 0, "front", "#e2d8c6", "#ffffff"],
+    ["batfang-hoodie", 0, "front", "#1a1418", "#ff4d6d"],
+  ],
+  reviews: [
+    ["starlit-nights-jacket", 0, "front", "#c9bfae"],
+    ["portugal-07-jersey", 0, "front", "#2a2725"],
+    ["obscura-layered-tee", 0, "front", "#d8cfbf"],
+  ],
+};
+{
+  const need = [SCENES.drop05, SCENES.lookbook1, SCENES.lookbook3, SCENES.lookbook4, SCENES.lookbook5];
+  SCENES.tiles.forEach(([, h, ci, v]) => need.push([h, ci, v]));
+  SCENES.community.forEach(([h, ci, v]) => need.push([h, ci, v]));
+  SCENES.reviews.forEach(([h, ci, v]) => need.push([h, ci, v]));
+  await Promise.all(need.map(([h, ci, v]) => loadCutout(h, ci, v)));
 }
 
 function common(id, seed) {
-  return `<defs>${fabricDefs("g", seed)}
+  return `<defs>
 <filter id="${id}b6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
 <filter id="${id}b20" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="20"/></filter>
 <filter id="${id}b60" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="60"/></filter>
@@ -73,7 +124,8 @@ const shutter = (x, y, w, h, c = "#2a2c33") => {
 {
   const W = 1600;
   const H = 900;
-  const g = garment("wrong-way-varsity-jacket", 0, 980, 300, 440, { id: "d5" });
+  const [h5, c5, v5] = SCENES.drop05;
+  const g = garment(h5, c5, 980, 300, 440, { view: v5 });
   write(
     "drop-05.svg",
     W,
@@ -102,7 +154,8 @@ function lookbook(n, build) {
   write(`lookbook-0${n}.svg`, W, H, `${common("c", 10 + n)}${build(W, H)}${grain("c", W, H, 0.13)}`);
 }
 lookbook(1, (W, H) => {
-  const g = garment("live-wire-tee", 0, 600, 520, 560);
+  const [h, ci, view] = SCENES.lookbook1;
+  const g = garment(h, ci, 600, 500, 660, { view });
   return `<rect width="${W}" height="${H}" fill="#0a0a10"/>
 ${shutter(80, 700, 460, 700, "#24262c")}${shutter(660, 700, 460, 700, "#1f2127")}
 <rect x="80" y="640" width="1040" height="60" fill="#a8322a"/><rect x="80" y="640" width="1040" height="60" fill="#000" opacity="0.45"/>
@@ -123,7 +176,8 @@ ${silhouette(600, 1230, 2.1)}
 <path d="M560 1235 L380 ${H} L760 ${H} L640 1235Z" fill="#000" opacity="0.55" filter="url(#cb20)"/>`;
 });
 lookbook(3, (W, H) => {
-  const g = garment("u-turn-reversible-hoodie", 0, 600, 360, 760);
+  const [h, ci, view] = SCENES.lookbook3;
+  const g = garment(h, ci, 600, 330, 700, { view });
   return `<rect width="${W}" height="${H}" fill="#0b0a0d"/>
 ${shutter(120, 120, 960, 1200, "#22242a")}
 <circle cx="1140" cy="520" r="420" fill="#ff3b5c" opacity="0.18" filter="url(#cb60)"/>
@@ -133,7 +187,8 @@ ${shutter(120, 120, 960, 1200, "#22242a")}
 ${shadowOf(g, 40, 50, 0.6)}${g}`;
 });
 lookbook(4, (W, H) => {
-  const g = garment("lineman-work-jacket", 0, 470, 640, 560, { rot: 4 });
+  const [h, ci, view] = SCENES.lookbook4;
+  const g = garment(h, ci, 470, 640, 560, { rot: 4, view });
   return `<rect width="${W}" height="${H}" fill="#08090e"/>
 <rect x="760" y="0" width="70" height="${H}" fill="#56524c"/><rect x="760" y="0" width="12" height="${H}" fill="#7a746b"/>
 <rect x="640" y="230" width="310" height="16" fill="#2a2928"/>
@@ -147,7 +202,8 @@ ${shadowOf(g, 70, 60, 0.55)}${g}
 ${Array.from({ length: 9 }, (_, i) => `<path d="M910 300 l${r(Math.cos(i) * 60)} ${r(Math.sin(i) * 40 + 30)}" stroke="#ffe7a6" stroke-width="3" opacity="0.8"/>`).join("")}`;
 });
 lookbook(5, (W, H) => {
-  const g = garment("fuse-tote", 0, 520, 600, 460, { rot: -3 });
+  const [h, ci, view] = SCENES.lookbook5;
+  const g = garment(h, ci, 520, 600, 500, { rot: -3, view });
   return `<rect width="${W}" height="${H}" fill="#0a0a0f"/>
 <rect x="490" y="0" width="34" height="${H}" fill="#3d3a37"/>
 <circle cx="507" cy="380" r="170" fill="#c8261b"/><rect x="390" y="350" width="234" height="60" fill="#ece6da"/>
@@ -160,10 +216,10 @@ ${shadowOf(g, 50, 60, 0.6)}${g}
 });
 
 /* ───────────── Category tiles (daylight, 3:4) ───────────── */
-function tile(name, handle, colourIdx, hh, { tint = "#e9e3d6", rot = 0 } = {}) {
+function tile(name, handle, colourIdx, view, hh, tint = "#e9e3d6") {
   const W = 900;
   const H = 1200;
-  const g = garment(handle, colourIdx, 450, 260, hh, { rot });
+  const g = garment(handle, colourIdx, 450, 260, hh, { view });
   let grille = "";
   for (let i = 0; i < 9; i++) grille += `<path d="M${-200 + i * 130} 0 L${200 + i * 130} ${H}" stroke="#000" stroke-width="34" opacity="0.07"/>`;
   write(
@@ -182,25 +238,14 @@ ${g}
 <rect width="${W}" height="${H}" filter="url(#cn)" opacity="0.08"/>`,
   );
 }
-tile("tees", "neutral-tee", 2, 640, { tint: "#e6dfd1" });
-tile("outerwear", "440v-hoodie", 1, 720, { tint: "#ded8cc" });
-tile("bottoms", "short-circuit-cargos", 1, 600, { tint: "#e3dccd" });
-tile("extras", "overhead-cap", 1, 360, { tint: "#e8e1d4", rot: 0 });
+SCENES.tiles.forEach(([name, handle, ci, view, hh, tint]) => tile(name, handle, ci, view, hh, tint));
 
 /* ───────────── Community polaroids (square) ───────────── */
-const comm = [
-  ["live-wire-tee", 1, "#1b1a24", "#ff9a3c"],
-  ["440v-hoodie", 0, "#2b2420", "#ffb36a"],
-  ["overhead-cap", 0, "#cfc4b0", "#fff4dc"],
-  ["no-entry-boxy-tee", 0, "#16171f", "#ff6a4a"],
-  ["grounded-sweatpants", 0, "#e2d8c6", "#ffffff"],
-  ["u-turn-reversible-hoodie", 0, "#1a1418", "#ff4d6d"],
-];
-comm.forEach(([h, ci, bg, light], i) => {
+SCENES.community.forEach(([h, ci, view, bg, light], i) => {
   const W = 900;
   const H = 900;
   const day = ["#cfc4b0", "#e2d8c6"].includes(bg);
-  const g = garment(h, ci, 450 + (i % 2 ? 40 : -30), 170, h.includes("cap") ? 340 : 560, { rot: (i % 3) - 1 });
+  const g = garment(h, ci, 450 + (i % 2 ? 40 : -30), 170, P(h).kind === "sweatpants" ? 680 : 560, { rot: (i % 3) - 1, view });
   write(
     `community-0${i + 1}.svg`,
     W,
@@ -215,14 +260,10 @@ ${shadowOf(g, 40, 50, day ? 0.25 : 0.5)}${g}
 });
 
 /* ───────────── Review photos (4:5, phone-snapshot feel) ───────────── */
-[
-  ["live-wire-tee", 0, "#c9bfae"],
-  ["440v-hoodie", 0, "#2a2725"],
-  ["short-circuit-cargos", 0, "#d8cfbf"],
-].forEach(([h, ci, bg], i) => {
+SCENES.reviews.forEach(([h, ci, view, bg], i) => {
   const W = 600;
   const H = 750;
-  const g = garment(h, ci, 300, 110, 520, { pose: "flat" });
+  const g = garment(h, ci, 300, 110, 520, { view });
   write(`review-0${i + 1}.svg`, W, H, `${common("c", 60 + i)}<rect width="${W}" height="${H}" fill="${bg}"/>${shadowOf(g, 14, 20, 0.3)}${g}<rect width="${W}" height="${H}" fill="#fff3d6" opacity="0.06"/>${grain("c", W, H, 0.14)}`);
 });
 
@@ -241,4 +282,8 @@ ${lampGlow(700, 120, 330, 0.8)}
 <rect y="${H - 120}" width="${W}" height="120" fill="#0b0b0e"/>`,
   );
 }
-console.log("campaign written:", fs.readdirSync(out).length, "files");
+for (const j of jobs) {
+  await sharp(Buffer.from(j.svg)).webp({ quality: 80, effort: 6 }).toFile(path.join(out, j.name));
+  fs.rmSync(path.join(out, j.name.replace(/\.webp$/, ".svg")), { force: true });
+}
+console.log("campaign written:", jobs.map((j) => j.name).join(", "));

@@ -6,7 +6,7 @@ import { catalog, bestSellers, pairings, reviews as rawReviews, type RawProduct 
 import { lineOrder } from "./mock/line-order";
 import type { Collection, Image, Money, Product, ProductVariant, Review } from "./types";
 import { formatPrice } from "../format";
-import { commerce, drops } from "../site-config";
+import { collectionCopy, commerce, drops } from "../site-config";
 
 export type { Product, Collection, Review };
 
@@ -19,15 +19,9 @@ function img(url: string, alt: string, w = 800, h = 1000): Image {
 }
 
 function reshape(raw: RawProduct): Product {
-  const colours = raw.colours.map((c) => {
-    const base = `/products/${raw.handle}/${c.slug}`;
-    const media =
-      c.slug === raw.colours[0].slug
-        ? raw.images
-        : { cutout: `${base}/cutout.svg`, front: `${base}/front.svg`, back: `${base}/back.svg`, insideOut: `${base}/inside-out.svg`, model: [`${base}/model-1.svg`] };
-    return { name: c.name, slug: c.slug, hex: c.hex, media };
-  });
+  const colours = raw.colours.map((c) => ({ name: c.name, slug: c.slug, hex: c.hex, media: c.media }));
   const name = `${raw.title} ${raw.type}`;
+  const lead = raw.lead ?? "front";
   const variants: ProductVariant[] = [];
   raw.colours.forEach((c, ci) => {
     raw.sizes.forEach((s, si) => {
@@ -43,15 +37,15 @@ function reshape(raw: RawProduct): Product {
         ],
         price: money(raw.price),
         compareAtPrice: raw.compareAtPrice ? money(raw.compareAtPrice) : null,
-        image: img(colours[ci].media.front, `${name} in ${c.name}, front`),
+        image: img(colours[ci].media[lead], `${name} in ${c.name}, ${lead}`),
       });
     });
   });
   const primary = colours[0];
+  const sides = lead === "back" ? (["back", "front"] as const) : (["front", "back"] as const);
   const images = [
-    img(primary.media.front, `${name} in ${primary.name}, front`),
-    img(primary.media.back, `${name} in ${primary.name}, back`),
-    img(primary.media.insideOut, `${name} in ${primary.name}, inside out`),
+    ...sides.map((side) => img(primary.media[side], `${name} in ${primary.name}, ${side}`)),
+    ...primary.media.views.map((v) => img(v.src, `${name} in ${primary.name}, ${v.label}`)),
     ...primary.media.model.map((m, i) => img(m, `${name} in ${primary.name}, on the line at night ${i + 1}`)),
   ];
   const available = raw.sizes.some((s) => s.available);
@@ -98,6 +92,8 @@ function reshape(raw: RawProduct): Product {
       releaseAt: raw.releaseAt ?? null,
       sizeChart: raw.sizeChart,
       dims: raw.dims,
+      hold: raw.hold,
+      lead,
       price: raw.price,
       compareAtPrice: raw.compareAtPrice ?? null,
     },
@@ -159,20 +155,13 @@ export const collections: Collection[] = [
     handle: "all",
     title: "EVERYTHING",
     description: "Every piece on the wire right now, plus what's coming back.",
-    seo: { title: "Shop everything", description: "Heavyweight tees, hoodies, jackets, cargos and extras from WRNGSIDE." },
+    seo: { title: "Shop everything", description: "Oversized tees, football jerseys, hoodies, denim jackets and wide-leg sweatpants from WRNGSIDE." },
     path: "/shop",
   },
   ...categories.map((c) => ({
     handle: c,
     title: CATEGORY_LABEL[c],
-    description:
-      c === "tees"
-        ? "240 GSM and up. Boxy, oversized, built to be worn to death."
-        : c === "outerwear"
-          ? "Hoodies, overshirts and jackets for the hour the city cools down."
-          : c === "bottoms"
-            ? "Cargos, sweats and shorts with room to move."
-            : "Caps, socks, totes and the small stuff that finishes a fit.",
+    description: collectionCopy[c],
     seo: { title: `Shop ${CATEGORY_LABEL[c].toLowerCase()}`, description: `WRNGSIDE ${c}: limited drops, made in India, COD available.` },
     path: `/shop/${c}`,
   })),

@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useSaved, toggleSaved } from "@/lib/stores";
 import { useHydrated } from "@/lib/store";
 import { getProductsByHandlesSync } from "@/lib/commerce";
+import { hangSrc } from "@/lib/commerce/helpers";
 import { copy, ui } from "@/lib/site-config";
 import { formatPrice, fill } from "@/lib/format";
 import { MiniLine } from "@/components/ui/MiniLine";
@@ -37,7 +38,7 @@ export function SavedView() {
               label={fill(ui.saved.rowLabel, { from: row * 4 + 1, to: Math.min(products.length, row * 4 + 4) })}
               items={products.slice(row * 4, row * 4 + 4).map((p) => ({
                 key: p.handle,
-                src: p.wrng.colours[0].media.cutout,
+                src: hangSrc(p),
                 alt: `${p.title} ${p.wrng.type}`,
                 w: p.wrng.dims.w,
                 h: p.wrng.dims.h,

@@ -13,7 +13,7 @@ export const site = {
   url: "https://wrngside.com",
   title: "WRNGSIDE — Raised on the wrong side of the wire",
   description:
-    "Premium Indian streetwear. Heavyweight oversized tees, hoodies, jackets and cargos, released in limited drops. COD across India.",
+    "Premium Indian streetwear. Oversized tees, football jerseys, hoodies, denim jackets and wide-leg sweatpants, released in limited drops. COD across India.",
   tagline: "Raised on the wrong side of the wire.",
   city: "NEW DELHI",
   cityShort: "DELHI",
@@ -68,7 +68,7 @@ export const commerce = {
   lowStockProductThreshold: 10, // whole product: LOW STOCK badge
   maxQtyPerLine: 5,
   shopPageSize: 12,
-  upsellHandle: "spark-socks",
+  upsellHandle: "07-archives-tank",
   dispatchCutoffHourIST: 14,
   deliveryDays: { metro: [2, 4] as [number, number], rest: [4, 7] as [number, number] },
   metroPincodePrefixes: ["110", "400", "560", "600", "700", "500", "411", "380", "122", "201"],
@@ -104,41 +104,41 @@ export const drops: { live: string; next: string; list: DropConfig[] } = {
     {
       id: "drop-05",
       number: "05",
-      name: "WRONG WAY",
+      name: "NIGHT SYSTEMS",
       status: "locked",
       // Countdown target. Everything (ticker, teaser, drops page) reads this.
-      releaseAt: "2026-11-06T20:00:00+05:30",
+      releaseAt: "2026-11-20T20:00:00+05:30",
       story:
-        "Varsity wool, waxed cotton and one beanie for the cold that hits Delhi at 2 AM. Built for people who take the long way back.",
-      location: "SHOT ON THE RING ROAD FLYOVER",
+        "Three black tees for the hours the city runs on backup power. A black hole, a web strung over the skyline and a head wired the wrong way.",
+      location: "SHOT UNDER THE SIGNATURE BRIDGE",
     },
     {
       id: "drop-04",
       number: "04",
-      name: "LIVE WIRE",
+      name: "AFTER HOURS",
       status: "live",
       releasedAt: "2026-10-16T20:00:00+05:30",
       story:
-        "Twelve pieces hung on the wires above Chawri Bazar. Heavyweight cotton, puff prints and a hoodie you can wear inside out.",
+        "Twelve pieces hung on the wires above Chawri Bazar. Studded tanks, football shirts, baroque denim and a work jacket that says AFTER HOURS on the chest.",
       location: "CHAWRI BAZAR, DELHI",
     },
     {
       id: "drop-03",
       number: "03",
-      name: "SURGE",
+      name: "EXTRA TIME",
       status: "archived",
       releasedAt: "2026-05-22T20:00:00+05:30",
-      story: "Summer shorts for 46°C afternoons. Gone in nine minutes. Coming back once.",
-      location: "YAMUNA BANK, DELHI",
+      story: "Football shirts for teams we'll never play for. Seven countries, names and numbers on the back, out in time for the World Cup.",
+      location: "SIRI FORT, DELHI",
     },
     {
       id: "drop-02",
       number: "02",
-      name: "ONE WAY",
+      name: "HEAVEN SENT",
       status: "archived",
       releasedAt: "2025-11-14T20:00:00+05:30",
-      story: "One long sleeve. One direction. Printed down the arm so you read it walking away.",
-      location: "PAHARGANJ, DELHI",
+      story: "Wings painted on washed denim, cherry blossom all over the next one, BLESSED down a leg. The softest thing we've made.",
+      location: "LODHI GARDEN, DELHI",
     },
     {
       id: "drop-01",
@@ -146,11 +146,19 @@ export const drops: { live: string; next: string; list: DropConfig[] } = {
       name: "GROUND ZERO",
       status: "archived",
       releasedAt: "2024-12-06T20:00:00+05:30",
-      story: "Where it started. A blank tee, made properly, in three colours. Still here.",
+      story: "Where it started. A black hoodie that said ONE OF 1, a dragon down the back of another, and leopard you only see up close. Still here.",
       location: "SHAHPUR JAT, DELHI",
     },
   ],
 };
+
+/** One line under each category title on the shop pages. */
+export const collectionCopy = {
+  tees: "Oversized tees, layered long sleeves and tanks. Most of the noise is on the back.",
+  jerseys: "Football shirts and polos for teams we'll never play for. Names and numbers on the back.",
+  outerwear: "Hoodies and jackets for the hour the city cools down.",
+  bottoms: "Wide-leg sweatpants, long enough to stack, with prints that run the length of the leg.",
+} as const;
 
 export const nav = {
   left: [
@@ -181,9 +189,9 @@ export const footer = {
       links: [
         { label: "Everything", href: "/shop" },
         { label: "Tees", href: "/shop/tees" },
+        { label: "Jerseys", href: "/shop/jerseys" },
         { label: "Outerwear", href: "/shop/outerwear" },
         { label: "Bottoms", href: "/shop/bottoms" },
-        { label: "Extras", href: "/shop/extras" },
         { label: "Your Line", href: "/saved" },
       ],
     },
@@ -282,10 +290,10 @@ export const copy = {
     title: "THE WRONG SIDE",
     intro: "Turn it inside out. That's where we spend the money.",
     lines: [
-      "240 GSM HEAVYWEIGHT COTTON",
-      "PRE-SHRUNK",
+      "HEAVYWEIGHT COTTON AND FLEECE",
+      "ACID AND STONE WASHES",
+      "PUFF PRINT, EMBROIDERY, STUDS",
       "BOXY OVERSIZED FIT",
-      "PUFF + SCREEN PRINTS",
       "MADE IN INDIA",
     ],
   },
@@ -393,7 +401,7 @@ export const ui = {
     recentlyViewed: "RECENTLY VIEWED",
     reviews: { title: "WORN, THEN REVIEWED", review: "REVIEW", reviews: "REVIEWS", none: "No reviews yet. Wear it first, then tell us.", bought: "BOUGHT", photoFrom: "Photo from {name}" },
     pincode: { label: "DELIVERY", placeholder: "Pincode", check: "CHECK", deliveryBy: "Delivery by {date}", cod: "COD available", prepaid: "Prepaid only" },
-    sizeGuideDrawer: { title: "SIZE GUIDE", caption: "Garment measurements in {unit}", unitNames: { cm: "centimetres", in: "inches", shoe: "UK and EU sizes" }, size: "SIZE", chest: "CHEST", length: "LENGTH", shoulder: "SHOULDER", sleeve: "SLEEVE", howTo: "LAY IT FLAT. MEASURE A PIECE YOU ALREADY LOVE." },
+    sizeGuideDrawer: { title: "SIZE GUIDE", caption: "Garment measurements in {unit}", unitNames: { cm: "centimetres", in: "inches" }, size: "SIZE", chest: "CHEST", length: "LENGTH", shoulder: "SHOULDER", sleeve: "SLEEVE", howTo: "LAY IT FLAT. MEASURE A PIECE YOU ALREADY LOVE." },
   },
   cart: {
     title: "YOUR BAG",
@@ -486,7 +494,7 @@ export const ui = {
     trackOrderLink: "Track Order",
     refundsLine: ["Returns are accepted within {returns} days of delivery; exchanges within {exchange}. See ", "."],
     returnsLink: "Returns & Exchanges",
-    sizeChartTitles: { tee: "TEES & JERSEYS", longsleeve: "LONG SLEEVES", hoodie: "HOODIES", jacket: "JACKETS", overshirt: "OVERSHIRTS", cargos: "CARGOS", sweatpants: "SWEATPANTS", shorts: "SHORTS", socks: "SOCKS", onesize: "ONE SIZE" },
+    sizeChartTitles: { tee: "OVERSIZED TEES", tank: "TANKS", jersey: "JERSEYS & POLOS", longsleeve: "LONG SLEEVES", hoodie: "HOODIES", jacket: "JACKETS", sweatpants: "SWEATPANTS" },
     whatsappNote: "Fastest. {hours}.",
     grievanceIntro: "Under the Consumer Protection (E-Commerce) Rules, 2020 and the IT Rules, 2021, you can raise any complaint with our Grievance Officer.",
     grievanceKeys: { role: "Role", email: "Email", hours: "Hours", company: "Company", address: "Address" },
@@ -500,8 +508,8 @@ export const ui = {
     kicker: "SEARCH",
     title: "SEARCH THE WIRE",
     label: "Search products",
-    placeholder: "Hoodie, cargos, live wire…",
-    overlayPlaceholder: "HOODIE, CARGOS, LIVE WIRE…",
+    placeholder: "Jersey, hoodie, baroque…",
+    overlayPlaceholder: "JERSEY, HOODIE, BAROQUE…",
     resultsLabel: "Results",
     trending: "TRENDING",
     onTheWire: "{n} ON THE WIRE",
@@ -579,10 +587,10 @@ export const ui = {
     paste: {
       dropPoster: "DROP {drop}",
       wrongSideOnly: "WRONG SIDE ONLY",
-      cotton: ["440 VOLTS OF", "HEAVY COTTON", "240 GSM · PUFF PRINT"],
+      cotton: ["WASHED BLACK DENIM", "BAROQUE", "JACKET + SWEATS · DROP 04"],
       lost: { title: "LOST: ONE SOCK", body: "Last seen on the line. Answers to SPARK. Reward.", tab: "WRNGSIDE.COM" },
-      uturn: ["REVERSIBLE", "U-TURN", "WEAR IT WRONG"],
-      nowShowing: ["NOW SHOWING", "SHORT CIRCUIT", "CARGOS · 6 POCKETS"],
+      uturn: ["FOOTBALL SHIRTS", "AWAY DAYS", "NAMES ON THE BACK"],
+      nowShowing: ["NOW SHOWING", "STARLIT NIGHTS", "WORK JACKET · FLAMES"],
       wrongWay: "← WRONG WAY",
       noSpam: "NO SPAM ONLY VOLTAGE",
       nextOnTheLine: "NEXT ON THE LINE",
@@ -601,8 +609,8 @@ export const pageSeo = {
   about: { title: "About", description: "WRNGSIDE: raised on the wrong side of the wire. The name, the city, the process, the team." },
   drops: { title: "Drops", description: "DROP 05 is locked. Countdown, access code and waitlist, plus the WRNGSIDE drop archive." },
   help: { title: "Help", description: "Shipping, returns and exchanges, size guide, order tracking, FAQ and contact for WRNGSIDE." },
-  lookbook: { title: "Lookbook", description: "DROP 04 — LIVE WIRE, shot after midnight across Delhi. Five chapters." },
-  shop: { title: "Shop everything", description: "Heavyweight oversized tees, hoodies, jackets, cargos and extras from WRNGSIDE. Limited drops, made in India, COD available." },
+  lookbook: { title: "Lookbook", description: "DROP 04 — AFTER HOURS, shot after midnight across Delhi. Five chapters." },
+  shop: { title: "Shop everything", description: "Oversized tees, football jerseys, hoodies, denim jackets and wide-leg sweatpants from WRNGSIDE. Limited drops, made in India, COD available." },
   account: { title: "Account" },
   bag: { title: "Your bag" },
   checkout: { title: "Checkout" },
@@ -618,9 +626,9 @@ export const hindi = {
   danger: "खतरा", // HI: "danger" (pole plate)
   marg: {
     tees: "टीज़ मार्ग", // HI: "Tees Marg"
+    jerseys: "जर्सीज़ मार्ग", // HI: "Jerseys Marg"
     outerwear: "आउटरवियर मार्ग", // HI: "Outerwear Marg"
     bottoms: "बॉटम्स मार्ग", // HI: "Bottoms Marg"
-    extras: "एक्स्ट्राज़ मार्ग", // HI: "Extras Marg"
   },
   shopSigns: ["चाय", "जनरल स्टोर", "मोबाइल रिपेयर", "बिजली घर"], // HI: tea, general store, mobile repair, power house
   noEntry: "प्रवेश निषेध", // HI: "no entry"
@@ -638,52 +646,52 @@ export const lineConfig = {
 
 export const lookbook = {
   title: "LOOKBOOK",
-  season: "DROP 04 — LIVE WIRE",
+  season: "DROP 04 — AFTER HOURS",
   chapters: [
     {
       id: "01",
-      title: "CURRENT",
+      title: "AFTER HOURS",
       time: "02:14 AM",
       place: "CHAWRI BAZAR, DELHI",
-      text: "The wires came first. Then the market. Then us.",
-      image: "/campaign/lookbook-01.svg",
-      products: ["live-wire-tee", "short-circuit-cargos"],
+      text: "The wires came first. Then the market. Then the jacket that says it on the chest.",
+      image: "/campaign/lookbook-01.webp",
+      products: ["starlit-nights-jacket", "crazy-days-sweatpants"],
     },
     {
       id: "02",
-      title: "DETOUR",
+      title: "BAROQUE",
       time: "03:40 AM",
       place: "PAHARGANJ, DELHI",
-      text: "Every shortcut here is somebody's long way home.",
-      image: "/campaign/lookbook-02.svg",
-      products: ["440v-hoodie", "grounded-sweatpants"],
+      text: "Scrollwork up the back, down the legs. Dressed for a palace, walking home past the chai stall.",
+      image: "/campaign/lookbook-02.webp",
+      products: ["baroque-denim-jacket", "baroque-sweatpants"],
     },
     {
       id: "03",
-      title: "INSIDE OUT",
+      title: "AWAY DAYS",
       time: "01:52 AM",
-      place: "LAJPAT NAGAR, DELHI",
-      text: "Both sides finished. Both sides right. Wear the one they told you not to.",
-      image: "/campaign/lookbook-03.svg",
-      products: ["u-turn-reversible-hoodie"],
+      place: "RAJIV CHOWK METRO, DELHI",
+      text: "Last train out. Every shirt here belongs to a team we'll never play for.",
+      image: "/campaign/lookbook-03.webp",
+      products: ["away-days-23-jersey", "argentina-10-long-sleeve-jersey"],
     },
     {
       id: "04",
-      title: "LINEMEN",
+      title: "BATFANG",
       time: "04:05 AM",
       place: "KAROL BAGH, DELHI",
-      text: "Named after the people who climb the poles so the rest of the city can sleep.",
-      image: "/campaign/lookbook-04.svg",
-      products: ["lineman-work-jacket", "overhead-cap"],
+      text: "The hour the bats own the wires and the lamps hum louder than the traffic.",
+      image: "/campaign/lookbook-04.webp",
+      products: ["batfang-hoodie", "obscura-layered-tee"],
     },
     {
       id: "05",
-      title: "NO ENTRY",
+      title: "FLASH",
       time: "12:48 AM",
       place: "HAUZ KHAS VILLAGE, DELHI",
-      text: "The sign says no. The street says maybe.",
-      image: "/campaign/lookbook-05.svg",
-      products: ["no-entry-boxy-tee", "fuse-tote"],
+      text: "Studs, chains, a camera flash. The sign says no. The street says maybe.",
+      image: "/campaign/lookbook-05.webp",
+      products: ["flash-studded-tank", "eight-ball-tank"],
     },
   ],
 } as const;
@@ -691,12 +699,12 @@ export const lookbook = {
 export const community = {
   hashtag: "#WRNGSIDE",
   posts: [
-    { handle: "@ayaan.after.dark", image: "/campaign/community-01.svg", city: "MUMBAI" },
-    { handle: "@meher.on.mute", image: "/campaign/community-02.svg", city: "BENGALURU" },
-    { handle: "@kabirwasnthere", image: "/campaign/community-03.svg", city: "DELHI" },
-    { handle: "@tanvi.inverted", image: "/campaign/community-04.svg", city: "PUNE" },
-    { handle: "@ronit.rides.late", image: "/campaign/community-05.svg", city: "KOLKATA" },
-    { handle: "@zoya.wrongturn", image: "/campaign/community-06.svg", city: "HYDERABAD" },
+    { handle: "@ayaan.after.dark", image: "/campaign/community-01.webp", city: "MUMBAI" },
+    { handle: "@meher.on.mute", image: "/campaign/community-02.webp", city: "BENGALURU" },
+    { handle: "@kabirwasnthere", image: "/campaign/community-03.webp", city: "DELHI" },
+    { handle: "@tanvi.inverted", image: "/campaign/community-04.webp", city: "PUNE" },
+    { handle: "@ronit.rides.late", image: "/campaign/community-05.webp", city: "KOLKATA" },
+    { handle: "@zoya.wrongturn", image: "/campaign/community-06.webp", city: "HYDERABAD" },
   ],
 } as const;
 
@@ -767,7 +775,7 @@ export const faq: FaqItem[] = [
   },
   {
     q: "Can I return or exchange?",
-    a: "Exchanges within 14 days and returns within 7, on unworn pieces with tags on. Socks are final sale. Start it from Track Order or message us on WhatsApp.",
+    a: "Exchanges within 14 days and returns within 7, on unworn pieces with tags on. Start it from Track Order or message us on WhatsApp.",
     tags: ["returns", "exchange", "refund"],
   },
   {
@@ -786,9 +794,9 @@ export const faq: FaqItem[] = [
     tags: ["international", "shipping"],
   },
   {
-    q: "What's the deal with the U-TURN hoodie?",
-    a: "It's reversible. Both sides are finished, both sides are right. Made to be worn on the wrong side.",
-    tags: ["u-turn", "reversible"],
+    q: "How do the football jerseys fit?",
+    a: "Loose, like a proper football shirt: raglan sleeves and room through the body. Take your usual size for a relaxed fit, or size down for a closer one.",
+    tags: ["jersey", "football", "fit", "polo"],
   },
   {
     q: "What payment methods do you take?",
@@ -816,7 +824,6 @@ export const policies = {
       "Exchanges within {exchange} days of delivery: size or colour, subject to stock.",
       "Returns within {returns} days of delivery, refunded to the original payment method. COD orders are refunded by UPI or bank transfer.",
       "Pieces must be unworn, unwashed, with tags attached.",
-      "Socks are final sale.",
       "We arrange the pickup. If your pincode isn't covered for pickup, ship it back and we'll refund up to ₹100 of postage.",
     ],
   },
@@ -885,7 +892,7 @@ export const legalDocs = {
 } as const;
 
 /** Size charts in centimetres. Garment measurements, laid flat where noted. */
-export type SizeChartKey = "tee" | "longsleeve" | "hoodie" | "jacket" | "overshirt" | "cargos" | "sweatpants" | "shorts" | "onesize" | "socks";
+export type SizeChartKey = "tee" | "tank" | "jersey" | "longsleeve" | "hoodie" | "jacket" | "sweatpants";
 
 export const sizeCharts: Record<
   SizeChartKey,
@@ -901,6 +908,28 @@ export const sizeCharts: Record<
       { size: "XXL", values: [128, 78, 64, 26] },
     ],
     note: "Chest measured all the way round, 2.5 cm below the armhole.",
+  },
+  tank: {
+    columns: ["CHEST", "LENGTH", "ARMHOLE"],
+    rows: [
+      { size: "S", values: [106, 70, 26] },
+      { size: "M", values: [110, 72, 27] },
+      { size: "L", values: [114, 74, 28] },
+      { size: "XL", values: [118, 76, 29] },
+      { size: "XXL", values: [122, 78, 30] },
+    ],
+    note: "Armhole measured straight down from the strap to the side seam.",
+  },
+  jersey: {
+    columns: ["CHEST", "LENGTH", "SHOULDER", "SLEEVE"],
+    rows: [
+      { size: "S", values: [108, 70, 50, 22] },
+      { size: "M", values: [112, 72, 52, 23] },
+      { size: "L", values: [116, 74, 54, 24] },
+      { size: "XL", values: [120, 76, 56, 25] },
+      { size: "XXL", values: [124, 78, 58, 26] },
+    ],
+    note: "Raglan sleeves: shoulder is measured across the back, seam to seam.",
   },
   longsleeve: {
     columns: ["CHEST", "LENGTH", "SHOULDER", "SLEEVE"],
@@ -922,75 +951,29 @@ export const sizeCharts: Record<
       { size: "XL", values: [132, 74, 64, 61] },
       { size: "XXL", values: [136, 76, 66, 62] },
     ],
-    note: "400 GSM fleece keeps its shape; expect no more than 2% shrinkage.",
+    note: "Length measured from the shoulder seam to the hem, hood not included.",
   },
   jacket: {
     columns: ["CHEST", "LENGTH", "SHOULDER", "SLEEVE"],
     rows: [
-      { size: "S", values: [122, 68, 54, 62] },
-      { size: "M", values: [126, 70, 56, 63] },
-      { size: "L", values: [130, 72, 58, 64] },
-      { size: "XL", values: [134, 74, 60, 65] },
-      { size: "XXL", values: [138, 76, 62, 66] },
+      { size: "S", values: [122, 66, 54, 62] },
+      { size: "M", values: [126, 68, 56, 63] },
+      { size: "L", values: [130, 70, 58, 64] },
+      { size: "XL", values: [134, 72, 60, 65] },
+      { size: "XXL", values: [138, 74, 62, 66] },
     ],
     note: "Cut to wear over a hoodie.",
   },
-  overshirt: {
-    columns: ["CHEST", "LENGTH", "SHOULDER", "SLEEVE"],
-    rows: [
-      { size: "S", values: [118, 74, 54, 60] },
-      { size: "M", values: [122, 76, 56, 61] },
-      { size: "L", values: [126, 78, 58, 62] },
-      { size: "XL", values: [130, 80, 60, 63] },
-      { size: "XXL", values: [134, 82, 62, 64] },
-    ],
-    note: "Length measured at the back, collar seam to hem.",
-  },
-  cargos: {
-    columns: ["WAIST", "HIP", "LENGTH", "LEG OPENING"],
-    rows: [
-      { size: "S", values: [74, 108, 100, 44] },
-      { size: "M", values: [80, 112, 102, 45] },
-      { size: "L", values: [86, 116, 104, 46] },
-      { size: "XL", values: [92, 120, 106, 47] },
-      { size: "XXL", values: [98, 124, 108, 48] },
-    ],
-    note: "Waist measured relaxed; the drawcord gives about 6 cm either way.",
-  },
   sweatpants: {
-    columns: ["WAIST", "HIP", "LENGTH", "CUFF"],
-    rows: [
-      { size: "S", values: [70, 104, 98, 26] },
-      { size: "M", values: [76, 108, 100, 27] },
-      { size: "L", values: [82, 112, 102, 28] },
-      { size: "XL", values: [88, 116, 104, 29] },
-      { size: "XXL", values: [94, 120, 106, 30] },
-    ],
-    note: "Waist measured relaxed, elastic unstretched.",
-  },
-  shorts: {
     columns: ["WAIST", "HIP", "LENGTH", "LEG OPENING"],
     rows: [
-      { size: "S", values: [72, 106, 50, 64] },
-      { size: "M", values: [78, 110, 51, 66] },
-      { size: "L", values: [84, 114, 52, 68] },
-      { size: "XL", values: [90, 118, 53, 70] },
-      { size: "XXL", values: [96, 122, 54, 72] },
+      { size: "S", values: [70, 108, 100, 30] },
+      { size: "M", values: [76, 112, 102, 31] },
+      { size: "L", values: [82, 116, 104, 32] },
+      { size: "XL", values: [88, 120, 106, 33] },
+      { size: "XXL", values: [94, 124, 108, 34] },
     ],
-    note: "Hits just above the knee on a 178 cm frame.",
-  },
-  onesize: {
-    columns: ["WIDTH", "HEIGHT"],
-    rows: [{ size: "ONE SIZE", values: [0, 0] }],
-    note: "One size. Adjustable where it matters.",
-  },
-  socks: {
-    columns: ["FITS UK", "FITS EU", "LENGTH"],
-    rows: [
-      { size: "UK 6–8", values: [6, 39, 22] },
-      { size: "UK 9–11", values: [9, 43, 24] },
-    ],
-    note: "Crew height. Combed cotton with a cushioned sole.",
+    note: "Waist measured relaxed, elastic unstretched. The drawcord takes in about 6 cm.",
   },
 };
 
@@ -998,7 +981,7 @@ export const modelInfo = {
   default: "Model is 183 cm (6 ft), wearing L.",
 } as const;
 
-export const trendingSearches = ["hoodie", "cargos", "live wire", "reversible", "black tee", "cap"] as const;
+export const trendingSearches = ["jersey", "baroque", "hoodie", "denim jacket", "black tee", "sweatpants"] as const;
 
 /** Social cards are generated by scripts/generate-og.mjs (JPEG, under 300 KB for WhatsApp). */
 export const seo = {

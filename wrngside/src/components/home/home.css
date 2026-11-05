@@ -159,9 +159,16 @@ html:not(.js) .mw {
 }
 .cat-label {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
+  column-gap: 8px;
   overflow: hidden;
+}
+@media (max-width: 479px) {
+  .cat-label .t-h3 {
+    font-size: clamp(16px, 5vw, 22px);
+  }
 }
 .cat-label > * {
   transition: transform 520ms var(--ease-entrance);
@@ -266,6 +273,27 @@ html:not(.js) .mw {
   .lbt-card {
     width: calc(var(--w) * 1.55);
     left: calc(var(--x) * 0.75);
+  }
+}
+/* Phones: a staggered two-column grid, so cards and captions never overlap. */
+@media (max-width: 767px) {
+  .lbt-collage {
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px var(--gutter);
+  }
+  .lbt-card {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+  }
+  .lbt-card:nth-child(even) {
+    margin-top: 56px;
+  }
+  .lbt-card:nth-child(n + 5) {
+    display: none;
   }
 }
 

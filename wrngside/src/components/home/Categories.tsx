@@ -26,7 +26,7 @@ export function Categories() {
             <li key={c} data-reveal="fade" style={{ "--d": `${i * 70}ms` } as React.CSSProperties}>
               <TLink href={`/shop/${c}`} className="cat-tile">
                 <span className="cat-img">
-                  <Image src={`/campaign/cat-${c}.svg`} alt="" fill sizes="(min-width: 1024px) 25vw, 50vw" loading="lazy" />
+                  <Image src={`/campaign/cat-${c}.webp`} alt="" fill sizes="(min-width: 1024px) 25vw, 50vw" loading="lazy" />
                 </span>
                 <span className="cat-label">
                   <span className="t-h3">{categoryLabel(c)}</span>

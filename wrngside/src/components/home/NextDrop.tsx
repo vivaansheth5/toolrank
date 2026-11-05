@@ -59,7 +59,7 @@ export function NextDrop() {
       <div ref={media} className="nd-media" data-reveal="img">
         <div className="reveal-inner nd-inner">
           <div className="nd-img">
-            <Image src={`/campaign/${drop.id}.svg`} alt={fill(ui.home.nextDropAlt, { name: drop.name })} fill sizes="100vw" loading="lazy" />
+            <Image src={`/campaign/${drop.id}.webp`} alt={fill(ui.home.nextDropAlt, { name: drop.name })} fill sizes="100vw" loading="lazy" />
           </div>
         </div>
       </div>

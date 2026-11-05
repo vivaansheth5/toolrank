@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { TLink } from "@/components/ui/TLink";
-import { getLineProducts, accessibleName, liveDrop } from "@/lib/commerce";
+import { getLineProducts, accessibleName, liveDrop, hangSrc } from "@/lib/commerce";
 import { copy, codes, hindi, ui } from "@/lib/site-config";
 import { fill } from "@/lib/format";
 import { buildLineLayout, spanPathD, type LineGarmentInput, LINE } from "./layout";
@@ -26,10 +26,11 @@ export async function TheLine() {
     hangStyle: p.wrng.hangStyle,
     weight: p.wrng.weight,
     dims: p.wrng.dims,
+    hold: p.wrng.hold,
     colourName: p.wrng.colours[0].name,
     colourHex: p.wrng.colours[0].hex,
     price: p.wrng.price,
-    cutout: p.wrng.colours[0].media.cutout,
+    cutout: hangSrc(p),
     sizes: p.wrng.sizes.map((s) => ({ label: s.label, available: s.available })),
     drop: p.wrng.drop,
     label: accessibleName(p),

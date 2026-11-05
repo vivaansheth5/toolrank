@@ -10,7 +10,7 @@ import { prefsStore, setPref, toast } from "@/lib/stores";
 import { codes, copy } from "@/lib/site-config";
 import { fill } from "@/lib/format";
 
-const CATEGORY: Record<string, string> = { tees: "TEES", outerwear: "OUTERWEAR", bottoms: "BOTTOMS", extras: "EXTRAS" };
+const CATEGORY: Record<string, string> = { tees: "TEES", jerseys: "JERSEYS", outerwear: "OUTERWEAR", bottoms: "BOTTOMS" };
 
 /** Mounts THE LINE engine on the server-rendered scene. */
 export function LineController({ data }: { data: EngineData & { dropNumber: string } }) {

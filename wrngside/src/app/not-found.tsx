@@ -13,13 +13,13 @@ export default function NotFound() {
   return (
     <main id="main" data-theme="night" className="theme-night nf">
       <div className="nf-scene" aria-hidden="true">
-        <Image src="/campaign/lost-sock.svg" alt="" fill sizes="100vw" preload />
+        <Image src="/campaign/lost-sock.webp" alt="" fill sizes="100vw" preload />
         <span className="nf-lamp" />
         <span className="nf-sock">
           <span className="nf-peg">
             <Peg />
           </span>
-          <Image src="/products/spark-socks/mixed/cutout.svg" alt="" width={200} height={180} />
+          <Image src="/scene/lost-sock.svg" alt="" width={200} height={180} />
         </span>
       </div>
       <div className="wrap nf-copy">

@@ -95,15 +95,21 @@
   .dl-lamp {
     right: 6%;
   }
+  .dl-pole {
+    opacity: 0.4;
+  }
   .chain {
     width: 140px;
     right: calc(6% - 40px);
-    top: 14%;
+    top: calc(var(--top-offset) + 4px);
     opacity: 0.6;
   }
   .padlock {
     width: 64px;
-    top: 24%;
+    top: calc(var(--top-offset) + 72px);
+  }
+  .dl-copy {
+    padding-top: calc(var(--top-offset) + 190px);
   }
 }
 .archive {

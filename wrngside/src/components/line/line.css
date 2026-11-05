@@ -748,16 +748,19 @@
 }
 .g-img {
   position: absolute;
+  z-index: 1;
   left: 0;
   top: calc(var(--top) * var(--s));
   width: 100%;
   height: calc(var(--h) * var(--s));
-  filter: drop-shadow(-1px 0 0 rgb(140 170 255 / 0.35));
+  /* A cold rim and a warm haze lift dark pieces off the night wall. */
+  filter: drop-shadow(-1px 0 0 rgb(140 170 255 / 0.4)) drop-shadow(0 0 16px rgb(255 200 140 / 0.2));
 }
 .g-img img {
   object-fit: contain;
   pointer-events: none;
 }
+/* The hook rises from behind the hood or collar. */
 .hanger {
   position: absolute;
   left: 50%;
@@ -765,7 +768,7 @@
   width: calc(44 * var(--s));
   height: calc(16 * var(--s));
   transform: translateX(-50%);
-  z-index: 2;
+  z-index: 0;
   overflow: visible;
 }
 .g-peg {
@@ -807,7 +810,7 @@
   filter: brightness(0.55);
 }
 .g[data-soldout] .g-img {
-  filter: saturate(0.25) drop-shadow(-1px 0 0 rgb(140 170 255 / 0.25));
+  filter: saturate(0.25) drop-shadow(-1px 0 0 rgb(140 170 255 / 0.25)) drop-shadow(0 0 16px rgb(255 200 140 / 0.12));
 }
 
 /* Shadows on the wall: pushed away from the nearest lamp. */

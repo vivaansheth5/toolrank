@@ -9,22 +9,27 @@ import { formatPrice } from "../format";
 
 export const CATEGORY_LABEL: Record<Category, string> = {
   tees: "TEES",
+  jerseys: "JERSEYS",
   outerwear: "OUTERWEAR",
   bottoms: "BOTTOMS",
-  extras: "EXTRAS",
 };
 
 export const categoryLabel = (c: Category) => CATEGORY_LABEL[c];
-export const categories: Category[] = ["tees", "outerwear", "bottoms", "extras"];
+export const categories: Category[] = ["tees", "jerseys", "outerwear", "bottoms"];
 
 /* ───────────────────────── helpers ───────────────────────── */
 
 export const priceOf = (p: Product) => p.wrng.price;
 
 export function fitTag(p: Product): string {
-  if (p.wrng.category === "extras") return "One size";
   const first = p.wrng.fit.split(/[ ,.]/)[0];
   return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+}
+
+/** The cutout THE LINE hangs: the side the print is on. */
+export function hangSrc(p: Product, colourIndex = 0) {
+  const m = (p.wrng.colours[colourIndex] ?? p.wrng.colours[0]).media;
+  return p.wrng.lead === "back" ? m.cutoutBack : m.cutout;
 }
 
 export function totalStock(p: Product) {
@@ -136,7 +141,7 @@ export function toListing(p: Product): Product {
       care: [],
       details: [],
       fabric: "",
-      colours: p.wrng.colours.map((c) => ({ ...c, media: { ...c.media, insideOut: "", model: [] } })),
+      colours: p.wrng.colours.map((c) => ({ ...c, media: { ...c.media, views: [], model: [] } })),
     },
   };
 }

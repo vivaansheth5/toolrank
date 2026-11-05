@@ -24,8 +24,9 @@ const BADGE_CLASS: Record<Badge, string> = {
 };
 
 /**
- * Product card: 4:5 image on dust. Desktop hover crossfades to the back shot
- * at 1.04 and slides up a quick-add size row. Badges come from real stock.
+ * Product card: 4:5 image on dust, leading with the side the print is on.
+ * Desktop hover crossfades to the other side at 1.04 and slides up a
+ * quick-add size row. Badges come from real stock.
  */
 export function ProductCard({ product: p, now, priority = false, sizes = "(min-width: 1024px) 25vw, 50vw" }: { product: Product; now: number; priority?: boolean; sizes?: string }) {
   const unlocked = useDropUnlocked(p.wrng.drop);
@@ -33,6 +34,9 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
   const locked = badges.includes("LOCKED");
   const soldOut = !p.availableForSale;
   const colour = p.wrng.colours[0];
+  // Lead with the side the print is on; hover shows the other.
+  const lead = p.wrng.lead;
+  const other = lead === "back" ? "front" : "back";
   const [adding, setAdding] = useState<string | null>(null);
   const href = `/products/${p.handle}`;
 
@@ -41,10 +45,10 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
       <div className="pcard-media">
         <TLink href={href} className="pcard-link" data-cursor={soldOut ? "soldout" : "view"} aria-label={`${p.title} ${p.wrng.type}`}>
           <span className="pcard-img pcard-front">
-            <ProductImage src={colour.media.front} alt={`${p.title} ${p.wrng.type} in ${colour.name}, front`} sizes={sizes} tint={colour.hex} priority={priority} />
+            <ProductImage src={colour.media[lead]} alt={`${p.title} ${p.wrng.type} in ${colour.name}, ${lead}`} sizes={sizes} tint={colour.hex} priority={priority} />
           </span>
           <span className="pcard-img pcard-back" aria-hidden="true">
-            <ProductImage src={colour.media.back} alt="" sizes={sizes} tint={colour.hex} />
+            <ProductImage src={colour.media[other]} alt="" sizes={sizes} tint={colour.hex} />
           </span>
           {soldOut && (
             <span className="stamp" aria-hidden="true">

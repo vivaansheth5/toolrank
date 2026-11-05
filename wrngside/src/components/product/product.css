@@ -40,6 +40,12 @@
 }
 .pdp-title {
   margin-top: -6px;
+  /* Fit the longest word to the info column, not the window (PERCEPTION,
+     BAROQUE on a desktop two-column layout). */
+  container-type: inline-size;
+}
+.pdp-title .lines {
+  font-size: min(1em, calc(100cqw / (var(--longest, 1) * 1.02)));
 }
 .pdp-price {
   display: flex;

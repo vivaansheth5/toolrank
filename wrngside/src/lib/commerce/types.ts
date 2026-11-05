@@ -5,9 +5,9 @@
  * Brand-specific fields live under `wrng`, which maps to product metafields
  * (namespace "wrng") in Shopify.
  */
-import type { Category, GarmentKind, HangStyle } from "./mock/catalog";
+import type { Category, GarmentKind, HangStyle, RawHold } from "./mock/catalog";
 
-export type { Category, GarmentKind, HangStyle };
+export type { Category, GarmentKind, HangStyle, RawHold };
 
 export type CurrencyCode = "INR";
 
@@ -47,10 +47,14 @@ export interface ProductOption {
 }
 
 export interface ProductMedia {
+  /** Front and back views on transparent, for THE LINE. */
   cutout: string;
+  cutoutBack: string;
   front: string;
   back: string;
-  insideOut: string;
+  /** Extra angles and close-ups. `label` finishes the alt text. */
+  views: { src: string; label: string }[];
+  /** On the wire at night. */
   model: string[];
 }
 
@@ -88,6 +92,10 @@ export interface ProductMeta {
   sizeChart: string;
   /** Real-world size of the cutout in cm (true scale on THE LINE). */
   dims: { w: number; h: number };
+  /** Where THE LINE grips it: peg positions (fractions of width) and depth below the top (cm). */
+  hold: RawHold;
+  /** The side listings, THE LINE, the gallery, the cart and search lead with. */
+  lead: "front" | "back";
   price: number;
   compareAtPrice: number | null;
 }

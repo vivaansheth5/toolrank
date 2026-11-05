@@ -6,7 +6,7 @@
  * scene with calc() from these numbers, so nothing shifts when JS arrives;
  * the engine reads the same numbers to drive physics.
  */
-import type { Category, GarmentKind, HangStyle } from "@/lib/commerce/types";
+import type { Category, GarmentKind, HangStyle, RawHold } from "@/lib/commerce/types";
 
 export interface LineGarmentInput {
   handle: string;
@@ -17,6 +17,8 @@ export interface LineGarmentInput {
   hangStyle: HangStyle;
   weight: number;
   dims: { w: number; h: number };
+  /** Where the piece is gripped, measured off its cutout. */
+  hold: RawHold;
   colourName: string;
   colourHex: string;
   price: number;
@@ -96,27 +98,17 @@ export function cableY(span: SpanSpec, u: number) {
   return LINE.y0 + 4 * u * (1 - u) * span.sag;
 }
 
-function hangGeometry(kind: GarmentKind, hang: HangStyle, dims: { w: number; h: number }) {
+function hangGeometry(hang: HangStyle, dims: { w: number; h: number }, hold: RawHold) {
   // topCm: cable → top of the cutout. pegs: fractions of width. tagCm: tag offset.
-  switch (hang) {
-    case "pegs":
-      if (kind === "socks") return { topCm: 0.4, pegs: [0.5], tagCm: dims.w * 0.42 };
-      if (kind === "beanie") return { topCm: 0.4, pegs: [0.5], tagCm: dims.w * 0.62 };
-      return { topCm: -0.6, pegs: [0.2, 0.8], tagCm: dims.w * 0.3 };
-    case "hanger": {
-      // Hoodies carry the hood above the shoulder line; jackets don't.
-      const shoulder = kind === "hoodie" || kind === "ziphoodie" ? 10.8 : 4.4;
-      return { topCm: LINE.hookCm - shoulder, pegs: [], tagCm: dims.w * 0.22 };
-    }
-    case "folded":
-      return { topCm: -1.1, pegs: [], tagCm: dims.w * 0.3 };
-    case "strap":
-      return { topCm: 0.6, pegs: [0.5], tagCm: dims.w * 0.62 };
-    case "handles":
-      return { topCm: -0.7, pegs: [], tagCm: dims.w * 0.46 };
-    default:
-      return { topCm: 0, pegs: [0.5], tagCm: dims.w * 0.4 };
+  if (hang === "hanger") {
+    // The hanger's shoulders sit hold.dropCm below the top of the piece (a
+    // hood rises well above them, a collar barely); the hook climbs from
+    // there to the cable.
+    return { topCm: LINE.hookCm - hold.dropCm, pegs: [], tagCm: dims.w * 0.36 };
   }
+  // Pegs bite just under the top edge where they grip, so the cutout rides
+  // that far above the cable, plus the fold of fabric over it.
+  return { topCm: -hold.dropCm - 0.6, pegs: hold.pegs, tagCm: dims.w * 0.4 };
 }
 
 export function buildLineLayout(items: LineGarmentInput[]): LineLayout {
@@ -150,7 +142,7 @@ export function buildLineLayout(items: LineGarmentInput[]): LineLayout {
       const gx = x + Q + k + 0.5;
       const u = (gx - span.x0) / len;
       const g = items[gi];
-      const geo = hangGeometry(g.kind, g.hangStyle, g.dims);
+      const geo = hangGeometry(g.hangStyle, g.dims, g.hold);
       span.garments.push(gi);
       garments.push({ ...g, index: gi, span: span.index, x: gx, u, y: cableY(span, u), ...geo, lamp: 0, lampDx: 0 });
     });

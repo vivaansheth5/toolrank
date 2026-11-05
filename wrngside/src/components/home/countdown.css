@@ -57,6 +57,28 @@
   align-self: center;
   margin-left: 8px;
 }
+/* Phones: all four groups on one row; IST goes underneath. */
+@media (max-width: 479px) {
+  .countdown {
+    gap: 4px;
+  }
+  .flap-digits {
+    gap: 2px;
+  }
+  .flap-d {
+    width: clamp(28px, 8.2vw, 36px);
+    height: clamp(40px, 11.6vw, 52px);
+    font-size: clamp(22px, 6.6vw, 28px);
+  }
+  .flap-sep {
+    font-size: clamp(18px, 5.4vw, 24px);
+    line-height: clamp(40px, 11.6vw, 52px);
+  }
+  .flap-tz {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .flap-d {
     animation: none;
