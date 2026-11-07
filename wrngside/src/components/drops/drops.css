@@ -1,0 +1,170 @@
+.droplock {
+  position: relative;
+  overflow: hidden;
+  min-height: 100svh;
+}
+.dl-stage {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: end;
+  padding-bottom: 64px;
+}
+.dl-visual {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.dl-pole {
+  position: absolute;
+  right: 18%;
+  top: 0;
+  bottom: 0;
+  width: clamp(40px, 5vw, 70px);
+  background: linear-gradient(90deg, #2c2a28, #57524c 45%, #6f675d 70%, #2f2c29);
+}
+.dl-lamp {
+  position: absolute;
+  right: calc(18% - 60px);
+  top: 70px;
+  width: 360px;
+  height: 360px;
+  margin-right: -150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 190 120 / 0.55), rgb(255 154 60 / 0.12) 40%, transparent 70%);
+  opacity: 0.12;
+}
+.dl-stage[data-phase="open"] .dl-lamp {
+  opacity: 1;
+}
+.chain {
+  position: absolute;
+  right: calc(18% - 75px);
+  top: 26%;
+  width: 220px;
+}
+.padlock {
+  position: absolute;
+  right: calc(18% - 8px);
+  top: 46%;
+  width: 92px;
+  transform-origin: 50% 0;
+}
+.dl-copy {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  padding-top: calc(var(--top-offset) + 48px);
+}
+.dl-story {
+  max-width: 46ch;
+}
+.dl-forms {
+  display: grid;
+  gap: 28px;
+  max-width: 560px;
+}
+.dl-wait {
+  display: grid;
+  gap: 12px;
+}
+.dl-wait .btn {
+  justify-self: start;
+}
+.dl-open {
+  display: grid;
+  gap: 24px;
+  padding-top: 16px;
+}
+.dl-open .mini-cap {
+  color: var(--bone);
+}
+/* The unlocked pieces hang on a cable tied to the lamp pole: the line ends at the pole. */
+.dl-open .mini-line {
+  margin-right: max(0px, calc(min(100vw, 50vw + 840px) - var(--margin) - 82vw + clamp(40px, 5vw, 70px)));
+}
+@media (max-width: 767px) {
+  .dl-open .mini-line {
+    margin-right: calc(6vw + clamp(40px, 5vw, 70px) - var(--margin));
+  }
+}
+@media (max-width: 767px) {
+  .dl-pole,
+  .chain,
+  .padlock,
+  .dl-lamp {
+    right: 6%;
+  }
+  .dl-pole {
+    opacity: 0.4;
+  }
+  .chain {
+    width: 140px;
+    right: calc(6% - 40px);
+    top: calc(var(--top-offset) + 4px);
+    opacity: 0.6;
+  }
+  .padlock {
+    width: 64px;
+    top: calc(var(--top-offset) + 72px);
+  }
+  .dl-copy {
+    padding-top: calc(var(--top-offset) + 190px);
+  }
+}
+.archive {
+  display: grid;
+  gap: 56px;
+  padding-block: 64px 128px;
+}
+.arch-drop {
+  display: grid;
+  gap: 24px;
+  padding-top: 32px;
+  border-top: 1px solid var(--hairline);
+}
+.arch-head {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 1024px) {
+  .arch-head {
+    grid-template-columns: auto 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+}
+.arch-num {
+  font-size: clamp(80px, 12vw, 200px);
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--bone);
+}
+.arch-meta {
+  display: grid;
+  gap: 10px;
+}
+.arch-story {
+  max-width: 52ch;
+}
+.arch-cta {
+  justify-self: start;
+}
+.arch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px var(--gutter);
+}
+@media (min-width: 1024px) {
+  .arch-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+.arch-drop[data-status="archived"] .pcard-media {
+  filter: grayscale(0.85) brightness(0.9);
+}
+.drops-page .pcard {
+  color: var(--bone);
+}
+.drops-page .pcard-quick {
+  background: rgb(22 22 22 / 0.94);
+}

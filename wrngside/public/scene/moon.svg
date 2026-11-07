@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400"><defs>
+<radialGradient id="m" cx="0.42" cy="0.4" r="0.6"><stop offset="0" stop-color="#f6ecd8"/><stop offset="1" stop-color="#d2c09e"/></radialGradient>
+<radialGradient id="halo" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#f3d7ae" stop-opacity="0.35"/><stop offset="0.4" stop-color="#f3d7ae" stop-opacity="0.08"/><stop offset="1" stop-color="#f3d7ae" stop-opacity="0"/></radialGradient>
+<filter id="b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4"/></filter>
+<filter id="hz" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="9"/></filter>
+</defs>
+<circle cx="200" cy="200" r="200" fill="url(#halo)"/>
+<g filter="url(#b)">
+<circle cx="200" cy="200" r="46" fill="url(#m)"/>
+<circle cx="186" cy="188" r="11" fill="#b9a786" opacity="0.35"/>
+<circle cx="214" cy="214" r="7" fill="#b9a786" opacity="0.3"/>
+<circle cx="205" cy="178" r="5" fill="#b9a786" opacity="0.28"/>
+<ellipse cx="190" cy="222" rx="13" ry="7" fill="#b9a786" opacity="0.22"/>
+</g>
+<rect x="60" y="208" width="290" height="16" fill="#3b2a38" opacity="0.55" filter="url(#hz)"/>
+<rect x="40" y="176" width="320" height="10" fill="#2a2238" opacity="0.4" filter="url(#hz)"/></svg>

@@ -1,0 +1,405 @@
+{
+ "07-archives-tank": {
+  "dims": {
+   "w": 52.0,
+   "h": 70.0
+  },
+  "hold": {
+   "pegs": [
+    0.344,
+    0.647
+   ],
+   "dropCm": 0.2
+  }
+ },
+ "amour-amor-hoodie": {
+  "dims": {
+   "w": 77.4,
+   "h": 76.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 14.2
+  }
+ },
+ "angel-wings-denim-jacket": {
+  "dims": {
+   "w": 80.3,
+   "h": 68.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 7.4
+  }
+ },
+ "argentina-10-jersey": {
+  "dims": {
+   "w": 66.3,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 5.0
+  }
+ },
+ "argentina-10-long-sleeve-jersey": {
+  "dims": {
+   "w": 71.0,
+   "h": 74.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 5.5
+  }
+ },
+ "away-days-23-jersey": {
+  "dims": {
+   "w": 78.4,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 6.8
+  }
+ },
+ "baroque-denim-jacket": {
+  "dims": {
+   "w": 74.3,
+   "h": 68.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 6.9
+  }
+ },
+ "baroque-sweatpants": {
+  "dims": {
+   "w": 49.8,
+   "h": 104.0
+  },
+  "hold": {
+   "pegs": [
+    0.292,
+    0.729
+   ],
+   "dropCm": 0.2
+  }
+ },
+ "batfang-hoodie": {
+  "dims": {
+   "w": 74.0,
+   "h": 76.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 11.3
+  }
+ },
+ "black-hole-tee": {
+  "dims": {
+   "w": 85.9,
+   "h": 74.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 5.5
+  }
+ },
+ "blessed-sweatpants": {
+  "dims": {
+   "w": 62.7,
+   "h": 104.0
+  },
+  "hold": {
+   "pegs": [
+    0.267,
+    0.72
+   ],
+   "dropCm": 0.3
+  }
+ },
+ "blossom-denim-jacket": {
+  "dims": {
+   "w": 71.7,
+   "h": 68.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 6.6
+  }
+ },
+ "crazy-days-sweatpants": {
+  "dims": {
+   "w": 57.9,
+   "h": 104.0
+  },
+  "hold": {
+   "pegs": [
+    0.32,
+    0.706
+   ],
+   "dropCm": 0.2
+  }
+ },
+ "dragon-hoodie": {
+  "dims": {
+   "w": 77.4,
+   "h": 76.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 14.1
+  }
+ },
+ "eight-ball-tank": {
+  "dims": {
+   "w": 52.1,
+   "h": 70.0
+  },
+  "hold": {
+   "pegs": [
+    0.345,
+    0.646
+   ],
+   "dropCm": 0.2
+  }
+ },
+ "england-07-polo": {
+  "dims": {
+   "w": 80.2,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 8.1
+  }
+ },
+ "euphoria-sweatpants": {
+  "dims": {
+   "w": 51.6,
+   "h": 104.0
+  },
+  "hold": {
+   "pegs": [
+    0.241,
+    0.723
+   ],
+   "dropCm": 0.3
+  }
+ },
+ "flash-studded-tank": {
+  "dims": {
+   "w": 52.3,
+   "h": 70.0
+  },
+  "hold": {
+   "pegs": [
+    0.346,
+    0.65
+   ],
+   "dropCm": 0.2
+  }
+ },
+ "france-10-jersey": {
+  "dims": {
+   "w": 76.4,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 7.4
+  }
+ },
+ "germany-11-polo": {
+  "dims": {
+   "w": 77.7,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 6.4
+  }
+ },
+ "japan-18-polo": {
+  "dims": {
+   "w": 84.1,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 8.6
+  }
+ },
+ "night-web-system-tee": {
+  "dims": {
+   "w": 86.4,
+   "h": 74.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 5.7
+  }
+ },
+ "obscura-layered-tee": {
+  "dims": {
+   "w": 81.4,
+   "h": 74.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 4.1
+  }
+ },
+ "one-of-1-hoodie": {
+  "dims": {
+   "w": 78.6,
+   "h": 64.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 19.6
+  }
+ },
+ "perception-tee": {
+  "dims": {
+   "w": 86.0,
+   "h": 74.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 5.5
+  }
+ },
+ "portugal-07-jersey": {
+  "dims": {
+   "w": 74.3,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 4.9
+  }
+ },
+ "portugal-07-long-sleeve-jersey": {
+  "dims": {
+   "w": 71.4,
+   "h": 74.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 4.8
+  }
+ },
+ "prowl-sweatpants": {
+  "dims": {
+   "w": 60.8,
+   "h": 104.0
+  },
+  "hold": {
+   "pegs": [
+    0.307,
+    0.697
+   ],
+   "dropCm": 0.3
+  }
+ },
+ "spain-19-jersey": {
+  "dims": {
+   "w": 69.1,
+   "h": 72.0
+  },
+  "hold": {
+   "pegs": [
+    0.28,
+    0.72
+   ],
+   "dropCm": 5.0
+  }
+ },
+ "starfall-sweatpants": {
+  "dims": {
+   "w": 51.1,
+   "h": 104.0
+  },
+  "hold": {
+   "pegs": [
+    0.289,
+    0.687
+   ],
+   "dropCm": 0.3
+  }
+ },
+ "starlit-nights-jacket": {
+  "dims": {
+   "w": 76.8,
+   "h": 68.0
+  },
+  "hold": {
+   "pegs": [
+    0.3,
+    0.7
+   ],
+   "dropCm": 6.9
+  }
+ }
+}

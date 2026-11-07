@@ -1,0 +1,86 @@
+.countdown {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.flap {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+.flap-digits {
+  display: flex;
+  gap: 3px;
+}
+.flap-d {
+  display: grid;
+  place-items: center;
+  width: clamp(36px, 5vw, 64px);
+  height: clamp(52px, 7vw, 88px);
+  background: var(--tar);
+  border: 1px solid rgb(140 137 132 / 0.3);
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 4vw, 52px);
+  color: var(--bone);
+  position: relative;
+  overflow: hidden;
+  animation: flap 520ms var(--ease-entrance);
+  transform-origin: 50% 50%;
+}
+.flap-d::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: #000;
+  opacity: 0.7;
+}
+@keyframes flap {
+  0% {
+    transform: perspective(300px) rotateX(-80deg);
+    filter: brightness(1.6);
+  }
+  100% {
+    transform: none;
+  }
+}
+.flap-sep {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 4vw, 52px);
+  line-height: clamp(52px, 7vw, 88px);
+  color: var(--concrete);
+}
+.flap-tz {
+  align-self: center;
+  margin-left: 8px;
+}
+/* Phones: all four groups on one row; IST goes underneath. */
+@media (max-width: 479px) {
+  .countdown {
+    gap: 4px;
+  }
+  .flap-digits {
+    gap: 2px;
+  }
+  .flap-d {
+    width: clamp(28px, 8.2vw, 36px);
+    height: clamp(40px, 11.6vw, 52px);
+    font-size: clamp(22px, 6.6vw, 28px);
+  }
+  .flap-sep {
+    font-size: clamp(18px, 5.4vw, 24px);
+    line-height: clamp(40px, 11.6vw, 52px);
+  }
+  .flap-tz {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flap-d {
+    animation: none;
+  }
+}
