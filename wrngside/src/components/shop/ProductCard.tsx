@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Product } from "@/lib/commerce/types";
 import { badgesFor, type Badge } from "@/lib/commerce/helpers";
 import { addToBag } from "@/lib/commerce/actions";
@@ -11,6 +11,7 @@ import { SaveButton } from "@/components/ui/SaveButton";
 import { openNotify } from "@/components/ui/NotifyDialog";
 import { useDropUnlocked } from "@/lib/stores";
 import { formatDropSlot, fill } from "@/lib/format";
+import { prefersReducedMotion } from "@/lib/device";
 import "./shop.css";
 import { ui, copy } from "@/lib/site-config";
 
@@ -24,9 +25,10 @@ const BADGE_CLASS: Record<Badge, string> = {
 };
 
 /**
- * Product card: 4:5 image on dust, leading with the side the print is on.
- * Desktop hover crossfades to the other side at 1.04 and slides up a
- * quick-add size row. Badges come from real stock.
+ * Product card: 4:5 images on dust, leading with the side the print is on.
+ * Swipe the image (or use the arrow, with a mouse) to see the other side;
+ * dots show which. Desktop hover slides up a quick-add size row. Badges come
+ * from real stock.
  */
 export function ProductCard({ product: p, now, priority = false, sizes = "(min-width: 1024px) 25vw, 50vw" }: { product: Product; now: number; priority?: boolean; sizes?: string }) {
   const unlocked = useDropUnlocked(p.wrng.drop);
@@ -38,17 +40,33 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
   const lead = p.wrng.lead;
   const other = lead === "back" ? "front" : "back";
   const [adding, setAdding] = useState<string | null>(null);
+  const strip = useRef<HTMLSpanElement>(null);
+  const [slide, setSlide] = useState(0);
+  const showSlide = (i: number) => {
+    const s = strip.current;
+    if (s) s.scrollTo({ left: i * s.clientWidth, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  };
   const href = `/products/${p.handle}`;
 
   return (
     <article className="pcard" data-soldout={soldOut || undefined} data-locked={locked || undefined} data-flip-id={p.handle}>
       <div className="pcard-media">
         <TLink href={href} className="pcard-link" data-cursor={soldOut ? "soldout" : "view"} aria-label={`${p.title} ${p.wrng.type}`}>
-          <span className="pcard-img pcard-front">
-            <ProductImage src={colour.media[lead]} alt={`${p.title} ${p.wrng.type} in ${colour.name}, ${lead}`} sizes={sizes} tint={colour.hex} priority={priority} />
-          </span>
-          <span className="pcard-img pcard-back" aria-hidden="true">
-            <ProductImage src={colour.media[other]} alt="" sizes={sizes} tint={colour.hex} />
+          <span
+            ref={strip}
+            className="pcard-strip no-scrollbar"
+            onScroll={(e) => {
+              const s = e.currentTarget;
+              const i = Math.round(s.scrollLeft / Math.max(1, s.clientWidth));
+              if (i !== slide) setSlide(i);
+            }}
+          >
+            <span className="pcard-img">
+              <ProductImage src={colour.media[lead]} alt={`${p.title} ${p.wrng.type} in ${colour.name}, ${lead}`} sizes={sizes} tint={colour.hex} priority={priority} />
+            </span>
+            <span className="pcard-img" aria-hidden="true">
+              <ProductImage src={colour.media[other]} alt="" sizes={sizes} tint={colour.hex} />
+            </span>
           </span>
           {soldOut && (
             <span className="stamp" aria-hidden="true">
@@ -56,6 +74,13 @@ export function ProductCard({ product: p, now, priority = false, sizes = "(min-w
             </span>
           )}
         </TLink>
+        <span className="pcard-dots" aria-hidden="true">
+          <i data-on={slide === 0 || undefined} />
+          <i data-on={slide === 1 || undefined} />
+        </span>
+        <button type="button" className="pcard-flip" onClick={() => showSlide(slide ? 0 : 1)} aria-label={fill(ui.common.showSide, { side: slide ? lead : other, title: p.title })}>
+          <span aria-hidden="true">{slide ? "←" : "→"}</span>
+        </button>
         <div className="pcard-badges">
           {badges
             .filter((b) => b !== "LOCKED")

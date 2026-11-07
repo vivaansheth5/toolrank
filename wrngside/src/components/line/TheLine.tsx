@@ -241,18 +241,8 @@ export async function TheLine() {
           <div className="torch" aria-hidden="true" />
           <div className="sparks" aria-hidden="true" />
 
-          {/* HUD */}
+          {/* HUD: just the progress cable. The skip link only shows for keyboard users. */}
           <div className="hud">
-            <div className="hud-left t-meta" aria-hidden="true">
-              <span className="hud-cat">
-                <span className="hud-cat-in" data-hud-cat>
-                  {fill(copy.hero.hudStart, { drop: drop.number })}
-                </span>
-              </span>
-              <span className="hud-count tabular" data-hud-count>
-                00 / {String(garments.length).padStart(2, "0")}
-              </span>
-            </div>
             <div className="hud-progress" aria-hidden="true">
               <svg viewBox="0 0 400 20" preserveAspectRatio="none">
                 <path className="hud-track" d="M0 4 Q200 18 400 4" />

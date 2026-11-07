@@ -8,6 +8,7 @@ import path from "node:path";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { rng, r, tone, mix } from "./art/lib.mjs";
+import { piece, throwUp, tag, stencil, stickerBomb, sparkle, dripsPath } from "./art/graffiti.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sceneDir = path.join(root, "public", "scene");
@@ -226,78 +227,226 @@ const anchors = { skyline: { w: 2400, h: 700, towerLights: [] }, buildings: { w:
     const len = 300 + R() * 600;
     cables += `<path d="M${r(x0)} ${r(y0)} Q${r(x0 + len / 2)} ${r(y0 + 40 + R() * 50)} ${r(x0 + len)} ${r(y0 + (R() - 0.5) * 40)}" stroke="#0b0b10" stroke-width="${r(1.5 + R() * 2)}" fill="none"/>`;
   }
+  // Rooftop billboard on scaffolding: the drop, lit by two gooseneck lamps.
+  let extraDefs = "";
+  let bill = "";
+  {
+    const bx = 1180;
+    const by = 104;
+    const bw = 470;
+    const bh = 196;
+    let legs = "";
+    [bx + 60, bx + bw - 60].forEach((lx) => (legs += `M${lx} ${by + bh}V560M${lx - 26} ${by + bh}V560`));
+    legs += `M${bx + 34} ${by + bh + 40}L${bx + bw / 2} 560M${bx + bw - 34} ${by + bh + 40}L${bx + bw / 2} 560M${bx + 34} ${by + bh + 40}H${bx + bw - 34}M${bx + 34} ${by + bh + 150}H${bx + bw - 34}`;
+    bill += `<path d="${legs}" stroke="#101116" stroke-width="7" fill="none"/>`;
+    bill += `<rect x="${bx - 8}" y="${by - 8}" width="${bw + 16}" height="${bh + 16}" fill="#0e0f13"/>`;
+    bill += `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="url(#billbg)"/>`;
+    // Catwalk with railing.
+    bill += `<rect x="${bx - 16}" y="${by + bh + 8}" width="${bw + 32}" height="8" fill="#16171c"/><path d="M${bx - 16} ${by + bh - 18}H${bx + bw + 16}${Array.from({ length: 13 }, (_, i) => `M${r(bx - 16 + i * ((bw + 32) / 12))} ${by + bh - 18}V${by + bh + 8}`).join("")}" stroke="#16171c" stroke-width="3"/>`;
+    const pc = piece("bb", "WRNGSIDE", { size: 74, x: bx + bw / 2, y: by + 98, rot: -2, fill: ["#ff2e88", "#ff6a2e", "#ffd23a"], depth: "#170a29", seed: 15, drips: 4, sparkles: 2 });
+    extraDefs += pc.defs;
+    bill += pc.body;
+    bill += stencil("AFTER HOURS  ·  DROP 04", { x: bx + bw / 2, y: by + 160, size: 20, color: "#f4f1ea", opacity: 0.95 });
+    // Shop signs, lit windows and TVs are DOM overlays: none may sit on the billboard.
+    const hit = (a) => a.x < bx + bw + 24 && a.x + a.w > bx - 24 && a.y < by + bh + 36 && a.y + a.h > by - 76;
+    anchors.buildings.signs = anchors.buildings.signs.filter((a) => !hit(a));
+    anchors.buildings.flicker = anchors.buildings.flicker.filter((a) => !hit(a));
+    anchors.buildings.tv = anchors.buildings.tv.filter((a) => !hit(a));
+    // Gooseneck lamps and their light.
+    [bx + 120, bx + bw - 120].forEach((lx) => {
+      bill += `<path d="M${lx} ${by - 8}V${by - 40}Q${lx} ${by - 58} ${lx + 26} ${by - 58}" stroke="#16171c" stroke-width="5" fill="none"/><path d="M${lx + 16} ${by - 64}h28l-6 12h-16z" fill="#1f2026"/>`;
+      bill += `<path d="M${lx + 22} ${by - 52}L${lx - 70} ${by + bh}H${lx + 130}L${lx + 38} ${by - 52}Z" fill="url(#billbeam)"/>`;
+      bill += `<ellipse cx="${lx + 30}" cy="${by - 52}" rx="12" ry="4" fill="#fff4dc"/>`;
+    });
+  }
+  // Sneakers thrown over a wire between two buildings (laces knotted together).
+  const sneaker = (upper, accent, sole) =>
+    `<path d="M2 26L2 13Q3 6 11 6L17 7Q24 4 28 8L37 14Q46 16 47 22L47 26Z" fill="${upper}"/><path d="M0 26H48Q49 30 45 31H3Q0 31 0 27Z" fill="${sole}"/><path d="M14 20L22 12L26 16L33 11" fill="none" stroke="${accent}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 9L27 13M21 7.5L29 11.5" stroke="#f4f1ea" stroke-width="1.2"/><path d="M2 13Q8 10 11 6" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="1.5"/>`;
+  let shoes = "";
+  {
+    const x0 = 2040;
+    const y0 = 318;
+    const x1 = 2620;
+    const y1 = 342;
+    const sag = 64;
+    const at = (u) => [x0 + (x1 - x0) * u, y0 + (y1 - y0) * u + 4 * u * (1 - u) * sag];
+    shoes += `<path d="M${x0} ${y0}Q${(x0 + x1) / 2} ${(y0 + y1) / 2 + sag * 2} ${x1} ${y1}" stroke="#0b0b10" stroke-width="4" fill="none"/>`;
+    [
+      [0.34, "#f4f1ea", "#d8231a", "#c9a46a"],
+      [0.71, "#141418", "#c6ff2e", "#c6ff2e"],
+    ].forEach(([u, upper, accent, sole]) => {
+      const [cx, cy] = at(u);
+      const ends = [
+        [cx - 16, cy + 58, 98],
+        [cx + 18, cy + 72, 72],
+      ];
+      ends.forEach(([ex, ey, rot]) => {
+        shoes += `<path d="M${r(cx)} ${r(cy)}L${r(ex)} ${r(ey)}" stroke="#f4f1ea" stroke-width="2.4" opacity="0.85"/>`;
+        shoes += `<g transform="translate(${r(ex)} ${r(ey)}) rotate(${rot}) scale(2.1) translate(-16 -7)">${sneaker(upper, accent, sole)}</g>`;
+      });
+    });
+  }
   const body = `<defs><filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+<filter id="overspray" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="20"/></filter>
+<linearGradient id="billbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1030"/><stop offset="1" stop-color="#0c0a14"/></linearGradient>
+<linearGradient id="billbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1c8" stop-opacity="0.45"/><stop offset="1" stop-color="#fff1c8" stop-opacity="0"/></linearGradient>${extraDefs}
 <linearGradient id="hz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2238" stop-opacity="0.45"/><stop offset="0.5" stop-color="#3a2a2c" stop-opacity="0.12"/><stop offset="1" stop-color="#3a2a2c" stop-opacity="0"/></linearGradient></defs>
-${glows}${s}${cables}<rect width="${W}" height="${H}" fill="url(#hz)"/>`;
+${glows}${s}${cables}${bill}${shoes}<rect width="${W}" height="${H}" fill="url(#hz)"/>`;
   write("buildings.svg", doc(W, H, body, ' data-layer="buildings"'));
 }
 
 /* ───────────────────────── WALL ───────────────────────── */
+// A street wall that's been painted over for years: pieces, throw-ups and
+// tags on concrete, brick and two pulled-down shop shutters. Wide (4800) so
+// the repeat along THE LINE isn't obvious; nothing crosses the tile edges.
+{
+  const W = 4800;
+  const H = 700;
+  const R = rng(99);
+  let defs = `<filter id="overspray" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="28"/></filter>
+<filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.66"/></filter>
+<linearGradient id="grime" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f0d0c" stop-opacity="0"/><stop offset="1" stop-color="#0f0d0c" stop-opacity="0.75"/></linearGradient>
+<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0.25"/><stop offset="0.5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.45"/></linearGradient>
+<pattern id="brick" width="96" height="44" patternUnits="userSpaceOnUse"><rect width="96" height="44" fill="#2a1a15"/><rect x="2" y="2" width="44" height="18" fill="#7a3b2a"/><rect x="50" y="2" width="44" height="18" fill="#6b3324"/><rect x="-22" y="24" width="44" height="18" fill="#73372a"/><rect x="26" y="24" width="44" height="18" fill="#80422f"/><rect x="74" y="24" width="44" height="18" fill="#6a3226"/></pattern>
+<pattern id="shutter" width="24" height="16" patternUnits="userSpaceOnUse"><rect width="24" height="16" fill="#6a7078"/><rect width="24" height="3" fill="#8e959e"/><rect y="12" width="24" height="4" fill="#3a3f45"/></pattern>`;
+  let s = "";
+  // Concrete base with old patches and rain streaks.
+  s += `<rect width="${W}" height="${H}" fill="#56504b"/>`;
+  for (let i = 0; i < 46; i++) {
+    const x = 40 + R() * (W - 80);
+    const y = 40 + R() * (H - 120);
+    s += `<rect x="${r(x)}" y="${r(y)}" width="${r(60 + R() * 220)}" height="${r(30 + R() * 120)}" fill="${R() > 0.5 ? "#625b55" : "#4a4440"}" opacity="${r(0.35 + R() * 0.4, 2)}"/>`;
+  }
+  for (let i = 0; i < 40; i++) {
+    const x = 20 + R() * (W - 40);
+    s += `<rect x="${r(x)}" y="28" width="${r(3 + R() * 10)}" height="${r(70 + R() * 260)}" fill="#2a2522" opacity="${r(0.18 + R() * 0.2, 2)}"/>`;
+  }
+  // Brick stretch (plaster knocked off), framed by columns.
+  s += `<rect x="1790" y="30" width="880" height="${H - 30}" fill="url(#brick)"/><rect x="1790" y="30" width="880" height="${H - 30}" fill="url(#shade)"/>`;
+  // Roller-buffed patch over old tags (the city paints, writers return).
+  let old = "";
+  ["SHNK", "PALE", "R1SE", "KHAOS"].forEach((t, i) => (old += tag(t, { x: 2050 + i * 150, y: 520 + (i % 2) * 40, size: 46, color: "#e8e2d6", seed: 300 + i, opacity: 0.35 })));
+  s += old + `<rect x="1980" y="455" width="520" height="150" fill="#6d6762" opacity="0.92"/>`;
+  // Shutters: corrugated, a little bowed, with a handle bar and padlock.
+  const shutter = (x0, x1) => {
+    const w = x1 - x0;
+    let g = `<rect x="${x0 - 14}" y="40" width="${w + 28}" height="${H - 40}" fill="#2a2c30"/>`;
+    g += `<rect x="${x0}" y="58" width="${w}" height="${H - 92}" fill="url(#shutter)"/>`;
+    g += `<rect x="${x0}" y="58" width="${w}" height="${H - 92}" fill="url(#shade)"/>`;
+    g += `<rect x="${x0 - 14}" y="40" width="${w + 28}" height="22" fill="#3b3f45"/><rect x="${x0 - 14}" y="40" width="${w + 28}" height="4" fill="#5d636b"/>`;
+    g += `<rect x="${x0}" y="${H - 52}" width="${w}" height="18" fill="#30343a"/><rect x="${x0 + w / 2 - 70}" y="${H - 48}" width="40" height="8" rx="3" fill="#878d95"/><rect x="${x0 + w / 2 + 30}" y="${H - 48}" width="40" height="8" rx="3" fill="#878d95"/>`;
+    g += `<g transform="translate(${x0 + w / 2} ${H - 38})"><path d="M-9 0v-10a9 9 0 0 1 18 0v10" fill="none" stroke="#b9bec4" stroke-width="4"/><rect x="-13" y="-2" width="26" height="24" rx="3" fill="#c9a24a"/><circle cy="9" r="3" fill="#3a2a10"/></g>`;
+    return g;
+  };
+  s += shutter(1240, 1730) + shutter(2740, 3210);
+  // Concrete columns between stretches.
+  [1200, 1760, 2690, 3240].forEach((cx) => {
+    s += `<rect x="${cx - 18}" y="0" width="44" height="${H}" fill="#615a54"/><rect x="${cx - 18}" y="0" width="5" height="${H}" fill="#746c65"/><rect x="${cx + 21}" y="0" width="5" height="${H}" fill="#2b2724"/>`;
+  });
+  // Coping and grime.
+  s += `<rect x="0" y="0" width="${W}" height="26" fill="#6a635d"/><rect x="0" y="0" width="${W}" height="4" fill="#7d756e"/><rect x="0" y="26" width="${W}" height="7" fill="#1a1715" opacity="0.85"/>`;
+  s += `<rect width="${W}" height="${H}" filter="url(#n)" opacity="0.35"/>`;
+
+  // ── The paint ──
+  let paint = "";
+  const add = (pc) => {
+    defs += pc.defs;
+    paint += pc.body;
+  };
+  // 1. WRNGSIDE, the big one: hot pink → orange → yellow on a violet cloud.
+  add(piece("pa", "WRNGSIDE", { size: 172, x: 600, y: 410, rot: -3, fill: ["#ff2e88", "#ff6a2e", "#ffd23a"], cloud: "#3d1f78", glow: "#ff2e88", depth: "#170a29", seed: 11 }));
+  // 2. Chrome throw-up on the first shutter.
+  add(throwUp("pb", "DRIP", { x: 1485, y: 420, size: 168, rot: 4, edge: "#2ad4ff", seed: 21 }));
+  // 3. AFTER / HOURS on the brick: ice blue → violet, magenta cloud.
+  add(piece("pc", "AFTER", { size: 138, x: 2215, y: 250, rot: -2, fill: ["#c8f4ff", "#2ad4ff", "#6b3cff"], cloud: "#5c1650", glow: "#2ad4ff", depth: "#0d0a26", seed: 31, sparkles: 2 }));
+  add(piece("pd", "HOURS", { size: 138, x: 2265, y: 420, rot: -1, fill: ["#c8f4ff", "#2ad4ff", "#6b3cff"], depth: "#0d0a26", seed: 37, sparkles: 2, drips: 8 }));
+  // 4. WRONG SIDE in dripping letters: acid green → yellow over a black cloud.
+  add(piece("pe", "WRONG SIDE", { font: "wet", size: 118, x: 3790, y: 380, rot: -2, fill: ["#d7ff3c", "#7dff3a", "#ffe53c"], cloud: "#141217", glow: "#9aff3c", depth: "#0b1406", outline2: "#141217", seed: 41, drips: 4, bounce: 0.03, lean: 0.03 }));
+  // 5. 440V throw-up, orange edge.
+  add(throwUp("pf", "440V", { x: 4330, y: 600, size: 104, rot: -5, edge: "#ff7a1a", seed: 51 }));
+
+  // A character on the second shutter: grinning, X eyes, dripping.
+  {
+    const cx = 2975;
+    const cy = 330;
+    const rr = 128;
+    paint += `<g>`;
+    paint += `<ellipse cx="${cx + 10}" cy="${cy + 14}" rx="${rr + 6}" ry="${rr}" fill="#0b0b10"/>`;
+    paint += `<ellipse cx="${cx}" cy="${cy}" rx="${rr + 6}" ry="${rr}" fill="#ffd400" stroke="#0b0b10" stroke-width="12"/>`;
+    paint += `<path d="${dripsPath([{ x1: cx - rr * 0.8, y1: cy, x2: cx + rr * 0.8, y2: cy + rr }], 160, 5, 61, { minLen: 0.3, maxLen: 0.9, start: 0.1 })}" fill="#ffd400"/>`;
+    [-48, 48].forEach((ex) => (paint += `<path d="M${cx + ex - 20} ${cy - 46}l40 40m0 -40l-40 40" stroke="#0b0b10" stroke-width="14" stroke-linecap="round"/>`));
+    paint += `<path d="M${cx - 78} ${cy + 30}Q${cx} ${cy + 110} ${cx + 78} ${cy + 30}Z" fill="#0b0b10"/>`;
+    paint += `<path d="M${cx - 54} ${cy + 44}h108v16h-108z" fill="#fff"/>`;
+    paint += `<path d="M${cx - 18} ${cy + 44}v16M${cx + 18} ${cy + 44}v16" stroke="#0b0b10" stroke-width="5"/>`;
+    paint += sparkle(cx + 150, cy - 110, 26) + sparkle(cx - 160, cy - 60, 18);
+    paint += `</g>`;
+  }
+
+  // Tags everywhere a writer could reach (and some where they shouldn't).
+  const tags = [
+    ["VOLT", 90, 610, "#f4f1ea", "tag", -6, true],
+    ["N8TE", 300, 640, "#ffd400", "marker", 3, false],
+    ["ZRO", 1040, 140, "#f4f1ea", "tag", -8, false],
+    ["SPRK", 1110, 640, "#ff3b6b", "tag", 4, true],
+    ["LATE", 1330, 130, "#ffd400", "marker", -4, false],
+    ["SHUT", 1600, 610, "#0b0b10", "tag", 6, false],
+    ["NOX", 1880, 140, "#f4f1ea", "tag", -5, true],
+    ["DLH6", 2580, 130, "#2ad4ff", "marker", 5, false],
+    ["DELHI", 2985, 590, "#ff3b1f", "marker", -6, false],
+    ["MAAN", 3330, 130, "#f4f1ea", "tag", -3, true],
+    ["CHAI", 3380, 640, "#ffd400", "tag", 5, false],
+    ["ROOF", 4460, 150, "#f4f1ea", "marker", -7, false],
+    ["B4D", 4640, 410, "#ff2e88", "tag", 8, true],
+    ["WRNG", 4580, 640, "#f4f1ea", "tag", -4, false],
+    ["SPRK", 680, 140, "#2ad4ff", "tag", 6, false],
+    ["N!", 1690, 250, "#f4f1ea", "tag", -10, false],
+  ];
+  tags.forEach(([t, x, y, c, f, rot, sw], i) => (paint += tag(t, { x, y, size: f === "marker" ? 50 : 56, color: c, font: f, rot, seed: 100 + i, swoosh: sw, crown: i % 5 === 0, drips: i % 3 === 0 ? 3 : 0 })));
+  // Stencils and arrows.
+  paint += stencil("NO ENTRY", { x: 4560, y: 290, size: 40, color: "#f4f1ea", rot: -2 });
+  paint += `<path d="M4470 330h170l-26 -20m26 20l-26 20" fill="none" stroke="#f4f1ea" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`;
+  paint += stencil("WRONG SIDE ONLY", { x: 2235, y: 600, size: 26, color: "#0b0b10", rot: 0, opacity: 0.85 });
+  // Sticker bombs by the shutters and the column.
+  paint += stickerBomb({ x: 960, y: 470, w: 200, h: 150, n: 22, seed: 7 });
+  paint += stickerBomb({ x: 3260, y: 220, w: 180, h: 160, n: 18, seed: 8 });
+  // Overspray speckle round the pieces.
+  const R2 = rng(77);
+  [[600, 410, "#ff2e88"], [2230, 330, "#2ad4ff"], [3790, 380, "#9aff3c"]].forEach(([cx, cy, c]) => {
+    for (let i = 0; i < 70; i++) {
+      const a = R2() * Math.PI * 2;
+      const d = 260 + R2() * 260;
+      paint += `<circle cx="${r(cx + Math.cos(a) * d)}" cy="${r(cy + Math.sin(a) * d * 0.45)}" r="${r(1 + R2() * 3.2)}" fill="${c}" opacity="${r(0.25 + R2() * 0.5, 2)}"/>`;
+    }
+  });
+
+  s += paint;
+  s += `<rect x="0" y="${H * 0.66}" width="${W}" height="${H * 0.34}" fill="url(#grime)"/>`;
+  const body = `<defs>${defs}</defs>${s}`;
+  write("wall.svg", doc(W, H, body, ' data-layer="wall"'));
+}
+
+/* ───────────────────────── CONCRETE (tall wall) ───────────────────────── */
+// Bare concrete for the side wall behind the opening poster. Tiles both ways,
+// so no coping band (the wall draws its own).
 {
   const W = 1600;
   const H = 700;
-  const R = rng(99);
-  const base = "#2c2826";
-  let s = `<rect width="${W}" height="${H}" fill="${base}"/>`;
-  // Plaster patches.
+  const R = rng(321);
+  let s = `<rect width="${W}" height="${H}" fill="#4f4a45"/>`;
+  for (let i = 0; i < 30; i++) {
+    const x = 30 + R() * (W - 260);
+    const y = 30 + R() * (H - 160);
+    s += `<rect x="${r(x)}" y="${r(y)}" width="${r(60 + R() * 200)}" height="${r(30 + R() * 110)}" fill="${R() > 0.5 ? "#5b554f" : "#45403c"}" opacity="${r(0.35 + R() * 0.4, 2)}"/>`;
+  }
   for (let i = 0; i < 26; i++) {
-    const cx = R() * W;
-    const cy = 60 + R() * (H - 120);
-    const rx = 40 + R() * 160;
-    const ry = 20 + R() * 90;
-    const pts = Array.from({ length: 9 }, (_, k) => {
-      const a = (k / 9) * Math.PI * 2;
-      const rr = 0.7 + R() * 0.5;
-      return `${r(cx + Math.cos(a) * rx * rr)} ${r(cy + Math.sin(a) * ry * rr)}`;
-    });
-    s += `<path d="M${pts.join("L")}Z" fill="${R() > 0.5 ? "#3d3833" : "#1f1c1a"}" opacity="${r(0.3 + R() * 0.4, 2)}" filter="url(#soft)"/>`;
+    const x = 10 + R() * (W - 20);
+    s += `<rect x="${r(x)}" y="${r(R() * 200)}" width="${r(3 + R() * 9)}" height="${r(80 + R() * 300)}" fill="#25211e" opacity="${r(0.16 + R() * 0.18, 2)}"/>`;
   }
-  // Exposed brick where the plaster fell away.
-  const bx = 980;
-  const by = 330;
-  let bricks = "";
-  for (let row = 0; row < 7; row++) {
-    for (let c = 0; c < 6; c++) {
-      const xx = bx + c * 46 + (row % 2) * 23;
-      bricks += `<rect x="${xx}" y="${by + row * 22}" width="42" height="18" fill="${["#40261e", "#4a2b21", "#38211a"][(row + c) % 3]}"/>`;
-    }
-  }
-  s += `<defs><clipPath id="brk"><path d="M${bx + 10} ${by + 6} L${bx + 120} ${by - 4} L${bx + 250} ${by + 20} L${bx + 290} ${by + 90} L${bx + 230} ${by + 150} L${bx + 120} ${by + 158} L${bx + 20} ${by + 120} Z"/></clipPath></defs>`;
-  s += `<rect x="${bx}" y="${by - 10}" width="300" height="180" fill="#2a1d18" clip-path="url(#brk)"/><g clip-path="url(#brk)">${bricks}</g>`;
-  s += `<path d="M${bx + 10} ${by + 6} L${bx + 120} ${by - 4} L${bx + 250} ${by + 20} L${bx + 290} ${by + 90} L${bx + 230} ${by + 150} L${bx + 120} ${by + 158} L${bx + 20} ${by + 120} Z" fill="none" stroke="#1d1a17" stroke-width="5" opacity="0.7"/>`;
-  // Rain stains from the coping.
-  for (let i = 0; i < 18; i++) {
-    const sx = R() * W;
-    const len = 80 + R() * 260;
-    s += `<rect x="${r(sx)}" y="30" width="${r(4 + R() * 14)}" height="${r(len)}" fill="#141210" opacity="${r(0.12 + R() * 0.18, 2)}" filter="url(#streak)"/>`;
-  }
-  // Cracks.
-  for (let i = 0; i < 6; i++) {
-    let cx = R() * W;
-    let cy = 40 + R() * 300;
-    let d = `M${r(cx)} ${r(cy)}`;
-    for (let k = 0; k < 7; k++) {
-      cx += (R() - 0.5) * 50;
-      cy += 15 + R() * 30;
-      d += `L${r(cx)} ${r(cy)}`;
-    }
-    s += `<path d="${d}" stroke="#151312" stroke-width="2" fill="none" opacity="0.75"/>`;
-  }
-  // Pillars.
-  [0, 800].forEach((px) => {
-    s += `<rect x="${px}" y="0" width="70" height="${H}" fill="#332e2b"/><rect x="${px}" y="0" width="5" height="${H}" fill="#423c37"/><rect x="${px + 65}" y="0" width="5" height="${H}" fill="#141210"/>`;
-  });
-  // Coping + bottom grime.
-  s += `<rect x="0" y="0" width="${W}" height="26" fill="#3a3531"/><rect x="0" y="0" width="${W}" height="4" fill="#4a443e"/><rect x="0" y="26" width="${W}" height="7" fill="#100e0d" opacity="0.85"/>`;
-  s += `<rect x="0" y="${H * 0.62}" width="${W}" height="${H * 0.38}" fill="url(#grime)"/>`;
-  s += `<rect width="${W}" height="${H}" filter="url(#n)" opacity="0.5"/>`;
-  const body = `<defs>
-<filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
-<filter id="streak" x="-200%" y="-10%" width="500%" height="120%"><feGaussianBlur stdDeviation="5 20"/></filter>
-<linearGradient id="grime" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f0d0c" stop-opacity="0"/><stop offset="1" stop-color="#0f0d0c" stop-opacity="0.7"/></linearGradient>
-<filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" seed="4" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.5 0 0 0 -0.72"/></filter>
-</defs>${s}`;
-  write("wall.svg", doc(W, H, body, ' data-layer="wall"'));
+  // Formwork seams.
+  for (let y = 140; y < H; y += 175) s += `<rect x="0" y="${y}" width="${W}" height="3" fill="#2f2b28" opacity="0.5"/>`;
+  for (let x = 0; x < W; x += 400) s += `<circle cx="${x + 60}" cy="70" r="4" fill="#2f2b28" opacity="0.6"/><circle cx="${x + 260}" cy="245" r="4" fill="#2f2b28" opacity="0.6"/>`;
+  const body = `<defs><filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="6" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.66"/></filter></defs>${s}<rect width="${W}" height="${H}" filter="url(#n)" opacity="0.35"/>`;
+  write("concrete.svg", doc(W, H, body, ' data-layer="concrete"'));
 }
 
 /* ───────────────────────── ASPHALT ───────────────────────── */

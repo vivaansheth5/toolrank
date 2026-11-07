@@ -1,10 +1,11 @@
-import { copy, hindi, ui, drops } from "@/lib/site-config";
+import { copy, ui, drops } from "@/lib/site-config";
 import { fill, formatPosterDate, formatDropSlot } from "@/lib/format";
 import { Lines } from "@/components/ui/Lines";
 
 /**
- * Wall layer (depth 0.8): a tall plastered side wall carrying the giant opening
- * poster, then a boundary wall covered in wheat-paste posters and stickers.
+ * Wall layer (depth 0.8): a tall concrete side wall carrying the giant opening
+ * poster, then a street wall painted over with pieces, throw-ups and tags
+ * (scene plate), with two wheat-pastes for the live and next drop on top.
  * x positions are in P units along the wall.
  */
 export function Wall({ dropNumber, dropName, pieces }: { dropNumber: string; dropName: string; pieces: number }) {
@@ -40,65 +41,12 @@ export function Wall({ dropNumber, dropName, pieces }: { dropNumber: string; dro
         <span className="tape tape-br" aria-hidden="true" />
       </div>
 
-      {/* Wheat-paste wall. */}
+      {/* Two wheat-pastes over the paint: the live drop and the next one. */}
       <div className="wall-art" aria-hidden="true">
         <div className="paste paste-yellow" style={{ "--wx": 1.9, "--wy": 0.53, "--r": "-1.5deg" } as React.CSSProperties}>
           <span className="paste-k">{fill(ui.scene.paste.dropPoster, { drop: dropNumber })}</span>
           <span className="paste-big">{dropName}</span>
           <span className="paste-k">{live.releasedAt ? formatPosterDate(live.releasedAt) : ""}</span>
-        </div>
-        <div className="paste-grid" style={{ "--wx": 2.75, "--wy": 0.5 } as React.CSSProperties}>
-          {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="paste paste-pink" style={{ "--r": `${(i % 3) - 1}deg` } as React.CSSProperties}>
-              <span className="paste-mid">{ui.scene.paste.wrongSideOnly}</span>
-              <span className="paste-arrow">←</span>
-            </div>
-          ))}
-        </div>
-        <div className="sticker sticker-noentry" style={{ "--wx": 3.55, "--wy": 0.62 } as React.CSSProperties} />
-        <div className="stencil deva" style={{ "--wx": 4.0, "--wy": 0.6 } as React.CSSProperties}>
-          {hindi.wrongSide}
-        </div>
-        <div className="paste paste-ink" style={{ "--wx": 5.05, "--wy": 0.52, "--r": "1deg" } as React.CSSProperties}>
-          <span className="paste-k">{ui.scene.paste.cotton[0]}</span>
-          <span className="paste-big">{ui.scene.paste.cotton[1]}</span>
-          <span className="paste-k">{ui.scene.paste.cotton[2]}</span>
-        </div>
-        <div className="flyer" style={{ "--wx": 5.85, "--wy": 0.56, "--r": "-2deg" } as React.CSSProperties}>
-          <span className="flyer-title">{ui.scene.paste.lost.title}</span>
-          <span className="flyer-body">{ui.scene.paste.lost.body}</span>
-          <span className="flyer-tabs">
-            {Array.from({ length: 6 }, (_, i) => (
-              <span key={i}>{ui.scene.paste.lost.tab}</span>
-            ))}
-          </span>
-        </div>
-        <div className="sticker sticker-440" style={{ "--wx": 6.4, "--wy": 0.72 } as React.CSSProperties}>
-          {ui.scene.paste.sticker}
-        </div>
-        <div className="paste paste-green" style={{ "--wx": 7.0, "--wy": 0.5, "--r": "2deg" } as React.CSSProperties}>
-          <span className="paste-k">{ui.scene.paste.uturn[0]}</span>
-          <span className="paste-big">{ui.scene.paste.uturn[1]}</span>
-          <span className="paste-k">{ui.scene.paste.uturn[2]}</span>
-        </div>
-        <div className="torn" style={{ "--wx": 7.9, "--wy": 0.58 } as React.CSSProperties} />
-        <div className="paste paste-yellow" style={{ "--wx": 8.6, "--wy": 0.54, "--r": "-1deg" } as React.CSSProperties}>
-          <span className="paste-k">{ui.scene.paste.nowShowing[0]}</span>
-          <span className="paste-big">{ui.scene.paste.nowShowing[1]}</span>
-          <span className="paste-k">{ui.scene.paste.nowShowing[2]}</span>
-        </div>
-        <div className="stencil stencil-arrow" style={{ "--wx": 9.6, "--wy": 0.66 } as React.CSSProperties}>
-          {ui.scene.paste.wrongWay}
-        </div>
-        <div className="paste-grid paste-grid-sm" style={{ "--wx": 10.4, "--wy": 0.52 } as React.CSSProperties}>
-          {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="paste paste-bone" style={{ "--r": `${(i % 2) * 2 - 1}deg` } as React.CSSProperties}>
-              <span className="paste-mid">{ui.scene.paste.noSpam}</span>
-            </div>
-          ))}
-        </div>
-        <div className="sticker sticker-n" style={{ "--wx": 11.3, "--wy": 0.64 } as React.CSSProperties}>
-          <span className="mirror">N</span>
         </div>
         <div className="paste paste-ink" style={{ "--wx": 11.9, "--wy": 0.5, "--r": "-1.5deg" } as React.CSSProperties}>
           <span className="paste-k">{ui.scene.paste.nextOnTheLine}</span>

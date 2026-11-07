@@ -661,7 +661,12 @@ export class LineEngine {
   }
 
   private bodyAngle(g: G) {
-    return g.pegStyle ? g.angle * 0.35 : g.angle;
+    return this.visualAngle(g);
+  }
+
+  /** Pegged pieces can't pivot freely: they shear more than they turn (less so on touch, where the sway is the point). */
+  private visualAngle(g: G) {
+    return g.pegStyle ? g.angle * (this.mode === "touch" ? 0.6 : 0.35) : g.angle;
   }
 
   /* ───────────────────────── memory & intro ───────────────────────── */
@@ -854,14 +859,18 @@ export class LineEngine {
       this.gust.t0 = t;
       this.gust.next = t + 8 + Math.random() * 6;
     }
-    const kV = 0.004;
+    // Swiping on a phone: the pieces trail the swipe a little harder than on
+    // desktop, so a slow drag already sways them, but a flick is capped lower
+    // so they swing slightly rather than fly.
+    const kV = m === "touch" ? 0.007 : 0.004;
+    const maxK = m === "touch" ? 0.6 : 1;
     for (const g of this.gs) {
       const screenX = g.xPx - this.pos + this.lineOffset.x;
       const visible = screenX > -this.V * 0.5 && screenX < this.V * 1.5;
       // Hover easing.
       g.hover += (g.hoverTarget - g.hover) * (1 - Math.exp(-dt * 10));
       // Target angle: trail the movement, plus wind, gusts and cursor air.
-      let target = clamp(kV * vScreen, -g.max, g.max);
+      let target = clamp(kV * vScreen, -g.max * maxK, g.max * maxK);
       target += this.wind(g, t) + this.gustAt(g, t, screenX);
       if (m === "desktop" && this.mouse.inside && visible) {
         const cy = (this.data.y0 + 0.2) * this.H + this.lineOffset.y;
@@ -884,8 +893,8 @@ export class LineEngine {
       }
       const s = this.ss[g.span];
       const dy = this.disp(s, g.u) + g.drop;
-      const r = g.pegStyle ? g.angle * 0.35 : g.angle;
-      const sk = g.pegStyle ? -g.angle * 0.65 : 0;
+      const r = this.visualAngle(g);
+      const sk = g.pegStyle ? -g.angle * (m === "touch" ? 0.45 : 0.65) : 0;
       const sc = 1 + 0.04 * g.hover;
       const tr = `translate3d(0,${dy.toFixed(2)}px,0) rotate(${r.toFixed(3)}deg) skewX(${sk.toFixed(3)}deg) scale(${sc.toFixed(4)})`;
       if (tr !== g.lastT) {
