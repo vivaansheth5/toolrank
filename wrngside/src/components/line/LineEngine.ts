@@ -53,6 +53,17 @@ const NM = 5; // cable modes per span
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+/**
+ * Pendulum constants for a piece of weight w (0 light … 1 heavy). Period 1.0 s
+ * → 1.3 s, damping ratio 0.2 → 0.27. Drive gains are per pitch/s² (the line's
+ * acceleration) and per pitch/s (air drag): a flick swings a tee ~7°, a jacket
+ * ~5°; a steady glide makes them trail by ~2–3°.
+ */
+function pendulum(w: number) {
+  const omega = (2 * Math.PI) / lerp(1.0, 1.3, w);
+  return { w2: omega * omega, c: 2 * lerp(0.2, 0.27, w) * omega, kA: lerp(5, 2.6, w), kD: lerp(18, 8, w), max: lerp(15, 9, w) };
+}
+
 interface G {
   i: number;
   handle: string;
@@ -76,8 +87,11 @@ interface G {
   hoverTarget: number;
   drop: number;
   phase: number;
-  stiff: number;
-  damp: number;
+  /** Pendulum: ω², damping, drive from the line's acceleration and from air drag, soft limit (deg). */
+  w2: number;
+  c: number;
+  kA: number;
+  kD: number;
   max: number;
   xPx: number;
   lampDxPx: number;
@@ -119,7 +133,6 @@ export class LineEngine {
   private pin!: HTMLElement;
   private scroller!: HTMLElement;
   private track!: HTMLElement;
-  private nights: HTMLElement[] = [];
   private light!: HTMLElement;
   private layers: { el: HTMLElement; depth: number; amp: number; mx: number; my: number; last: string }[] = [];
   private gs: G[] = [];
@@ -139,6 +152,8 @@ export class LineEngine {
   private pos = 0;
   private lastPos = 0;
   private vel = 0;
+  private accel = 0;
+  private lastTrack = "";
   private time = 0;
   private started = 0;
   private mouse = { x: -9999, y: -9999, nx: 0, ny: 0, inside: false };
@@ -175,7 +190,6 @@ export class LineEngine {
     this.pin = q<HTMLElement>("[data-line-pin]");
     this.scroller = q<HTMLElement>("[data-line-scroller]");
     this.track = q<HTMLElement>("[data-line-track]");
-    this.nights = [...this.root.querySelectorAll<HTMLElement>(".night")];
     this.light = q<HTMLElement>(".light");
     this.hint = q<HTMLElement>("[data-line-hint]");
     this.hud.cat = q<HTMLElement>("[data-hud-cat]");
@@ -217,7 +231,8 @@ export class LineEngine {
         span: d.span,
         u: d.u,
         weight: d.weight,
-        pegStyle: d.hang === "pegs" && d.w > 60,
+        // Held at two points: the cloth shears under the pegs instead of turning.
+        pegStyle: d.hang === "pegs",
         angle: 0,
         vel: 0,
         tagAngle: 0,
@@ -226,10 +241,9 @@ export class LineEngine {
         hoverTarget: 0,
         drop: 0,
         phase: Math.random() * 100,
-        // Brief: tees stiffness 50 / damping 4 / max 14°; outerwear 32 / 3.6 / 8°.
-        stiff: lerp(54, 30, w),
-        damp: lerp(4.2, 3.5, w),
-        max: lerp(15, 7.5, w),
+        // A real pendulum: light tees swing at ~1.0 s, heavy jackets at ~1.3 s,
+        // both lightly damped by the air.
+        ...pendulum(w),
         xPx: 0,
         lampDxPx: 0,
         lastT: "",
@@ -664,9 +678,9 @@ export class LineEngine {
     return this.visualAngle(g);
   }
 
-  /** Pegged pieces can't pivot freely: they shear more than they turn (less so on touch, where the sway is the point). */
+  /** Pegged pieces can't pivot: the pegs hold the top, the hem swings (shear, see tick). */
   private visualAngle(g: G) {
-    return g.pegStyle ? g.angle * (this.mode === "touch" ? 0.6 : 0.35) : g.angle;
+    return g.pegStyle ? g.angle * 0.15 : g.angle;
   }
 
   /* ───────────────────────── memory & intro ───────────────────────── */
@@ -707,7 +721,7 @@ export class LineEngine {
   private runIntro() {
     if (!this.introPending) return;
     this.introPending = false;
-    const light = this.light;
+    const light = this.stage;
     const setLamp = (v: number, warm = 0.15) => {
       light.style.setProperty("--lamp", String(v));
       light.style.setProperty("--warm", String(warm));
@@ -763,7 +777,9 @@ export class LineEngine {
 
   private stepCables(dt: number) {
     const w1 = 2 * Math.PI * 1.25;
-    const speed = Math.abs(this.vel);
+    // Moving the line bows the cables, on desktop. On phones that would mean
+    // redrawing them every frame of a swipe: they only move when plucked.
+    const speed = this.mode === "desktop" ? Math.abs(this.vel) : 0;
     for (const s of this.ss) {
       s.force.fill(0);
       // Moving the line bows the cable a little; stopping lets it spring back.
@@ -815,7 +831,12 @@ export class LineEngine {
     else this.pos = this.scroller.scrollLeft;
     const raw = (this.pos - this.lastPos) / Math.max(dt, 1 / 240);
     this.lastPos = this.pos;
-    this.vel += (raw - this.vel) * (1 - Math.exp(-dt * 14));
+    // Short smoothing (25 ms) so the swing answers the finger, not a frame late;
+    // acceleration from the smoothed velocity, smoothed again (40 ms).
+    const prevVel = this.vel;
+    this.vel += (raw - this.vel) * (1 - Math.exp(-dt / 0.025));
+    const rawAcc = (this.vel - prevVel) / Math.max(dt, 1 / 240);
+    this.accel += (rawAcc - this.accel) * (1 - Math.exp(-dt / 0.04));
     if (!this.interacted && Math.abs(raw) > 30) this.markInteracted();
 
     if (m === "static") {
@@ -831,14 +852,12 @@ export class LineEngine {
     this.lineOffset.x += (-mx * 14 - this.lineOffset.x) * k;
     this.lineOffset.y += (-my * 8 - this.lineOffset.y) * k;
     if (m === "desktop") {
+      // The wall, its pools and the lamps live in the track and move with it.
       const tr = `translate3d(${(-this.pos + this.lineOffset.x).toFixed(2)}px, ${this.lineOffset.y.toFixed(2)}px, 0)`;
-      this.track.style.transform = tr;
-      for (const n of this.nights) n.style.transform = tr;
-      this.light.style.transform = tr;
-    } else if (!this.sda) {
-      const tr = `translate3d(${(-this.pos).toFixed(2)}px, 0, 0)`;
-      for (const n of this.nights) n.style.transform = tr;
-      this.light.style.transform = tr;
+      if (tr !== this.lastTrack) {
+        this.track.style.transform = tr;
+        this.lastTrack = tr;
+      }
     }
     for (const L of this.layers) {
       L.mx += (-mx * L.amp - L.mx) * k;
@@ -854,37 +873,52 @@ export class LineEngine {
 
     // 3. Physics.
     this.stepCables(dt);
-    const vScreen = -this.vel;
     if (t > this.gust.next && !this.introPending) {
       this.gust.t0 = t;
       this.gust.next = t + 8 + Math.random() * 6;
     }
-    // Swiping on a phone: the pieces trail the swipe a little harder than on
-    // desktop, so a slow drag already sways them, but a flick is capped lower
-    // so they swing slightly rather than fly.
-    const kV = m === "touch" ? 0.007 : 0.004;
-    const maxK = m === "touch" ? 0.6 : 1;
+    // Each piece is a damped pendulum hung from a pivot that moves with the
+    // line. Pivot motion in pitches per second: the line moves opposite to the
+    // scroll. Speeding up leaves the hem behind; stopping swings it through;
+    // air drag makes it trail a little while the line keeps moving.
+    const vP = -this.vel / this.P;
+    const aP = -this.accel / this.P;
+    const gain = m === "desktop" ? 1.5 : 1;
+    const steps = dt > 1 / 50 ? 2 : 1;
+    const h = dt / steps;
     for (const g of this.gs) {
       const screenX = g.xPx - this.pos + this.lineOffset.x;
       const visible = screenX > -this.V * 0.5 && screenX < this.V * 1.5;
       // Hover easing.
       g.hover += (g.hoverTarget - g.hover) * (1 - Math.exp(-dt * 10));
-      // Target angle: trail the movement, plus wind, gusts and cursor air.
-      let target = clamp(kV * vScreen, -g.max * maxK, g.max * maxK);
-      target += this.wind(g, t) + this.gustAt(g, t, screenX);
+      // Where it would hang at rest: wind, gusts and (desktop) cursor air.
+      let rest = this.wind(g, t) + this.gustAt(g, t, screenX);
       if (m === "desktop" && this.mouse.inside && visible) {
         const cy = (this.data.y0 + 0.2) * this.H + this.lineOffset.y;
         const dx = this.mouse.x - screenX;
         const dy = this.mouse.y - cy;
         const dist = Math.hypot(dx, dy * 0.6);
-        if (dist < 160) target += 3 * Math.pow(1 - dist / 160, 2) * Math.sign(dx || 1);
+        if (dist < 160) rest += 3 * Math.pow(1 - dist / 160, 2) * Math.sign(dx || 1);
       }
-      g.vel += (g.stiff * (target - g.angle) - g.damp * g.vel) * dt;
-      g.angle += g.vel * dt;
-      // Swing tag: a lighter pendulum that lags the garment.
-      const tagTarget = clamp(kV * 1.4 * vScreen, -22, 22) + this.wind(g, t + 0.4) * 1.6 - g.vel * 0.05;
-      g.tagVel += (36 * (tagTarget - g.tagAngle) - 3.1 * g.tagVel) * dt;
-      g.tagAngle += g.tagVel * dt;
+      const drive = gain * (g.kA * aP + g.kD * vP);
+      for (let k = 0; k < steps; k++) {
+        g.vel += (-g.w2 * (g.angle - rest) - g.c * g.vel + drive) * h;
+        g.angle += g.vel * h;
+      }
+      // Soft limit: a hard flick can't throw a piece over the cable.
+      if (Math.abs(g.angle) > g.max) {
+        const sgn = Math.sign(g.angle);
+        g.angle = sgn * (g.max + (Math.abs(g.angle) - g.max) * 0.35);
+        if (Math.sign(g.vel) === sgn) g.vel *= 0.4;
+      }
+      // Swing tag: a lighter, quicker pendulum on its string.
+      const tagRest = this.wind(g, t + 0.4) * 1.6;
+      const tagDrive = gain * (g.kA * 1.5 * aP + g.kD * 1.4 * vP);
+      for (let k = 0; k < steps; k++) {
+        g.tagVel += (-64 * (g.tagAngle - tagRest) - 2.9 * g.tagVel + tagDrive) * h;
+        g.tagAngle += g.tagVel * h;
+      }
+      g.tagAngle = clamp(g.tagAngle, -24, 24);
 
       if (!visible) continue;
       if (!g.prefetched && screenX > -this.V * 0.2 && screenX < this.V * 1.2) {
@@ -894,7 +928,7 @@ export class LineEngine {
       const s = this.ss[g.span];
       const dy = this.disp(s, g.u) + g.drop;
       const r = this.visualAngle(g);
-      const sk = g.pegStyle ? -g.angle * (m === "touch" ? 0.45 : 0.65) : 0;
+      const sk = g.pegStyle ? -g.angle * 0.85 : 0;
       const sc = 1 + 0.04 * g.hover;
       const tr = `translate3d(0,${dy.toFixed(2)}px,0) rotate(${r.toFixed(3)}deg) skewX(${sk.toFixed(3)}deg) scale(${sc.toFixed(4)})`;
       if (tr !== g.lastT) {
@@ -953,15 +987,11 @@ export class LineEngine {
   }
 
   private writeStatic() {
-    // Reduced motion: no parallax; the wall and lights move 1:1 with the content.
-    const tr = `translate3d(${(-this.pos).toFixed(1)}px,0,0)`;
-    for (const n of this.nights) n.style.transform = tr;
-    this.light.style.transform = tr;
+    // Reduced motion: no parallax. The wall and lights scroll with the line.
     for (const L of this.layers) {
-      const s = L.depth === 0.8 ? tr : "none";
-      if (s !== L.last) {
-        L.el.style.transform = s;
-        L.last = s;
+      if (L.last !== "none") {
+        L.el.style.transform = "none";
+        L.last = "none";
       }
     }
   }
@@ -995,10 +1025,9 @@ export class LineEngine {
     if (Math.abs(p - this.hud.lastP) > 0.0008) {
       this.hud.lastP = p;
       this.hud.fill?.style.setProperty("stroke-dasharray", `${p.toFixed(4)} 1`);
-      if (this.hud.spark) {
-        this.hud.spark.style.left = `${(p * 100).toFixed(2)}%`;
-        this.hud.spark.style.top = `${((4 + 14 * 4 * p * (1 - p) * 0.5) / 20) * 100}%`;
-      }
+      // Along the cable curve (M0 4 Q200 18 400 4 in a 20 px tall box), by
+      // transform so it never triggers layout.
+      if (this.hud.spark) this.hud.spark.style.transform = `translate3d(${(p * 100).toFixed(2)}%, ${(4 + 28 * p * (1 - p)).toFixed(2)}px, 0)`;
     }
     const idx = this.currentIndex();
     const { category, count } = this.deps.hudLabel(idx);

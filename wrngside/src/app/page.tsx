@@ -5,10 +5,8 @@ import { renderTime } from "@/lib/time";
 import { TheLine } from "@/components/line/TheLine";
 import { TornEdge } from "@/components/home/TornEdge";
 import { Manifesto } from "@/components/home/Manifesto";
-import { NextDrop } from "@/components/home/NextDrop";
 import { Categories } from "@/components/home/Categories";
 import { LookbookTeaser } from "@/components/home/LookbookTeaser";
-import { Craft } from "@/components/home/Craft";
 import { Community } from "@/components/home/Community";
 import { WrongList } from "@/components/home/WrongList";
 import { ThemeSync } from "@/components/home/ThemeSync";
@@ -25,8 +23,13 @@ import { Lines } from "@/components/ui/Lines";
 export const metadata: Metadata = pageMeta({ title: site.title, description: site.description, path: "/", absolute: true });
 
 export default async function Home() {
-  // The wall is the hero's largest paint (LCP): fetch it before the CSS asks for it.
-  preload("/scene/wall.svg", { as: "image", fetchPriority: "high" });
+  // Fetch the hero's first paints before the CSS asks for them. The poster wall's
+  // concrete is in view everywhere. The graffiti wall (8K at 2x+, 4K at 1x, as
+  // the CSS image-set picks) is only in the first view on desktop; on phones it
+  // starts a screen to the right, so it loads with the CSS and leaves the
+  // bandwidth to what's on screen.
+  preload("/scene/concrete.webp", { as: "image", fetchPriority: "high" });
+  preload("/scene/wall-4k.webp", { as: "image", imageSrcSet: "/scene/wall-4k.webp 1x, /scene/wall-8k.webp 2x", fetchPriority: "high", media: "(hover: hover) and (pointer: fine)" });
   const best = (await getBestSellers()).map(toListing);
   const now = renderTime();
   return (
@@ -42,9 +45,6 @@ export default async function Home() {
           <section className="lights-on" aria-label="Manifesto">
             <Manifesto />
           </section>
-        </Suspense>
-        <Suspense>
-          <NextDrop />
         </Suspense>
         <Suspense>
           <Categories />
@@ -69,9 +69,6 @@ export default async function Home() {
         </Suspense>
         <Suspense>
           <LookbookTeaser />
-        </Suspense>
-        <Suspense>
-          <Craft />
         </Suspense>
         <Suspense>
           <Community />

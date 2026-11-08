@@ -15,7 +15,9 @@ export const metadata: Metadata = pageMeta({
 });
 export const viewport: Viewport = { themeColor: site.themeColor.day };
 
-const IMAGES = ["/campaign/lookbook-01.webp", "/campaign/lookbook-04.webp", "/campaign/cat-outerwear.webp", "/campaign/lookbook-02.webp"];
+// The name, the city (Old Delhi at night), the process, the team. The lookbook's
+// American streets stay in the lookbook.
+const IMAGES = ["/campaign/community-01.webp", "/campaign/about-city.webp", "/campaign/cat-outerwear.webp", "/campaign/community-05.webp"];
 
 export default function AboutPage() {
   return (

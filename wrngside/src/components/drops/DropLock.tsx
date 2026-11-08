@@ -9,7 +9,7 @@ import { countdownParts, formatDropSlot, fill } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/device";
-import { Flap } from "@/components/home/NextDrop";
+import { Flap } from "@/components/ui/Flap";
 import { ContactField, validateContact, type ContactMode } from "@/components/ui/ContactField";
 import { MiniLine } from "@/components/ui/MiniLine";
 import { TLink } from "@/components/ui/TLink";

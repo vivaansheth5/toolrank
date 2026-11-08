@@ -63,11 +63,15 @@ export function Pole({ pole }: { pole: PoleSpec }) {
         </g>
       ))}
 
-      {/* Lamp bracket and cobra-head luminaire (to the right). */}
-      <path d="M150 140 C150 108 178 92 226 94" stroke="#2a2927" strokeWidth="5" fill="none" />
-      <path d="M150 156 C160 128 186 110 212 104" stroke="#2a2927" strokeWidth="2.5" fill="none" />
-      <path d="M218 88 C232 84 262 88 270 98 C262 106 236 108 220 102 Z" fill="#34322f" />
-      <path d="M223 101 C236 104 256 104 266 100 L262 106 C248 110 232 110 224 106 Z" className="lamp-lens" fill="#ffd9a3" />
+      {/* Lamp bracket and cobra-head luminaire (to the right). The group drops
+          below the fixed header (--lamp-drop, in these units); the light layer
+          follows the same offset. */}
+      <g className="pole-lamp">
+        <path d="M150 140 C150 108 178 92 226 94" stroke="#2a2927" strokeWidth="5" fill="none" />
+        <path d="M150 156 C160 128 186 110 212 104" stroke="#2a2927" strokeWidth="2.5" fill="none" />
+        <path d="M218 88 C232 84 262 88 270 98 C262 106 236 108 220 102 Z" fill="#34322f" />
+        <path d="M223 101 C236 104 256 104 266 100 L262 106 C248 110 232 110 224 106 Z" className="lamp-lens" fill="#fff6e4" />
+      </g>
 
       {/* Pole body. */}
       <path d="M141 92 L159 92 L166 905 L134 905 Z" fill={`url(#${id}c)`} />

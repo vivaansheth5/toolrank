@@ -69,24 +69,35 @@ html[data-header="hidden"] .ticker {
   color: var(--bone);
 }
 .live-dot {
+  position: relative;
   display: inline-block;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: var(--signal);
-  box-shadow: 0 0 0 0 rgb(255 59 31 / 0.6);
-  animation: live 1.6s var(--ease-ui) infinite;
   flex: none;
+}
+/* The pulse ring scales and fades (compositor-only, unlike an animated box-shadow). */
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgb(255 59 31 / 0.55);
+  animation: live 1.6s var(--ease-ui) infinite;
 }
 @keyframes live {
   0% {
-    box-shadow: 0 0 0 0 rgb(255 59 31 / 0.55);
+    transform: scale(1);
+    opacity: 1;
   }
   70% {
-    box-shadow: 0 0 0 7px rgb(255 59 31 / 0);
+    transform: scale(3);
+    opacity: 0;
   }
   100% {
-    box-shadow: 0 0 0 0 rgb(255 59 31 / 0);
+    transform: scale(3);
+    opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1161,6 +1172,9 @@ html.scroll-locked {
 .contact-field {
   display: grid;
   gap: 12px;
+}
+.contact-field.is-compact .seg {
+  margin-bottom: 0;
 }
 .input-wrap {
   position: relative;

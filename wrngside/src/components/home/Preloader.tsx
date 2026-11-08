@@ -47,11 +47,21 @@ export function Preloader() {
             }),
       ),
     );
-    ["/scene/buildings.svg", "/scene/wall.svg", "/scene/sky.svg"].forEach((src) => {
+    // The scene plates in the first view, at the resolution the CSS will use.
+    // The graffiti wall only counts on desktop: on phones it starts off-screen.
+    const bigHiDpi = window.matchMedia("(min-width: 1600px) and (min-resolution: 2dppx)").matches;
+    const desktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    [
+      { src: bigHiDpi ? "/scene/buildings-8k.webp" : "/scene/buildings-4k.webp" },
+      ...(desktop ? [{ src: "/scene/wall-4k.webp", srcset: "/scene/wall-4k.webp 1x, /scene/wall-8k.webp 2x" }] : []),
+      { src: "/scene/concrete.webp" },
+      { src: "/scene/sky.svg" },
+    ].forEach(({ src, srcset }: { src: string; srcset?: string }) => {
       tasks.push(
         new Promise((r) => {
           const i = new Image();
           i.onload = i.onerror = () => r(null);
+          if (srcset) i.srcset = srcset;
           i.src = src;
         }),
       );

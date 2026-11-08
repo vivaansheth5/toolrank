@@ -1,14 +1,21 @@
 #!/usr/bin/env node
-// Scene plates for THE LINE → public/scene/*.svg, textures → public/textures/*.png,
+// Scene plates for THE LINE → public/scene/, textures → public/textures/*.png,
 // and overlay anchors → src/components/line/scene-anchors.ts.
 // Plates tile horizontally (background-repeat: repeat-x) so ultrawide screens
 // extend the street instead of stretching it.
+//
+// The detailed plates (wall, buildings, concrete, pavement) are drawn as SVG
+// here and rendered straight to WebP: 8K and 4K for the wall and buildings,
+// with a night grade baked in. A bitmap costs a phone nothing to move; the
+// same SVG with its noise and blur filters had to be rasterised on the device.
+// The simple ones (sky, skyline, moon, foreground) stay SVG.
 import fs from "node:fs";
+import sharp from "sharp";
 import path from "node:path";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { rng, r, tone, mix } from "./art/lib.mjs";
-import { piece, throwUp, tag, stencil, stickerBomb, sparkle, dripsPath } from "./art/graffiti.mjs";
+import { piece, throwUp, tag, stencil, stickerBomb, sparkle, dripsPath, wordPath } from "./art/graffiti.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sceneDir = path.join(root, "public", "scene");
@@ -17,6 +24,29 @@ fs.mkdirSync(sceneDir, { recursive: true });
 fs.mkdirSync(texDir, { recursive: true });
 
 const write = (name, svg) => fs.writeFileSync(path.join(sceneDir, name), svg.replace(/\n\s*/g, "\n").trim() + "\n");
+
+/**
+ * Render an SVG plate (W×H user units) to WebP at each target width, vector-
+ * sharp (rendered at that size, not upscaled), then night-graded: a cooler,
+ * darker exposure with the saturation pushed back up so the paint stays loud.
+ */
+const rasters = [];
+const raster = (svg, W, outs, grade) =>
+  rasters.push(
+    (async () => {
+      for (const o of outs) {
+        const density = (72 * o.w) / W;
+        let img = sharp(Buffer.from(svg), { density, limitInputPixels: false });
+        if (grade) img = img.linear(grade.mul, grade.add).modulate({ saturation: grade.sat, brightness: grade.bright ?? 1 });
+        const info = await img.webp({ quality: o.q ?? 80, effort: 6, smartSubsample: true }).toFile(path.join(sceneDir, o.name));
+        console.log(`  ${o.name}: ${info.width}×${info.height}, ${Math.round(info.size / 1024)} KB`);
+      }
+    })(),
+  );
+const NIGHT_WALL = { mul: [0.6, 0.6, 0.72], add: [0, 2, 10], sat: 1.28 };
+const NIGHT_BLD = { mul: [0.82, 0.82, 0.9], add: [0, 0, 6], sat: 1.22 };
+// Stale SVG copies of the rasterised plates.
+["wall.svg", "buildings.svg", "concrete.svg", "asphalt.svg"].forEach((f) => fs.rmSync(path.join(sceneDir, f), { force: true }));
 const doc = (w, h, body, extra = "") =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" preserveAspectRatio="xMidYMax slice"${extra}>${body}</svg>`;
 
@@ -167,7 +197,7 @@ const anchors = { skyline: { w: 2400, h: 700, towerLights: [] }, buildings: { w:
       for (let c = 0; c < cols; c++) {
         const wx = x + pad + c * 78;
         const roll = R();
-        if (roll < 0.14) {
+        if (roll < 0.21) {
           const warm = R() > 0.35;
           const fill = warm ? (R() > 0.5 ? "#f2a258" : "#f7c47c") : "#bcd4f2";
           glows += `<rect x="${r(wx - 14)}" y="${r(wy - 14)}" width="78" height="86" fill="${fill}" opacity="0.18" filter="url(#g)"/>`;
@@ -215,10 +245,26 @@ const anchors = { skyline: { w: 2400, h: 700, towerLights: [] }, buildings: { w:
       const c = signColours[signCount % signColours.length];
       s += `<rect x="${r(sx)}" y="${r(sy)}" width="${r(sw)}" height="54" fill="${c}"/><rect x="${r(sx)}" y="${r(sy)}" width="${r(sw)}" height="54" fill="#000" opacity="0.35"/><rect x="${r(sx + 4)}" y="${r(sy + 4)}" width="${r(sw - 8)}" height="46" fill="none" stroke="#e8dcc0" stroke-opacity="0.3" stroke-width="2"/>`;
       anchors.buildings.signs.push({ x: r(sx), y: r(sy), w: r(sw), h: 54, colour: c });
+      glows += `<ellipse cx="${r(sx + sw / 2)}" cy="${r(sy + 70)}" rx="${r(sw * 0.75)}" ry="70" fill="${c}" opacity="0.35" filter="url(#g)"/>`;
       signCount++;
     }
     x += w + (R() > 0.7 ? 18 : 0);
   }
+  // Neon: pink and cyan tubes on the facades (glow, tube, hot core).
+  const neonTube = (d, color, sw) =>
+    `<path d="${d}" fill="none" stroke="${color}" stroke-width="${sw * 4}" opacity="0.45" filter="url(#g)" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#fff" stroke-width="${r(sw * 0.35)}" opacity="0.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  let neon = "";
+  {
+    // An arrow pointing down the street, a 24 HRS sign, a mirrored-N roundel,
+    // a pink frame round a window, a cyan zigzag.
+    neon += neonTube("M2240 210h120l-30 -26m30 26l-30 26", "#33e5ff", 6);
+    const hrs = wordPath("24 HRS", { font: "block", size: 54, tracking: 0.06, seed: 3 });
+    neon += `<g transform="translate(420 236)">${neonTube(hrs.d, "#ff3d8b", 2.6)}</g>`;
+    neon += `<g transform="translate(2760 300)"><circle r="46" fill="none" stroke="#ff3d8b" stroke-width="22" opacity="0.4" filter="url(#g)"/><circle r="46" fill="none" stroke="#ff3d8b" stroke-width="5"/><circle r="46" fill="none" stroke="#fff" stroke-width="1.8" opacity="0.8"/><g transform="scale(-1 1)">${neonTube(wordPath("N", { font: "block", size: 62, seed: 1 }).d.replace(/^/, ""), "#33e5ff", 2.4)}</g></g>`;
+    neon += neonTube("M1030 300h96v116h-96z", "#ff3d8b", 4);
+    neon += neonTube("M1840 120l30 24l30 -24l30 24l30 -24l30 24", "#33e5ff", 5);
+  }
+
   // Cable bundles strung between buildings.
   let cables = "";
   for (let i = 0; i < 7; i++) {
@@ -291,8 +337,8 @@ const anchors = { skyline: { w: 2400, h: 700, towerLights: [] }, buildings: { w:
 <linearGradient id="billbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1030"/><stop offset="1" stop-color="#0c0a14"/></linearGradient>
 <linearGradient id="billbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1c8" stop-opacity="0.45"/><stop offset="1" stop-color="#fff1c8" stop-opacity="0"/></linearGradient>${extraDefs}
 <linearGradient id="hz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2238" stop-opacity="0.45"/><stop offset="0.5" stop-color="#3a2a2c" stop-opacity="0.12"/><stop offset="1" stop-color="#3a2a2c" stop-opacity="0"/></linearGradient></defs>
-${glows}${s}${cables}${bill}${shoes}<rect width="${W}" height="${H}" fill="url(#hz)"/>`;
-  write("buildings.svg", doc(W, H, body, ' data-layer="buildings"'));
+${glows}${s}${neon}${cables}${bill}${shoes}<rect width="${W}" height="${H}" fill="url(#hz)"/>`;
+  raster(doc(W, H, body), W, [{ w: 7680, name: "buildings-8k.webp", q: 78 }, { w: 3840, name: "buildings-4k.webp", q: 80 }], NIGHT_BLD);
 }
 
 /* ───────────────────────── WALL ───────────────────────── */
@@ -345,7 +391,7 @@ ${glows}${s}${cables}${bill}${shoes}<rect width="${W}" height="${H}" fill="url(#
   });
   // Coping and grime.
   s += `<rect x="0" y="0" width="${W}" height="26" fill="#6a635d"/><rect x="0" y="0" width="${W}" height="4" fill="#7d756e"/><rect x="0" y="26" width="${W}" height="7" fill="#1a1715" opacity="0.85"/>`;
-  s += `<rect width="${W}" height="${H}" filter="url(#n)" opacity="0.35"/>`;
+  s += `<rect width="${W}" height="${H}" filter="url(#n)" opacity="0.22"/>`;
 
   // ── The paint ──
   let paint = "";
@@ -422,7 +468,7 @@ ${glows}${s}${cables}${bill}${shoes}<rect width="${W}" height="${H}" fill="url(#
   s += paint;
   s += `<rect x="0" y="${H * 0.66}" width="${W}" height="${H * 0.34}" fill="url(#grime)"/>`;
   const body = `<defs>${defs}</defs>${s}`;
-  write("wall.svg", doc(W, H, body, ' data-layer="wall"'));
+  raster(doc(W, H, body), W, [{ w: 7680, name: "wall-8k.webp", q: 80 }, { w: 3840, name: "wall-4k.webp", q: 82 }], NIGHT_WALL);
 }
 
 /* ───────────────────────── CONCRETE (tall wall) ───────────────────────── */
@@ -446,7 +492,7 @@ ${glows}${s}${cables}${bill}${shoes}<rect width="${W}" height="${H}" fill="url(#
   for (let y = 140; y < H; y += 175) s += `<rect x="0" y="${y}" width="${W}" height="3" fill="#2f2b28" opacity="0.5"/>`;
   for (let x = 0; x < W; x += 400) s += `<circle cx="${x + 60}" cy="70" r="4" fill="#2f2b28" opacity="0.6"/><circle cx="${x + 260}" cy="245" r="4" fill="#2f2b28" opacity="0.6"/>`;
   const body = `<defs><filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="6" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.66"/></filter></defs>${s}<rect width="${W}" height="${H}" filter="url(#n)" opacity="0.35"/>`;
-  write("concrete.svg", doc(W, H, body, ' data-layer="concrete"'));
+  raster(doc(W, H, body), W, [{ w: 3200, name: "concrete.webp", q: 78 }], NIGHT_WALL);
 }
 
 /* ───────────────────────── ASPHALT ───────────────────────── */
@@ -473,7 +519,7 @@ ${glows}${s}${cables}${bill}${shoes}<rect width="${W}" height="${H}" fill="url(#
 <rect x="0" y="30" width="${W}" height="10" fill="#050505"/>
 ${puddles}
 <rect y="40" width="${W}" height="${H - 40}" filter="url(#n)" opacity="0.25"/>`;
-  write("asphalt.svg", doc(W, H, body, ' data-layer="asphalt"'));
+  raster(doc(W, H, body), W, [{ w: 3200, name: "asphalt.webp", q: 78 }], NIGHT_WALL);
 }
 
 /* ───────────────────────── FOREGROUND ───────────────────────── */
@@ -579,6 +625,7 @@ export const sceneAnchors = ${JSON.stringify(anchors, null, 2)} as const;
 `;
 fs.mkdirSync(path.join(root, "src", "components", "line"), { recursive: true });
 fs.writeFileSync(path.join(root, "src", "components", "line", "scene-anchors.ts"), ts);
+await Promise.all(rasters);
 console.log("scene written:", fs.readdirSync(sceneDir).join(", "));
 console.log("anchors:", JSON.stringify(anchors).slice(0, 400));
 void mix;

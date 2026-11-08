@@ -324,9 +324,6 @@ html.lenis body {
 .wanted.cv-auto {
   contain-intrinsic-size: auto calc(260px + 287vw);
 }
-.craft.cv-auto {
-  contain-intrinsic-size: auto 780px;
-}
 .community.cv-auto {
   contain-intrinsic-size: auto calc(200px + 183vw);
 }
@@ -339,9 +336,6 @@ html.lenis body {
 @media (min-width: 768px) {
   .wanted.cv-auto {
     contain-intrinsic-size: auto calc(260px + 260vw);
-  }
-  .craft.cv-auto {
-    contain-intrinsic-size: auto 850px;
   }
   .community.cv-auto {
     contain-intrinsic-size: auto calc(200px + 166vw);
@@ -356,9 +350,6 @@ html.lenis body {
 @media (min-width: 1024px) {
   .wanted.cv-auto {
     contain-intrinsic-size: auto calc(470px + 45vw);
-  }
-  .craft.cv-auto {
-    contain-intrinsic-size: auto calc(490px + 12vw);
   }
   .community.cv-auto {
     contain-intrinsic-size: auto calc(250px + 17vw);
@@ -784,6 +775,15 @@ html.js [data-reveal="fade"].is-in {
 html:has(main[data-theme="night"]) .grain,
 html[data-light="night"] .grain {
   opacity: 0.08;
+}
+/* Phones: a still grain, no larger than the screen. A moving layer four
+   times the screen's area was costing more than the texture shows. */
+@media (hover: none), (pointer: coarse) {
+  .grain {
+    inset: 0;
+    animation: none;
+    will-change: auto;
+  }
 }
 @keyframes grain-step {
   0% {

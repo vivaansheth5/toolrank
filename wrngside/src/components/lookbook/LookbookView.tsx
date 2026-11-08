@@ -62,7 +62,9 @@ export function LookbookView({ products }: { products: Record<string, Product> }
         <div ref={track} className="lb-track">
           {lookbook.chapters.map((c, i) => (
             <section key={c.id} id={`chapter-${c.id}`} className="lb-ch" aria-labelledby={`lb-t-${c.id}`}>
-              <div className="lb-img" data-reveal="img">
+              {/* The first chapter is the page's largest paint: show it as soon as it
+                  loads instead of waiting for the script that plays the reveal. */}
+              <div className="lb-img" data-reveal={i === 0 ? undefined : "img"}>
                 <div className="reveal-inner">
                   <div className="lb-img-inner">
                     <Image src={c.image} alt={fill(ui.home.chapterAlt, { title: c.title, place: c.place, time: c.time })} fill sizes="(min-width: 1024px) 55vw, 100vw" preload={i === 0} loading={i === 0 ? "eager" : "lazy"} />

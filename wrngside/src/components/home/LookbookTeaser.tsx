@@ -14,7 +14,7 @@ const LAYOUT = [
   { x: 36, y: 0, w: 22, speed: 1.15, rot: 1.8 },
   { x: 66, y: 6, w: 30, speed: 0.9, rot: -1.2 },
   { x: 8, y: 54, w: 24, speed: 1.25, rot: 2.2 },
-  { x: 41, y: 50, w: 28, speed: 0.8, rot: -2 },
+  { x: 36, y: 50, w: 27, speed: 0.8, rot: -2 },
   { x: 77, y: 60, w: 20, speed: 1.1, rot: 3 },
 ];
 
@@ -24,8 +24,8 @@ export function LookbookTeaser() {
   useGSAP(
     () => {
       const el = ref.current;
-      // Phones get a plain staggered grid (see home.css): no parallax to overlap it.
-      if (!el || window.matchMedia(REDUCED_MOTION).matches || window.matchMedia("(max-width: 767px)").matches) return;
+      // Phones and tablets get a plain staggered grid (see home.css): no parallax to overlap it.
+      if (!el || window.matchMedia(REDUCED_MOTION).matches || window.matchMedia("(max-width: 1023px)").matches) return;
       el.querySelectorAll<HTMLElement>("[data-speed]").forEach((card) => {
         const s = Number(card.dataset.speed);
         gsap.fromTo(card, { y: (s - 1) * 260 }, { y: (1 - s) * 260, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
@@ -33,7 +33,8 @@ export function LookbookTeaser() {
     },
     { scope: ref },
   );
-  const items = [...lookbook.chapters, lookbook.chapters[0]].slice(0, 6);
+  // One card per chapter (the collage has six places, the lookbook six chapters).
+  const items = lookbook.chapters.slice(0, LAYOUT.length);
   return (
     <section className="lbt theme-night" aria-labelledby="lbt-title">
       <div className="wrap sec-head">
@@ -52,7 +53,7 @@ export function LookbookTeaser() {
             <figure key={i} className="lbt-card" data-speed={L.speed} style={{ "--x": `${L.x}%`, "--y": `${L.y}%`, "--w": `${L.w}%`, "--r": `${L.rot}deg` } as React.CSSProperties}>
               <TLink href={`/lookbook#chapter-${c.id}`} className="lbt-link" aria-label={fill(ui.home.chapterLabel, { id: c.id, title: c.title, time: c.time, place: c.place })}>
                 <span className="lbt-img">
-                  <Image src={i === 5 ? "/campaign/community-03.webp" : c.image} alt="" fill sizes="(min-width: 1024px) 30vw, 60vw" loading="lazy" />
+                  <Image src={c.image} alt="" fill sizes="(min-width: 1024px) 30vw, 60vw" loading="lazy" />
                 </span>
               </TLink>
               <figcaption className="t-meta">

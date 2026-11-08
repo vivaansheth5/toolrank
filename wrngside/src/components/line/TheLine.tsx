@@ -109,18 +109,17 @@ export async function TheLine() {
               WR<span className="neon-n">N</span>GSIDE
             </span>
           </div>
-          {/* 4. Wall (0.8) */}
-          <Wall dropNumber={drop.number} dropName={drop.name} pieces={garments.length} />
-
-          <div className="night night-under" aria-hidden="true">
-            {poles.map((p) => (
-              <span key={p.index} className="pool" style={{ "--x": p.x } as React.CSSProperties} />
-            ))}
-          </div>
-
-          {/* 5. The line (1.0) */}
+          {/* 4. The line (1.0): the street wall, its light pools, the cables,
+              poles, garments and lamps all scroll together natively, so
+              nothing on it lags the finger. */}
           <div className="line-scroller no-scrollbar" data-line-scroller>
             <div className="line-track" data-line-track>
+              <Wall dropNumber={drop.number} dropName={drop.name} pieces={garments.length} />
+              <div className="pools" aria-hidden="true">
+                {poles.map((p) => (
+                  <span key={p.index} className="pool" style={{ "--x": p.x } as React.CSSProperties} />
+                ))}
+              </div>
               <svg className="cables" viewBox={`${LINE.pole0 * 1000 - 500} 0 ${cableW * 1000 + 1000} 1000`} preserveAspectRatio="none" aria-hidden="true" focusable="false" style={{ "--cw": cableW + 1, "--cx0": LINE.pole0 - 0.5 } as React.CSSProperties}>
                 {spans.map((s) => (
                   <g key={s.index}>
@@ -201,33 +200,27 @@ export async function TheLine() {
                 ))}
                 <span className="snap" style={{ "--x": endX } as React.CSSProperties} data-end />
               </div>
+
+              {/* Streetlights: hot lens, bloom, beam. Their pools on the wall are above. */}
+              <div className="light" aria-hidden="true">
+                {poles.map((p) => (
+                  <span key={p.index} className="lamp" style={{ "--x": p.x } as React.CSSProperties} data-lamp={p.index}>
+                    <span className="lamp-cone" />
+                    <span className="lamp-glow" />
+                    <span className="lamp-core" />
+                    <span className="lamp-dust">
+                      {Array.from({ length: 4 }, (_, i) => (
+                        <i key={i} style={{ "--i": i } as React.CSSProperties} />
+                      ))}
+                    </span>
+                    <span className="lamp-reflect" />
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* 6. Light: night multiply layers with pools at each lamp, then glows.
-              Strong one over the backdrop, a lighter one over the garments. */}
-          <div className="night night-over" aria-hidden="true">
-            {poles.map((p) => (
-              <span key={p.index} className="pool" style={{ "--x": p.x } as React.CSSProperties} />
-            ))}
-          </div>
-          <div className="light" aria-hidden="true">
-            {poles.map((p) => (
-              <span key={p.index} className="lamp" style={{ "--x": p.x } as React.CSSProperties} data-lamp={p.index}>
-                <span className="lamp-cone" />
-                <span className="lamp-glow" />
-                <span className="lamp-core" />
-                <span className="lamp-dust">
-                  {Array.from({ length: 7 }, (_, i) => (
-                    <i key={i} style={{ "--i": i } as React.CSSProperties} />
-                  ))}
-                </span>
-                <span className="lamp-reflect" />
-              </span>
-            ))}
-          </div>
-
-          {/* 7. Foreground (1.6), out of focus. */}
+          {/* 5. Foreground (1.6), out of focus. */}
           <div className="lyr lyr-fg" data-depth="1.6" aria-hidden="true">
             <Image className="fg-cables fg-a" src="/scene/fg-cables.svg" alt="" width={2400} height={520} />
             <Image className="fg-neem" src="/scene/fg-neem.svg" alt="" width={800} height={520} />
@@ -248,7 +241,9 @@ export async function TheLine() {
                 <path className="hud-track" d="M0 4 Q200 18 400 4" />
                 <path className="hud-fill" d="M0 4 Q200 18 400 4" pathLength={1} data-hud-fill />
               </svg>
-              <span className="hud-spark" data-hud-spark />
+              <span className="hud-spark-track" data-hud-spark>
+                <span className="hud-spark" />
+              </span>
             </div>
             <a href="#after-line" className="hud-skip t-meta" data-action="skip">
               {copy.hero.skip} <span aria-hidden="true">↓</span>

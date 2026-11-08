@@ -3,10 +3,10 @@ import { fill, formatPosterDate, formatDropSlot } from "@/lib/format";
 import { Lines } from "@/components/ui/Lines";
 
 /**
- * Wall layer (depth 0.8): a tall concrete side wall carrying the giant opening
- * poster, then a street wall painted over with pieces, throw-ups and tags
- * (scene plate), with two wheat-pastes for the live and next drop on top.
- * x positions are in P units along the wall.
+ * The street wall, right behind the poles, so it scrolls with the line: a tall
+ * concrete side wall carrying the giant opening poster, then a wall painted
+ * over with pieces, throw-ups and tags (scene plate), with two wheat-pastes
+ * for the live and next drop on top. x positions are in P units along it.
  */
 export function Wall({ dropNumber, dropName, pieces }: { dropNumber: string; dropName: string; pieces: number }) {
   const live = drops.list.find((d) => d.id === drops.live)!;
@@ -14,7 +14,7 @@ export function Wall({ dropNumber, dropName, pieces }: { dropNumber: string; dro
   const [subText] = fill(copy.hero.sub, { drop: dropNumber }).split("→");
   const [subTouch] = fill(copy.hero.subTouch, { drop: dropNumber }).split("→");
   return (
-    <div className="lyr lyr-wall" data-depth="0.8">
+    <div className="wall-layer">
       <div className="wall-base" aria-hidden="true" />
       <div className="wall-tall" aria-hidden="true" />
 
